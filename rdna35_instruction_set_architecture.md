@@ -45,94 +45,88 @@ Santa Clara, CA, 95054
 
 # Contents
 
-|                                                         |    |
-|---------------------------------------------------------|----|
-| Preface .....                                           | 1  |
-| About This Document .....                               | 1  |
-| Audience .....                                          | 1  |
-| Organization .....                                      | 1  |
-| Related Documents .....                                 | 2  |
-| Additional Information .....                            | 2  |
-| 1. Introduction .....                                   | 3  |
-| 1.1. Terminology .....                                  | 3  |
-| 1.2. Hardware Overview .....                            | 5  |
-| 1.2.1. Work-group Processor (WGP) .....                 | 6  |
-| 1.2.2. Data Sharing .....                               | 6  |
-| 1.2.3. Device Memory .....                              | 7  |
-| 2. Shader Concepts .....                                | 9  |
-| 2.1. Wave32 and Wave64 .....                            | 9  |
-| 2.2. Shader Types .....                                 | 10 |
-| 2.2.1. Compute Shaders .....                            | 10 |
-| 2.2.2. Graphics Shaders .....                           | 10 |
-| 2.3. Work-groups .....                                  | 11 |
-| 2.4. Shader Padding Requirement .....                   | 12 |
-| 3. Wave State .....                                     | 13 |
-| 3.1. State Overview .....                               | 13 |
-| 3.2. Control State: PC and EXEC .....                   | 14 |
-| 3.2.1. Program Counter (PC) .....                       | 14 |
-| 3.2.2. EXECute Mask .....                               | 14 |
-| 3.2.3. Instruction Skipping: EXEC==0 .....              | 15 |
-| 3.3. Storage State: SGPR, VGPR, LDS .....               | 15 |
-| 3.3.1. SGPRs .....                                      | 15 |
-| 3.3.2. VGPRs .....                                      | 17 |
-| 3.3.3. Memory Alignment and Out-of-Range Behavior ..... | 18 |
-| 3.3.4. LDS .....                                        | 19 |
-| 3.4. Wave State Registers .....                         | 20 |
-| 3.4.1. Status register .....                            | 20 |
-| 3.4.2. Mode register .....                              | 22 |
-| 3.4.3. M0 : Miscellaneous Register .....                | 23 |
-| 3.4.4. NULL .....                                       | 23 |
-| 3.4.5. SCC: Scalar Condition Code .....                 | 23 |
-| 3.4.6. Vector Compares: VCC and VCCZ .....              | 24 |
-| 3.4.7. FLAT_SCRATCH .....                               | 24 |
-| 3.4.8. Hardware Internal Registers .....                | 25 |
-
-|                                                        |    |
-|--------------------------------------------------------|----|
-| 3.4.9. Trap and Exception registers .....              | 25 |
-| 3.4.10. Time .....                                     | 27 |
-| 3.5. Initial Wave State .....                          | 28 |
-| 3.5.1. EXEC initialization .....                       | 28 |
-| 3.5.2. FLAT_SCRATCH Initialization .....               | 28 |
-| 3.5.3. SGPR Initialization .....                       | 28 |
-| 3.5.4. Which VGPRs Get Initialized .....               | 31 |
-| 3.5.5. LDS Initialization .....                        | 34 |
-| 4. Shader Instruction Set .....                        | 35 |
-| 4.1. Common Instruction Fields .....                   | 35 |
-| 4.1.1. Cache Controls: SLC, GLC and DLC .....          | 36 |
-| 5. Program Flow Control .....                          | 39 |
-| 5.1. Program Control .....                             | 39 |
-| 5.2. Instruction Clauses .....                         | 40 |
-| 5.2.1. Clause Breaks .....                             | 41 |
-| 5.3. Send Message Types .....                          | 41 |
-| 5.4. Branching .....                                   | 43 |
-| 5.5. Work-groups and Barriers .....                    | 43 |
-| 5.6. Data Dependency Resolution .....                  | 44 |
-| 5.7. ALU Instruction Software Scheduling .....         | 45 |
-| 6. Scalar ALU Operations .....                         | 47 |
-| 6.1. SALU Instruction Formats .....                    | 47 |
-| 6.2. Scalar ALU Operands .....                         | 47 |
-| 6.3. Scalar Condition Code (SCC) .....                 | 50 |
-| 6.4. Integer Arithmetic Instructions .....             | 50 |
-| 6.5. Conditional Move Instructions .....               | 51 |
-| 6.6. Comparison Instructions .....                     | 51 |
-| 6.7. Bit-Wise Instructions .....                       | 51 |
-| 6.8. SALU Floating Point .....                         | 53 |
-| 6.9. Access Instructions .....                         | 54 |
-| 6.10. Memory Aperture Query .....                      | 54 |
-| 7. Vector ALU Operations .....                         | 56 |
-| 7.1. Microcode Encodings .....                         | 56 |
-| 7.2. Operands .....                                    | 58 |
-| 7.2.1. Non-Standard Uses of Operand Fields .....       | 59 |
-| 7.2.2. Inputs Operands .....                           | 60 |
-| 7.2.3. Output Operands .....                           | 62 |
-| 7.2.4. Denormalized and Rounding Modes .....           | 63 |
-| 7.2.5. Instructions using SGPRs as Mask or Carry ..... | 64 |
-| 7.2.6. Wave64 use of SGPRs .....                       | 64 |
-| 7.2.7. Out-of-Range GPRs .....                         | 64 |
-
 |                                                                       |     |
 |-----------------------------------------------------------------------|-----|
+| Preface .....                                                         | 1   |
+| About This Document .....                                             | 1   |
+| Audience .....                                                        | 1   |
+| Organization .....                                                    | 1   |
+| Related Documents .....                                               | 2   |
+| Additional Information .....                                          | 2   |
+| 1. Introduction .....                                                 | 3   |
+| 1.1. Terminology .....                                                | 3   |
+| 1.2. Hardware Overview .....                                          | 5   |
+| 1.2.1. Work-group Processor (WGP) .....                               | 6   |
+| 1.2.2. Data Sharing .....                                             | 6   |
+| 1.2.3. Device Memory .....                                            | 7   |
+| 2. Shader Concepts .....                                              | 9   |
+| 2.1. Wave32 and Wave64 .....                                          | 9   |
+| 2.2. Shader Types .....                                               | 10  |
+| 2.2.1. Compute Shaders .....                                          | 10  |
+| 2.2.2. Graphics Shaders .....                                         | 10  |
+| 2.3. Work-groups .....                                                | 11  |
+| 2.4. Shader Padding Requirement .....                                 | 12  |
+| 3. Wave State .....                                                   | 13  |
+| 3.1. State Overview .....                                             | 13  |
+| 3.2. Control State: PC and EXEC .....                                 | 14  |
+| 3.2.1. Program Counter (PC) .....                                     | 14  |
+| 3.2.2. EXECute Mask .....                                             | 14  |
+| 3.2.3. Instruction Skipping: EXEC==0 .....                            | 15  |
+| 3.3. Storage State: SGPR, VGPR, LDS .....                             | 15  |
+| 3.3.1. SGPRs .....                                                    | 15  |
+| 3.3.2. VGPRs .....                                                    | 17  |
+| 3.3.3. Memory Alignment and Out-of-Range Behavior .....               | 18  |
+| 3.3.4. LDS .....                                                      | 19  |
+| 3.4. Wave State Registers .....                                       | 20  |
+| 3.4.1. Status register .....                                          | 20  |
+| 3.4.2. Mode register .....                                            | 22  |
+| 3.4.3. M0 : Miscellaneous Register .....                              | 23  |
+| 3.4.4. NULL .....                                                     | 23  |
+| 3.4.5. SCC: Scalar Condition Code .....                               | 23  |
+| 3.4.6. Vector Compares: VCC and VCCZ .....                            | 24  |
+| 3.4.7. FLAT_SCRATCH .....                                             | 24  |
+| 3.4.8. Hardware Internal Registers .....                              | 25  |
+| 3.4.9. Trap and Exception registers .....                             | 25  |
+| 3.4.10. Time .....                                                    | 27  |
+| 3.5. Initial Wave State .....                                         | 28  |
+| 3.5.1. EXEC initialization .....                                      | 28  |
+| 3.5.2. FLAT_SCRATCH Initialization .....                              | 28  |
+| 3.5.3. SGPR Initialization .....                                      | 28  |
+| 3.5.4. Which VGPRs Get Initialized .....                              | 31  |
+| 3.5.5. LDS Initialization .....                                       | 34  |
+| 4. Shader Instruction Set .....                                       | 35  |
+| 4.1. Common Instruction Fields .....                                  | 35  |
+| 4.1.1. Cache Controls: SLC, GLC and DLC .....                         | 36  |
+| 5. Program Flow Control .....                                         | 39  |
+| 5.1. Program Control .....                                            | 39  |
+| 5.2. Instruction Clauses .....                                        | 40  |
+| 5.2.1. Clause Breaks .....                                            | 41  |
+| 5.3. Send Message Types .....                                         | 41  |
+| 5.4. Branching .....                                                  | 43  |
+| 5.5. Work-groups and Barriers .....                                   | 43  |
+| 5.6. Data Dependency Resolution .....                                 | 44  |
+| 5.7. ALU Instruction Software Scheduling .....                        | 45  |
+| 6. Scalar ALU Operations .....                                        | 47  |
+| 6.1. SALU Instruction Formats .....                                   | 47  |
+| 6.2. Scalar ALU Operands .....                                        | 47  |
+| 6.3. Scalar Condition Code (SCC) .....                                | 50  |
+| 6.4. Integer Arithmetic Instructions .....                            | 50  |
+| 6.5. Conditional Move Instructions .....                              | 51  |
+| 6.6. Comparison Instructions .....                                    | 51  |
+| 6.7. Bit-Wise Instructions .....                                      | 51  |
+| 6.8. SALU Floating Point .....                                        | 53  |
+| 6.9. Access Instructions .....                                        | 54  |
+| 6.10. Memory Aperture Query .....                                     | 54  |
+| 7. Vector ALU Operations .....                                        | 56  |
+| 7.1. Microcode Encodings .....                                        | 56  |
+| 7.2. Operands .....                                                   | 58  |
+| 7.2.1. Non-Standard Uses of Operand Fields .....                      | 59  |
+| 7.2.2. Inputs Operands .....                                          | 60  |
+| 7.2.3. Output Operands .....                                          | 62  |
+| 7.2.4. Denormalized and Rounding Modes .....                          | 63  |
+| 7.2.5. Instructions using SGPRs as Mask or Carry .....                | 64  |
+| 7.2.6. Wave64 use of SGPRs .....                                      | 64  |
+| 7.2.7. Out-of-Range GPRs .....                                        | 64  |
 | 7.2.8. PERMLANE Specific Rules .....                                  | 64  |
 | 7.3. Instructions .....                                               | 65  |
 | 7.4. 16-bit Math and VGPRs .....                                      | 67  |
@@ -174,130 +168,121 @@ Santa Clara, CA, 95054
 | 10.1.5. Image Non-Sequential Address (NSA) .....                      | 99  |
 | 10.2. Image Opcodes with No Sampler .....                             | 100 |
 | 10.3. Image Opcodes with a Sampler .....                              | 102 |
-
-|                                                             |     |
-|-------------------------------------------------------------|-----|
-| 10.4. VGPR Usage . . . . .                                  | 103 |
-| 10.4.1. Data format in VGPRs . . . . .                      | 105 |
-| 10.5. Image Resource . . . . .                              | 105 |
-| 10.6. Image Sampler . . . . .                               | 106 |
-| 10.7. Data Formats . . . . .                                | 108 |
-| 10.8. Vector Memory Instruction Data Dependencies . . . . . | 109 |
-| 10.9. Ray Tracing . . . . .                                 | 109 |
-| 10.9.1. Instruction definition and fields . . . . .         | 109 |
-| 10.9.2. Using BVH with NSA . . . . .                        | 110 |
-| 10.9.3. Texture Resource Definition . . . . .               | 111 |
-| 10.10. Partially Resident Textures . . . . .                | 112 |
-| 11. Global, Scratch and Flat Address Space . . . . .        | 113 |
-| 11.1. Instructions . . . . .                                | 115 |
-| 11.1.1. FLAT . . . . .                                      | 115 |
-| 11.1.2. Global . . . . .                                    | 116 |
-| 11.1.3. Scratch . . . . .                                   | 116 |
-| 11.2. Addressing . . . . .                                  | 117 |
-| 11.3. Memory Error Checking . . . . .                       | 118 |
-| 11.4. Data . . . . .                                        | 119 |
-| 12. Data Share Operations . . . . .                         | 120 |
-| 12.1. Overview . . . . .                                    | 120 |
-| 12.1.1. Dataflow in Memory Hierarchy . . . . .              | 121 |
-| 12.1.2. LDS Modes and Allocation: CU vs. WGP Mode . . . . . | 121 |
-| 12.1.3. LDS Access Methods . . . . .                        | 121 |
-| 12.2. Pixel Parameter Interpolation . . . . .               | 122 |
-| 12.2.1. LDS Parameter Loads . . . . .                       | 122 |
-| 12.3. VALU Parameter Interpolation . . . . .                | 125 |
-| 12.3.1. 16-bit Parameter Interpolation . . . . .            | 126 |
-| 12.4. LDS Direct Load . . . . .                             | 126 |
-| 12.5. Data Share Indexed and Atomic Access . . . . .        | 127 |
-| 12.5.1. LDS Atomic Ops . . . . .                            | 130 |
-| 12.5.2. LDS Lane-permute Ops . . . . .                      | 130 |
-| 12.5.3. DS Stack Operations for Ray Tracing . . . . .       | 131 |
-| 12.6. Global Data Share . . . . .                           | 132 |
-| 12.6.1. GS NGG Streamout Instructions . . . . .             | 132 |
-| 12.7. Alignment and Errors . . . . .                        | 133 |
-| 13. Float Memory Atomics . . . . .                          | 134 |
-| 13.1. Rounding . . . . .                                    | 134 |
-| 13.2. Denormals . . . . .                                   | 134 |
-| 13.3. NaN Handling . . . . .                                | 135 |
-| 13.4. Global Wave Sync & Atomic Ordered Count . . . . .     | 136 |
-
-|                                                             |     |
-|-------------------------------------------------------------|-----|
-| 13.4.1. GWS and Ordered Count Programming Rule .....        | 136 |
-| 13.4.2. EXEC Handling .....                                 | 136 |
-| 13.4.3. Ordered Count .....                                 | 136 |
-| 13.4.4. Global Wave Sync .....                              | 138 |
-| 14. Export: Position, Color/MRT .....                       | 141 |
-| 14.1. Pixel Shader Exports .....                            | 142 |
-| 14.2. Primitive Shader Exports (From GS shader stage) ..... | 142 |
-| 14.3. Dependency Checking .....                             | 142 |
-| 15. Microcode Formats .....                                 | 144 |
-| 15.1. Scalar ALU and Control Formats .....                  | 146 |
-| 15.1.1. SOP2 .....                                          | 146 |
-| 15.1.2. SOPK .....                                          | 147 |
-| 15.1.3. SOP1 .....                                          | 148 |
-| 15.1.4. SOPC .....                                          | 150 |
-| 15.1.5. SOPP .....                                          | 152 |
-| 15.2. Scalar Memory Format .....                            | 153 |
-| 15.2.1. SMEM .....                                          | 153 |
-| 15.3. Vector ALU Formats .....                              | 154 |
-| 15.3.1. VOP2 .....                                          | 154 |
-| 15.3.2. VOP1 .....                                          | 155 |
-| 15.3.3. VOPC .....                                          | 157 |
-| 15.3.4. VOP3 .....                                          | 161 |
-| 15.3.5. VOP3SD .....                                        | 167 |
-| 15.3.6. VOP3P .....                                         | 168 |
-| 15.3.7. VOPD .....                                          | 170 |
-| 15.3.8. DPP16 .....                                         | 172 |
-| 15.3.9. DPP8 .....                                          | 173 |
-| 15.4. Vector Parameter Interpolation Format .....           | 174 |
-| 15.4.1. VINTERP .....                                       | 174 |
-| 15.5. Parameter and Direct Load from LDS .....              | 175 |
-| 15.5.1. LDSDIR .....                                        | 175 |
-| 15.6. LDS and GDS Format .....                              | 177 |
-| 15.6.1. DS .....                                            | 177 |
-| 15.7. Vector Memory Buffer Formats .....                    | 179 |
-| 15.7.1. MTBUF .....                                         | 179 |
-| 15.7.2. MUBUF .....                                         | 180 |
-| 15.8. Vector Memory Image Format .....                      | 182 |
-| 15.8.1. MIMG .....                                          | 182 |
-| 15.9. Flat Formats .....                                    | 185 |
-| 15.9.1. FLAT .....                                          | 185 |
-| 15.9.2. GLOBAL .....                                        | 186 |
-
-|                                                              |     |
-|--------------------------------------------------------------|-----|
-| 15.9.3. SCRATCH .....                                        | 187 |
-| 15.10. Export Format .....                                   | 188 |
-| 15.10.1. EXP .....                                           | 188 |
-| 16. Instructions .....                                       | 189 |
-| 16.1. SOP2 Instructions .....                                | 190 |
-| 16.2. SOPK Instructions .....                                | 207 |
-| 16.3. SOP1 Instructions .....                                | 215 |
-| 16.4. SOPC Instructions .....                                | 240 |
-| 16.5. SOPP Instructions .....                                | 249 |
-| 16.6. SMEM Instructions .....                                | 262 |
-| 16.7. VOP2 Instructions .....                                | 267 |
-| 16.7.1. VOP2 using VOP3 or VOP3SD encoding .....             | 281 |
-| 16.8. VOP1 Instructions .....                                | 283 |
-| 16.8.1. VOP1 using VOP3 encoding .....                       | 312 |
-| 16.9. VOPC Instructions .....                                | 313 |
-| 16.9.1. VOPC using VOP3 encoding .....                       | 371 |
-| 16.10. VOP3P Instructions .....                              | 373 |
-| 16.11. VOPD Instructions .....                               | 384 |
-| 16.11.1. VOPD X-Instructions .....                           | 384 |
-| 16.11.2. VOPD Y-Instructions .....                           | 386 |
-| 16.12. VOP3 & VOP3SD Instructions .....                      | 389 |
-| 16.13. VINTERP Instructions .....                            | 529 |
-| 16.14. Parameter and Direct Load from LDS Instructions ..... | 534 |
-| 16.15. LDS & GDS Instructions .....                          | 535 |
-| 16.15.1. LDS Instruction Limitations .....                   | 572 |
-| 16.16. MUBUF Instructions .....                              | 573 |
-| 16.17. MTBUF Instructions .....                              | 591 |
-| 16.18. MIMG Instructions .....                               | 596 |
-| 16.19. EXPORT Instructions .....                             | 613 |
-| 16.20. FLAT, Scratch and Global Instructions .....           | 614 |
-| 16.20.1. Flat Instructions .....                             | 614 |
-| 16.20.2. Scratch Instructions .....                          | 626 |
-| 16.20.3. Global Instructions .....                           | 631 |
+| 10.4. VGPR Usage . . . . .                                            | 103 |
+| 10.4.1. Data format in VGPRs . . . . .                                | 105 |
+| 10.5. Image Resource . . . . .                                        | 105 |
+| 10.6. Image Sampler . . . . .                                         | 106 |
+| 10.7. Data Formats . . . . .                                          | 108 |
+| 10.8. Vector Memory Instruction Data Dependencies . . . . .           | 109 |
+| 10.9. Ray Tracing . . . . .                                           | 109 |
+| 10.9.1. Instruction definition and fields . . . . .                   | 109 |
+| 10.9.2. Using BVH with NSA . . . . .                                  | 110 |
+| 10.9.3. Texture Resource Definition . . . . .                         | 111 |
+| 10.10. Partially Resident Textures . . . . .                          | 112 |
+| 11. Global, Scratch and Flat Address Space . . . . .                  | 113 |
+| 11.1. Instructions . . . . .                                          | 115 |
+| 11.1.1. FLAT . . . . .                                                | 115 |
+| 11.1.2. Global . . . . .                                              | 116 |
+| 11.1.3. Scratch . . . . .                                             | 116 |
+| 11.2. Addressing . . . . .                                            | 117 |
+| 11.3. Memory Error Checking . . . . .                                 | 118 |
+| 11.4. Data . . . . .                                                  | 119 |
+| 12. Data Share Operations . . . . .                                   | 120 |
+| 12.1. Overview . . . . .                                              | 120 |
+| 12.1.1. Dataflow in Memory Hierarchy . . . . .                        | 121 |
+| 12.1.2. LDS Modes and Allocation: CU vs. WGP Mode . . . . .           | 121 |
+| 12.1.3. LDS Access Methods . . . . .                                  | 121 |
+| 12.2. Pixel Parameter Interpolation . . . . .                         | 122 |
+| 12.2.1. LDS Parameter Loads . . . . .                                 | 122 |
+| 12.3. VALU Parameter Interpolation . . . . .                          | 125 |
+| 12.3.1. 16-bit Parameter Interpolation . . . . .                      | 126 |
+| 12.4. LDS Direct Load . . . . .                                       | 126 |
+| 12.5. Data Share Indexed and Atomic Access . . . . .                  | 127 |
+| 12.5.1. LDS Atomic Ops . . . . .                                      | 130 |
+| 12.5.2. LDS Lane-permute Ops . . . . .                                | 130 |
+| 12.5.3. DS Stack Operations for Ray Tracing . . . . .                 | 131 |
+| 12.6. Global Data Share . . . . .                                     | 132 |
+| 12.6.1. GS NGG Streamout Instructions . . . . .                       | 132 |
+| 12.7. Alignment and Errors . . . . .                                  | 133 |
+| 13. Float Memory Atomics . . . . .                                    | 134 |
+| 13.1. Rounding . . . . .                                              | 134 |
+| 13.2. Denormals . . . . .                                             | 134 |
+| 13.3. NaN Handling . . . . .                                          | 135 |
+| 13.4. Global Wave Sync & Atomic Ordered Count . . . . .               | 136 |
+| 13.4.1. GWS and Ordered Count Programming Rule .....                  | 136 |
+| 13.4.2. EXEC Handling .....                                           | 136 |
+| 13.4.3. Ordered Count .....                                           | 136 |
+| 13.4.4. Global Wave Sync .....                                        | 138 |
+| 14. Export: Position, Color/MRT .....                                 | 141 |
+| 14.1. Pixel Shader Exports .....                                      | 142 |
+| 14.2. Primitive Shader Exports (From GS shader stage) .....           | 142 |
+| 14.3. Dependency Checking .....                                       | 142 |
+| 15. Microcode Formats .....                                           | 144 |
+| 15.1. Scalar ALU and Control Formats .....                            | 146 |
+| 15.1.1. SOP2 .....                                                    | 146 |
+| 15.1.2. SOPK .....                                                    | 147 |
+| 15.1.3. SOP1 .....                                                    | 148 |
+| 15.1.4. SOPC .....                                                    | 150 |
+| 15.1.5. SOPP .....                                                    | 152 |
+| 15.2. Scalar Memory Format .....                                      | 153 |
+| 15.2.1. SMEM .....                                                    | 153 |
+| 15.3. Vector ALU Formats .....                                        | 154 |
+| 15.3.1. VOP2 .....                                                    | 154 |
+| 15.3.2. VOP1 .....                                                    | 155 |
+| 15.3.3. VOPC .....                                                    | 157 |
+| 15.3.4. VOP3 .....                                                    | 161 |
+| 15.3.5. VOP3SD .....                                                  | 167 |
+| 15.3.6. VOP3P .....                                                   | 168 |
+| 15.3.7. VOPD .....                                                    | 170 |
+| 15.3.8. DPP16 .....                                                   | 172 |
+| 15.3.9. DPP8 .....                                                    | 173 |
+| 15.4. Vector Parameter Interpolation Format .....                     | 174 |
+| 15.4.1. VINTERP .....                                                 | 174 |
+| 15.5. Parameter and Direct Load from LDS .....                        | 175 |
+| 15.5.1. LDSDIR .....                                                  | 175 |
+| 15.6. LDS and GDS Format .....                                        | 177 |
+| 15.6.1. DS .....                                                      | 177 |
+| 15.7. Vector Memory Buffer Formats .....                              | 179 |
+| 15.7.1. MTBUF .....                                                   | 179 |
+| 15.7.2. MUBUF .....                                                   | 180 |
+| 15.8. Vector Memory Image Format .....                                | 182 |
+| 15.8.1. MIMG .....                                                    | 182 |
+| 15.9. Flat Formats .....                                              | 185 |
+| 15.9.1. FLAT .....                                                    | 185 |
+| 15.9.2. GLOBAL .....                                                  | 186 |
+| 15.9.3. SCRATCH .....                                                 | 187 |
+| 15.10. Export Format .....                                            | 188 |
+| 15.10.1. EXP .....                                                    | 188 |
+| 16. Instructions .....                                                | 189 |
+| 16.1. SOP2 Instructions .....                                         | 190 |
+| 16.2. SOPK Instructions .....                                         | 207 |
+| 16.3. SOP1 Instructions .....                                         | 215 |
+| 16.4. SOPC Instructions .....                                         | 240 |
+| 16.5. SOPP Instructions .....                                         | 249 |
+| 16.6. SMEM Instructions .....                                         | 262 |
+| 16.7. VOP2 Instructions .....                                         | 267 |
+| 16.7.1. VOP2 using VOP3 or VOP3SD encoding .....                      | 281 |
+| 16.8. VOP1 Instructions .....                                         | 283 |
+| 16.8.1. VOP1 using VOP3 encoding .....                                | 312 |
+| 16.9. VOPC Instructions .....                                         | 313 |
+| 16.9.1. VOPC using VOP3 encoding .....                                | 371 |
+| 16.10. VOP3P Instructions .....                                       | 373 |
+| 16.11. VOPD Instructions .....                                        | 384 |
+| 16.11.1. VOPD X-Instructions .....                                    | 384 |
+| 16.11.2. VOPD Y-Instructions .....                                    | 386 |
+| 16.12. VOP3 & VOP3SD Instructions .....                               | 389 |
+| 16.13. VINTERP Instructions .....                                     | 529 |
+| 16.14. Parameter and Direct Load from LDS Instructions .....          | 534 |
+| 16.15. LDS & GDS Instructions .....                                   | 535 |
+| 16.15.1. LDS Instruction Limitations .....                            | 572 |
+| 16.16. MUBUF Instructions .....                                       | 573 |
+| 16.17. MTBUF Instructions .....                                       | 591 |
+| 16.18. MIMG Instructions .....                                        | 596 |
+| 16.19. EXPORT Instructions .....                                      | 613 |
+| 16.20. FLAT, Scratch and Global Instructions .....                    | 614 |
+| 16.20.1. Flat Instructions .....                                      | 614 |
+| 16.20.2. Scratch Instructions .....                                   | 626 |
+| 16.20.3. Global Instructions .....                                    | 631 |
 
 # Preface
 
@@ -365,7 +350,7 @@ The following terminology and conventions are used in this document:
 | < >                              | Angle brackets denote streams.                                                                                                                                                                                   |
 | [1,2)                            | A range that includes the left-most value (in this case, 1), but excludes the right-most value (in this case, 2).                                                                                                |
 | [1,2]                            | A range that includes both the left-most and right-most values.                                                                                                                                                  |
-| {x   y} or {x, y}                | One of the multiple options listed. In this case, X or Y.                                                                                                                                                        |
+| {x | y} or {x, y}                | One of the multiple options listed. In this case, X or Y.                                                                                                                                                        |
 | 0.0                              | A floating-point value.                                                                                                                                                                                          |
 | 1011b<br>'b0010<br>32'b0010      | A binary value, in this example a 4-bit value.<br>A binary value of unspecified size.<br>A 32-bit binary value. Binary values may include underscores for readability and can be ignored when parsing the value. |
 | 0x1A<br>'h123<br>24'h01          | A hexadecimal value.<br>A hexadecimal value.<br>A 24-bit hexadecimal value.                                                                                                                                      |
@@ -374,46 +359,43 @@ The following terminology and conventions are used in this document:
 
 **Table 2. Basic Terms**
 
-| Term              | Description                                                                                                                                                                                                     |
-|-------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| RDNA3.5 Processor | The RDNA3.5 shader processor is a scalar and vector ALU with memory access designed to run complex programs on behalf of a wave.                                                                                |
-| Kernel            | A program executed by the shader processor for each work item submitted to it.                                                                                                                                  |
-| Shader Program    | Same meaning as "Kernel". The shader types are: CS (Compute Shader), and for graphics-capable devices, PS (Pixel Shader), GS (Geometry Shader), and HS (Hull Shader).                                           |
-| Dispatch          | A dispatch launches a 1D, 2D, or 3D grid of work to the RDNA3.5 processor array.                                                                                                                                |
-| Work-group        | A work-group is a collection of waves that have the ability to synchronize with each other with barriers; they also can share data through the Local Data Share. Waves in a work-group all run on the same WGP. |
-| Wave              | A collection of 32 or 64 work-items that execute in parallel on a single RDNA3.5 processor.                                                                                                                     |
-| Work-item         | A single element of work: one element from the dispatch grid, or in graphics a pixel, vertex or primitive.                                                                                                      |
-| Thread            | A synonym for "work-item".                                                                                                                                                                                      |
-| Lane              | A synonym for "work-item" typically used only when describing VALU operations.                                                                                                                                  |
-| SA                | Shader Array. A collection of compute units.                                                                                                                                                                    |
-
-| Term                       | Description                                                                                                                                 |
-|----------------------------|---------------------------------------------------------------------------------------------------------------------------------------------|
-| SE                         | Shader Engine. A collection of shader arrays.                                                                                               |
-| SGPR                       | Scalar General Purpose Registers. 32-bit registers that are shared by work-items in each wave.                                              |
-| VGPR                       | Vector General Purpose Registers. 32-bit registers that are private to each work-items in a wave.                                           |
-| LDS                        | Local Data Share. A 32-bank scratch memory allocated to waves or work-groups                                                                |
-| GDS                        | Global Data Share. A scratch memory shared by all shader engines. Similar to LDS but also supports append operations.                       |
-| VMEM                       | Vector Memory. Refers to LDS, Texture, Global, Flat and Scratch memory.                                                                     |
-| SIMD32                     | Single Instruction Multiple Data. In this document a SIMD refers to the Vector ALU unit that processes instructions for a single wave.      |
-| Literal Constant           | A 32-bit integer or float constant that is placed in the instruction stream.                                                                |
-| Scalar ALU (SALU)          | The scalar ALU operates on one value per wave and manages all control flow.                                                                 |
-| Vector ALU (VALU)          | The vector ALU maintains Vector GPRs that are unique for each work item and execute arithmetic operations uniquely on each work-item.       |
-| Work-group Processor (WGP) | The basic unit of shader computation hardware, including scalar & vector ALU's and memory, as well as LDS and scalar caches.                |
-| Compute Unit (CU)          | One half of a WGP. Contains 2 SIMD32's that share one path to memory.                                                                       |
-| Microcode format           | The microcode format describes the bit patterns used to encode instructions. Each instruction is 32-bits or more, in units of 32-bits.      |
-| Instruction                | An instruction is the basic unit of the kernel. Instructions include: vector ALU, scalar ALU, memory transfer, and control flow operations. |
-| Quad                       | A quad is a 2x2 group of screen-aligned pixels. This is relevant for sampling texture maps.                                                 |
-| Texture Sampler (S#)       | A texture sampler is a 128-bit entity that describes how the vector memory system reads and samples (filters) a texture map.                |
-| Texture Resource (T#)      | A texture resource descriptor describes an image in memory: address, data format, width, height, depth, etc.                                |
-| Buffer Resource (V#)       | A buffer resource descriptor describes a buffer in memory: address, data format, stride, etc.                                               |
-| NGG                        | Next Generation Graphics pipeline                                                                                                           |
-| DPP                        | Data Parallel Primitives: VALU instructions which can pass data between work-items                                                          |
-| LSB                        | Least Significant Bit                                                                                                                       |
-| MSB                        | Most Significant Bit                                                                                                                        |
-| DWORD                      | 32-bit data                                                                                                                                 |
-| SHORT                      | 16-bit data                                                                                                                                 |
-| BYTE                       | 8-bit data                                                                                                                                  |
+| Term                       | Description                                                                                                                                                                                                     |
+|----------------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| RDNA3.5 Processor          | The RDNA3.5 shader processor is a scalar and vector ALU with memory access designed to run complex programs on behalf of a wave.                                                                                |
+| Kernel                     | A program executed by the shader processor for each work item submitted to it.                                                                                                                                  |
+| Shader Program             | Same meaning as "Kernel". The shader types are: CS (Compute Shader), and for graphics-capable devices, PS (Pixel Shader), GS (Geometry Shader), and HS (Hull Shader).                                           |
+| Dispatch                   | A dispatch launches a 1D, 2D, or 3D grid of work to the RDNA3.5 processor array.                                                                                                                                |
+| Work-group                 | A work-group is a collection of waves that have the ability to synchronize with each other with barriers; they also can share data through the Local Data Share. Waves in a work-group all run on the same WGP. |
+| Wave                       | A collection of 32 or 64 work-items that execute in parallel on a single RDNA3.5 processor.                                                                                                                     |
+| Work-item                  | A single element of work: one element from the dispatch grid, or in graphics a pixel, vertex or primitive.                                                                                                      |
+| Thread                     | A synonym for "work-item".                                                                                                                                                                                      |
+| Lane                       | A synonym for "work-item" typically used only when describing VALU operations.                                                                                                                                  |
+| SA                         | Shader Array. A collection of compute units.                                                                                                                                                                    |
+| SE                         | Shader Engine. A collection of shader arrays.                                                                                                                                                                   |
+| SGPR                       | Scalar General Purpose Registers. 32-bit registers that are shared by work-items in each wave.                                                                                                                  |
+| VGPR                       | Vector General Purpose Registers. 32-bit registers that are private to each work-items in a wave.                                                                                                               |
+| LDS                        | Local Data Share. A 32-bank scratch memory allocated to waves or work-groups                                                                                                                                    |
+| GDS                        | Global Data Share. A scratch memory shared by all shader engines. Similar to LDS but also supports append operations.                                                                                           |
+| VMEM                       | Vector Memory. Refers to LDS, Texture, Global, Flat and Scratch memory.                                                                                                                                         |
+| SIMD32                     | Single Instruction Multiple Data. In this document a SIMD refers to the Vector ALU unit that processes instructions for a single wave.                                                                          |
+| Literal Constant           | A 32-bit integer or float constant that is placed in the instruction stream.                                                                                                                                    |
+| Scalar ALU (SALU)          | The scalar ALU operates on one value per wave and manages all control flow.                                                                                                                                     |
+| Vector ALU (VALU)          | The vector ALU maintains Vector GPRs that are unique for each work item and execute arithmetic operations uniquely on each work-item.                                                                           |
+| Work-group Processor (WGP) | The basic unit of shader computation hardware, including scalar & vector ALU's and memory, as well as LDS and scalar caches.                                                                                    |
+| Compute Unit (CU)          | One half of a WGP. Contains 2 SIMD32's that share one path to memory.                                                                                                                                           |
+| Microcode format           | The microcode format describes the bit patterns used to encode instructions. Each instruction is 32-bits or more, in units of 32-bits.                                                                          |
+| Instruction                | An instruction is the basic unit of the kernel. Instructions include: vector ALU, scalar ALU, memory transfer, and control flow operations.                                                                     |
+| Quad                       | A quad is a 2x2 group of screen-aligned pixels. This is relevant for sampling texture maps.                                                                                                                     |
+| Texture Sampler (S#)       | A texture sampler is a 128-bit entity that describes how the vector memory system reads and samples (filters) a texture map.                                                                                    |
+| Texture Resource (T#)      | A texture resource descriptor describes an image in memory: address, data format, width, height, depth, etc.                                                                                                    |
+| Buffer Resource (V#)       | A buffer resource descriptor describes a buffer in memory: address, data format, stride, etc.                                                                                                                   |
+| NGG                        | Next Generation Graphics pipeline                                                                                                                                                                               |
+| DPP                        | Data Parallel Primitives: VALU instructions which can pass data between work-items                                                                                                                              |
+| LSB                        | Least Significant Bit                                                                                                                                                                                           |
+| MSB                        | Most Significant Bit                                                                                                                                                                                            |
+| DWORD                      | 32-bit data                                                                                                                                                                                                     |
+| SHORT                      | 16-bit data                                                                                                                                                                                                     |
+| BYTE                       | 8-bit data                                                                                                                                                                                                      |
 
 **Table 3. Instruction suffixes have the following definitions:**
 
@@ -431,16 +413,13 @@ The following terminology and conventions are used in this document:
 | I64    | signed 64-bit integer                                                           |
 | U16    | unsigned 16-bit integer                                                         |
 | U32    | unsigned 32-bit integer                                                         |
-
-| Format | Meaning                                  |
-|--------|------------------------------------------|
-| U64    | unsigned 64-bit integer                  |
-| D.i    | Destination which is a signed integer    |
-| D.u    | Destination which is an unsigned integer |
-| D.f    | Destination which is a float             |
-| S*.i   | Source which is a signed integer         |
-| S*.u   | Source which is an unsigned integer      |
-| S*.f   | Source which is a float                  |
+| U64    | unsigned 64-bit integer                                                         |
+| D.i    | Destination which is a signed integer                                           |
+| D.u    | Destination which is an unsigned integer                                        |
+| D.f    | Destination which is a float                                                    |
+| S*.i   | Source which is a signed integer                                                |
+| S*.u   | Source which is an unsigned integer                                             |
+| S*.f   | Source which is a float                                                         |
 
 If an instruction has two suffixes (for example, \_I32\_F32), the first suffix indicates the destination type, the second the source type.
 
@@ -651,32 +630,29 @@ The table below shows the hardware states readable or writable by a shader progr
 
 Table 4. Readable and Writable Hardware States
 
-| Abbrev.      | Name                  | Size (bits) | Description                                                                                                                                                                                                                                                           |
-|--------------|-----------------------|-------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| PC           | Program Counter       | 48          | Points to the memory address of the next shader instruction to execute. Read/write only via scalar control flow instructions and indirectly using branch. <i>The 2 LSB's are forced to zero.</i>                                                                      |
-| V0-V255      | VGPR                  | 32          | Vector general-purpose register. (32 bits per work-item x (32 or 64) work-items per wave).                                                                                                                                                                            |
-| S0-S105      | SGPR                  | 32          | Scalar general-purpose register. All waves are allocated 106 SGPRs + 16 TTMPs.                                                                                                                                                                                        |
-| LDS          | Local Data Share      | 64kB        | Local data share is a scratch RAM with built-in arithmetic capabilities that allow data to be shared between threads in a work-group.                                                                                                                                 |
-| EXEC         | Execute Mask          | 64          | A bit mask with one bit per thread, which is applied to vector instructions and controls which threads execute and which ignore the instruction.                                                                                                                      |
-| EXECZ        | EXEC is zero          | 1           | A single bit flag indicating that the EXEC mask is all zeros. For wave32 it considers only EXEC[31:0].                                                                                                                                                                |
-| VCC          | Vector Condition Code | 64          | A bit mask with one bit per thread; it holds the result of a vector compare operation or integer carry-out. <i>Physically VCC is stored in specific SGPRs.</i>                                                                                                        |
-| VCCZ         | VCC is zero           | 1           | A single-bit flag indicating that the VCC mask is all zeros. For wave32 it considers only VCC[31:0].                                                                                                                                                                  |
-| SCC          | Scalar Condition Code | 1           | Result from a scalar ALU comparison instruction.                                                                                                                                                                                                                      |
-| FLAT_SCRATCH | Flat scratch address  | 48          | The base address of scratch memory for this wave. Used by Flat and Scratch instructions. Read-only by user shader.                                                                                                                                                    |
-| STATUS       | Status                | 32          | Read-only shader status bits.                                                                                                                                                                                                                                         |
-| MODE         | Mode                  | 32          | Writable shader mode bits.                                                                                                                                                                                                                                            |
-| M0           | Misc Reg              | 32          | A temporary register that has various uses, including GPR indexing and bounds checking.                                                                                                                                                                               |
-| TRAPSTS      | Trap Status           | 32          | Holds information about exceptions and pending traps.                                                                                                                                                                                                                 |
-| TBA          | Trap Base Address     | 48          | Holds the pointer to the current trap handler program address. Per-VMID register. Bit [63] indicates if the trap handler is present (1) or not (0) and is not considered part of the address (bit[62] is replicated into address bit[63]). Accessed via S_SENDMSG_RTN |
-| TMA          | Trap Memory Address   | 48          | Temporary register for shader operations. For example, can hold a pointer to memory used by the trap handler.                                                                                                                                                         |
-
-| Abbrev.      | Name                                  | Size (bits) | Description                                                                                                                |
-|--------------|---------------------------------------|-------------|----------------------------------------------------------------------------------------------------------------------------|
-| TTMP0-TTMP15 | Trap Temporary SGPRs                  | 32          | 16 SGPRs available only to the Trap Handler for temporary storage.                                                         |
-| VMcnt        | Vector memory load instruction count  | 6           | Counts the number of VMEM load and sample instructions issued but not yet completed.                                       |
-| VScnt        | Vector memory store instruction count | 6           | Counts the number of VMEM store instructions issued but not yet completed.                                                 |
-| EXPcnt       | Export Count                          | 3           | Counts the number of Export and GDS instructions issued but not yet completed. Also counts parameter loads outstanding.    |
-| LGKMcnt      | LDS, GDS, Constant and Message count  | 6           | Counts the number of LDS, GDS, constant-fetch (scalar memory read), and message instructions issued but not yet completed. |
+| Abbrev.      | Name                                  | Size (bits) | Description                                                                                                                                                                                                                                                           |
+|--------------|---------------------------------------|-------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| PC           | Program Counter                       | 48          | Points to the memory address of the next shader instruction to execute. Read/write only via scalar control flow instructions and indirectly using branch. <i>The 2 LSB's are forced to zero.</i>                                                                      |
+| V0-V255      | VGPR                                  | 32          | Vector general-purpose register. (32 bits per work-item x (32 or 64) work-items per wave).                                                                                                                                                                            |
+| S0-S105      | SGPR                                  | 32          | Scalar general-purpose register. All waves are allocated 106 SGPRs + 16 TTMPs.                                                                                                                                                                                        |
+| LDS          | Local Data Share                      | 64kB        | Local data share is a scratch RAM with built-in arithmetic capabilities that allow data to be shared between threads in a work-group.                                                                                                                                 |
+| EXEC         | Execute Mask                          | 64          | A bit mask with one bit per thread, which is applied to vector instructions and controls which threads execute and which ignore the instruction.                                                                                                                      |
+| EXECZ        | EXEC is zero                          | 1           | A single bit flag indicating that the EXEC mask is all zeros. For wave32 it considers only EXEC[31:0].                                                                                                                                                                |
+| VCC          | Vector Condition Code                 | 64          | A bit mask with one bit per thread; it holds the result of a vector compare operation or integer carry-out. <i>Physically VCC is stored in specific SGPRs.</i>                                                                                                        |
+| VCCZ         | VCC is zero                           | 1           | A single-bit flag indicating that the VCC mask is all zeros. For wave32 it considers only VCC[31:0].                                                                                                                                                                  |
+| SCC          | Scalar Condition Code                 | 1           | Result from a scalar ALU comparison instruction.                                                                                                                                                                                                                      |
+| FLAT_SCRATCH | Flat scratch address                  | 48          | The base address of scratch memory for this wave. Used by Flat and Scratch instructions. Read-only by user shader.                                                                                                                                                    |
+| STATUS       | Status                                | 32          | Read-only shader status bits.                                                                                                                                                                                                                                         |
+| MODE         | Mode                                  | 32          | Writable shader mode bits.                                                                                                                                                                                                                                            |
+| M0           | Misc Reg                              | 32          | A temporary register that has various uses, including GPR indexing and bounds checking.                                                                                                                                                                               |
+| TRAPSTS      | Trap Status                           | 32          | Holds information about exceptions and pending traps.                                                                                                                                                                                                                 |
+| TBA          | Trap Base Address                     | 48          | Holds the pointer to the current trap handler program address. Per-VMID register. Bit [63] indicates if the trap handler is present (1) or not (0) and is not considered part of the address (bit[62] is replicated into address bit[63]). Accessed via S_SENDMSG_RTN |
+| TMA          | Trap Memory Address                   | 48          | Temporary register for shader operations. For example, can hold a pointer to memory used by the trap handler.                                                                                                                                                         |
+| TTMP0-TTMP15 | Trap Temporary SGPRs                  | 32          | 16 SGPRs available only to the Trap Handler for temporary storage.                                                                                                                                                                                                    |
+| VMcnt        | Vector memory load instruction count  | 6           | Counts the number of VMEM load and sample instructions issued but not yet completed.                                                                                                                                                                                  |
+| VScnt        | Vector memory store instruction count | 6           | Counts the number of VMEM store instructions issued but not yet completed.                                                                                                                                                                                            |
+| EXPcnt       | Export Count                          | 3           | Counts the number of Export and GDS instructions issued but not yet completed. Also counts parameter loads outstanding.                                                                                                                                               |
+| LGKMcnt      | LDS, GDS, Constant and Message count  | 6           | Counts the number of LDS, GDS, constant-fetch (scalar memory read), and message instructions issued but not yet completed.                                                                                                                                            |
 
 ## 3.2. Control State: PC and EXEC
 
@@ -735,7 +711,7 @@ Every wave is allocated a fixed number of SGPRs:
 
 #### 3.3.1.2. VCC
 
-The Vector Condition Code (VCC) can be written by V\_CMP and integer vector ADD/SUB instructions. VCC is implicitly read by V\_ADD\_CI, V\_SUB\_CI, V\_CNDMASK and V\_DIV\_FMAD. VCC is a named SGPR-pair and is subject to the same dependency checks as any other SGPR.
+The Vector Condition Code (VCC) can be written by V\_CMP and integer vector ADD/SUB instructions. VCC is implicitly read by V\_ADD\_CI, V\_SUB\_CI, V\_CNDMASK and V\_DIV\_FMAS. VCC is a named SGPR-pair and is subject to the same dependency checks as any other SGPR.
 
 #### 3.3.1.3. SGPR Alignment
 
@@ -943,14 +919,11 @@ Status register fields can be read but not written to by the shader. *While in t
 
 Table 5. Status Register Fields
 
-| Field     | Bit Pos | Write when Priv? | Description                                                                                                                                                                       |
-|-----------|---------|------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| SCC       | 0       | Y                | Scalar condition code. Used as a carry-out bit. For a comparison instruction, this bit indicates failure or success. For logical operations, this is 1 if the result is non-zero. |
-| SYS_PRIO  | 2:1     | Y                | Wave priority set at wave creation time. See S_SETPRIO instruction for details. 0 is lowest, 3 is highest priority.                                                               |
-| USER_PRIO | 4:3     | Y                | Wave's priority set by shader program itself. See S_SETPRIO instruction for details.                                                                                              |
-
 | Field         | Bit Pos | Write when Priv? | Description                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 |
 |---------------|---------|------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| SCC           | 0       | Y                | Scalar condition code. Used as a carry-out bit. For a comparison instruction, this bit indicates failure or success. For logical operations, this is 1 if the result is non-zero.                                                                                                                                                                                                                                                                                                                                           |
+| SYS_PRIO      | 2:1     | Y                | Wave priority set at wave creation time. See S_SETPRIO instruction for details. 0 is lowest, 3 is highest priority.                                                                                                                                                                                                                                                                                                                                                                                                         |
+| USER_PRIO     | 4:3     | Y                | Wave's priority set by shader program itself. See S_SETPRIO instruction for details.                                                                                                                                                                                                                                                                                                                                                                                                                                        |
 | PRIV          | 5       | N                | Privileged mode. Indicates that the wave is in the trap handler. Gives write access to TTMP registers.                                                                                                                                                                                                                                                                                                                                                                                                                      |
 | TRAP_EN       | 6       | N                | Indicates that a trap handler is present. When set to zero, traps are not taken.                                                                                                                                                                                                                                                                                                                                                                                                                                            |
 | EXPORT_RDY    | 8       | Y                | This status bit indicates if export buffer space has been allocated. The shader stalls any export instruction until this bit becomes "1". <i>It gets set to 1 when export buffer space has been allocated.</i><br>Shader hardware checks this bit before executing any EXPORT instruction to Position, Z or MRT targets, and put the wave into a waiting state if the alloc has not yet been received. The alloc arrives eventually (unless SKIP_EXPORT is set) as a message and the shader then continues with the export. |
@@ -988,11 +961,8 @@ Table 6. Mode Register Fields
 | LOD_CLAMPED     | 10      | Sticky status bit - indicates that one or more texture accesses had their LOD clamped.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          |
 | TRAP_AFTER_INST | 11      | Forces the wave to jump to the exception handler after each instruction is executed (but not after ENDPGM). Only works if TRAP_EN = 1.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          |
 | EXCP_EN         | 21:12   | Enable mask for exceptions. Enabled means if the exception occurs and if TRAP_EN==1, a trap may be taken.<br><br>[12] : invalid<br>[13] : inputDenormal<br>[14] : float_div0<br>[15] : overflow<br>[16] : underflow<br>[17] : inexact<br>[18] : int_div0<br>[19] : addr_watch - take exception when TC sees wave access an "address of interest"<br>[21] : trap on wave end - h/w clears this upon entering trap handler for end-of-wave                                                                                                                                                                                                                                        |
-
-| Field        | Bit Pos | Description                                                                                                                                                                                                              |
-|--------------|---------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| FP16_OVFL    | 23      | If set, an overflowed FP16 VALU result is clamped to +/- MAX_FP16 regardless of round mode, while still preserving true INF values. ( <i>Inputs which are infinity may result in infinity, as does divide-by-zero</i> ). |
-| DISABLE_PERF | 27      | 1 = disable performance counting for this wave.                                                                                                                                                                          |
+| FP16_OVFL       | 23      | If set, an overflowed FP16 VALU result is clamped to +/- MAX_FP16 regardless of round mode, while still preserving true INF values. ( <i>Inputs which are infinity may result in infinity, as does divide-by-zero</i> ).                                                                                                                                                                                                                                                                                                                                                                                                                                                        |
+| DISABLE_PERF    | 27      | 1 = disable performance counting for this wave.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 |
 
 ### 3.4.3. M0 : Miscellaneous Register
 
@@ -1147,7 +1117,7 @@ MEMVIOL and Illegal-Instruction jump to the trap handler and cannot be masked of
 
 | Bit | Exception              | Cause                                                                                              | Result                                             |
 |-----|------------------------|----------------------------------------------------------------------------------------------------|----------------------------------------------------|
-| 0   | invalid                | operand is invalid for operation: $0 * \infty$ , $0/0$ , $\sqrt{-x}$ , any input is NaN.           | NaN                                                |
+| 0   | invalid                | operand is invalid for operation: $0 * \infty$ , $0/0$ , $\sqrt{-x}$ , any input is SNaN.          | QNaN                                               |
 | 1   | Input Denormal         | one or more operands was subnormal                                                                 | ordinary result                                    |
 | 2   | Divide by zero         | Float X / 0                                                                                        | correct signed infinity                            |
 | 3   | overflow               | The rounded result would be larger than the largest finite number.                                 | Depends on rounding mode. Signed max# or infinity. |
@@ -1227,15 +1197,12 @@ The tables below show how to control which values are initialized prior to shade
 
 Table 8. PS SGPR Load
 
-| SGPR Order     | Description                                      | Enable                              |
-|----------------|--------------------------------------------------|-------------------------------------|
-| First 0..32 of | User data registers                              | SPI_SHADER_PGM_RSRC2_PS.user_sgpr   |
-| then           | {bc_optimize, prim_mask[14:0], lds_offset[15:0]} | N/A                                 |
-| then           | {ps_wave_id[9:0], ps_wave_index[5:0]}            | SPI_SHADER_PGM_RSRC2_PS.wave_cnt_en |
-
-| SGPR Order | Description                                                        | Enable                                          |
-|------------|--------------------------------------------------------------------|-------------------------------------------------|
-| then       | Provoking Vtx Info:<br>{prim15[1:0], prim14[1:0], ..., prim0[1:0]} | SPI_SHADER_PGM_RSRC1_PS .<br>LOAD_PROVOKING_VTX |
+| SGPR Order     | Description                                                        | Enable                                          |
+|----------------|--------------------------------------------------------------------|-------------------------------------------------|
+| First 0..32 of | User data registers                                                | SPI_SHADER_PGM_RSRC2_PS.user_sgpr               |
+| then           | {bc_optimize, prim_mask[14:0], lds_offset[15:0]}                   | N/A                                             |
+| then           | {ps_wave_id[9:0], ps_wave_index[5:0]}                              | SPI_SHADER_PGM_RSRC2_PS.wave_cnt_en             |
+| then           | Provoking Vtx Info:<br>{prim15[1:0], prim14[1:0], ..., prim0[1:0]} | SPI_SHADER_PGM_RSRC1_PS .<br>LOAD_PROVOKING_VTX |
 
 **PS\_wave\_index** is  $(se\_id[1:0] * GPU\_GC\_NUM\_PACKER\_PER\_SE + packer\_id)$ .
 
@@ -1259,19 +1226,16 @@ State registers:
 
 Table 9. GS SGPR Load
 
-| SGPR # | GS with <code>FAST_LAUNCH != 2</code>                                                                                                              | GS with <code>FAST_LAUNCH == 2</code>                                                 | Enable                                                       |
-|--------|----------------------------------------------------------------------------------------------------------------------------------------------------|---------------------------------------------------------------------------------------|--------------------------------------------------------------|
-| 0      | GS Program Address [31:0]<br><i>comes from:</i><br><code>SPI_SHADER_PGM_LO_GS</code>                                                               | GS Program Address [31:0]<br><i>comes from:</i><br><code>SPI_SHADER_PGM_LO_GS</code>  | <i>automatically loaded</i>                                  |
-| 1      | GS Program Address [63:32]<br><i>comes from:</i><br><code>SPI_SHADER_PGM_HI_GS</code>                                                              | GS Program Address [63:32]<br><i>comes from:</i><br><code>SPI_SHADER_PGM_HI_GS</code> | <i>automatically loaded</i>                                  |
-| 2      | {1'b0, <code>gsAmpPrimPerGrp</code> [8:0],<br>1'b0, <code>esAmpVertPerGrp</code> [8:0],<br><code>ordered_wave_id</code> [11:0]}                    | 32'h0                                                                                 | <b>Must not be overwritten</b> , in some cases listed below. |
-| 3      | { <code>TGsize</code> [3:0],<br><code>WaveInGroup</code> [3:0], 8'h0,<br><code>gsInputPrimCnt</code> [7:0],<br><code>esInputVertCnt</code> [7:0] } | { <code>TGsize</code> [3:0],<br><code>WaveInGroup</code> [3:0], 24'h0 }               | <i>automatically loaded.</i>                                 |
-| 4      | Off-chip LDS base [31:0]                                                                                                                           | { <code>TGID_Y</code> [15:0],<br><code>TGID_X</code> [15:0] }                         | <code>SPI_SHADER_PGM_RSRC2_GS.oc_lds_en</code>               |
-| 5      | { 17'h0, <code>attrSgBase</code> [14:0] }                                                                                                          | { <code>TGID_Z</code> [15:0], 1'b0,<br><code>attrSgBase</code> [14:0] }               | -                                                            |
-| 6      | SPI is loading <code>flat_scratch</code> [63:0] at this time                                                                                       |                                                                                       | -                                                            |
-| 7      |                                                                                                                                                    |                                                                                       | -                                                            |
-
-| SGPR #         | GS with FAST_LAUNCH != 2         | GS with FAST_LAUNCH == 2         | Enable                            |
-|----------------|----------------------------------|----------------------------------|-----------------------------------|
+| SGPR #         | GS with <code>FAST_LAUNCH != 2</code>                                                                                                              | GS with <code>FAST_LAUNCH == 2</code>                                                 | Enable                                                       |
+|----------------|----------------------------------------------------------------------------------------------------------------------------------------------------|---------------------------------------------------------------------------------------|--------------------------------------------------------------|
+| 0              | GS Program Address [31:0]<br><i>comes from:</i><br><code>SPI_SHADER_PGM_LO_GS</code>                                                               | GS Program Address [31:0]<br><i>comes from:</i><br><code>SPI_SHADER_PGM_LO_GS</code>  | <i>automatically loaded</i>                                  |
+| 1              | GS Program Address [63:32]<br><i>comes from:</i><br><code>SPI_SHADER_PGM_HI_GS</code>                                                              | GS Program Address [63:32]<br><i>comes from:</i><br><code>SPI_SHADER_PGM_HI_GS</code> | <i>automatically loaded</i>                                  |
+| 2              | {1'b0, <code>gsAmpPrimPerGrp</code> [8:0],<br>1'b0, <code>esAmpVertPerGrp</code> [8:0],<br><code>ordered_wave_id</code> [11:0]}                    | 32'h0                                                                                 | <b>Must not be overwritten</b> , in some cases listed below. |
+| 3              | { <code>TGsize</code> [3:0],<br><code>WaveInGroup</code> [3:0], 8'h0,<br><code>gsInputPrimCnt</code> [7:0],<br><code>esInputVertCnt</code> [7:0] } | { <code>TGsize</code> [3:0],<br><code>WaveInGroup</code> [3:0], 24'h0 }               | <i>automatically loaded.</i>                                 |
+| 4              | Off-chip LDS base [31:0]                                                                                                                           | { <code>TGID_Y</code> [15:0],<br><code>TGID_X</code> [15:0] }                         | <code>SPI_SHADER_PGM_RSRC2_GS.oc_lds_en</code>               |
+| 5              | { 17'h0, <code>attrSgBase</code> [14:0] }                                                                                                          | { <code>TGID_Z</code> [15:0], 1'b0,<br><code>attrSgBase</code> [14:0] }               | -                                                            |
+| 6              | SPI is loading <code>flat_scratch</code> [63:0] at this time                                                                                       |                                                                                       | -                                                            |
+| 7              |                                                                                                                                                    |                                                                                       | -                                                            |
 | 8 - (up to) 39 | User data registers of GS shader | User data registers of GS shader | SPI_SHADER_PGM_RSRC2_GS.user_sgpr |
 
 When stream-out is used, SGPR[2] must not be modified or overwritten any time before the final stream out is issued (GDS ordered count with 'done' = 1). This is because the pipeline reset sequence which hardware automatically executes reads SGPR to fabricate a GDS-ordered-count instruction and relies on this value.
@@ -1313,15 +1277,12 @@ Table 11. CS SGPR Load
 | then            | <code>work_group_id2[31:0]</code>                                                                                                                                                                                   | COMPUTE_PGM_RSRC2.tgid_z_en  |
 | then            | { <code>first_wave</code> , <code>6'h00</code> , <code>wave_id_in_group[4:0]</code> , <code>2'h0</code> ,<br><code>ordered_append_term[11:0]</code> , <code>work-</code><br><code>group_size_in_waves[5:0]</code> } | COMPUTE_PGM_RSRC2.tg_size_en |
 | TTMP4,5         | 0                                                                                                                                                                                                                   |                              |
-
-| SGPR Order | Description                          | Enable |
-|------------|--------------------------------------|--------|
-| TTMP6      | dispatch packet addr lo              |        |
-| TTMP7      | dispatch packet addr hi              |        |
-| TTMP8      | dispatch grid X[31:0]                |        |
-| TTMP9      | dispatch grid Y[31:0]                |        |
-| TTMP10     | dispatch grid Z[31:0]                |        |
-| TTMP11     | { 26'b0, wave_id_in_workgroup[5:0] } |        |
+| TTMP6           | dispatch packet addr lo                                                                                                                                                                                             |                              |
+| TTMP7           | dispatch packet addr hi                                                                                                                                                                                             |                              |
+| TTMP8           | dispatch grid X[31:0]                                                                                                                                                                                               |                              |
+| TTMP9           | dispatch grid Y[31:0]                                                                                                                                                                                               |                              |
+| TTMP10          | dispatch grid Z[31:0]                                                                                                                                                                                               |                              |
+| TTMP11          | { 26'b0, wave_id_in_workgroup[5:0] }                                                                                                                                                                                |                              |
 
 Other TTMPs are not initialized.
 
@@ -1390,20 +1351,16 @@ The two Pixel Staging Register (PSR) control registers contain an identical set 
 
 The above table shows VGPR destinations for PS when all possible terms are enabled. If `PS_INPUT_ADDR == PS_INPUT_ENA`, then PS VGPRs pack towards VGPR0 as terms are disabled, as shown in the table below:
 
-| Field Name       | ENA | ADDR | IJ / VGPR Terms | VGPR Dest |
-|------------------|-----|------|-----------------|-----------|
-| PERSP_SAMPLE_ENA | 1   | 1    | PERSP_SAMPLE I  | VGPR0     |
-|                  |     |      | PERSP_SAMPLE J  | VGPR1     |
-
 | Field Name           | ENA | ADDR | IJ / VGPR Terms         | VGPR Dest |
 |----------------------|-----|------|-------------------------|-----------|
+| PERSP_SAMPLE_ENA     | 1   | 1    | PERSP_SAMPLE I          | VGPR0     |
+|                      |     |      | PERSP_SAMPLE J          | VGPR1     |
 | PERSP_CENTER_ENA     | 1   | 1    | PERSP_CENTER I          | VGPR2     |
 |                      |     |      | PERSP_CENTER J          | VGPR3     |
 | PERSP_CENTROID_ENA   | 0   | 0    | PERSP_CENTROID I        | X         |
 |                      |     |      | PERSP_CENTROID J        | X         |
 | PERSP_PULL_MODEL_ENA | 0   | 0    | PERSP_PULL_MODEL I/W    | X         |
 |                      |     |      | PERSP_PULL_MODEL J/W    | X         |
-|                      |     |      | PERSP_PULL_MODEL 1/W    | X         |
 |                      |     |      | PERSP_PULL_MODEL 1/W    | X         |
 | LINEAR_SAMPLE_ENA    | 0   | 0    | LINEAR_SAMPLE I         | X         |
 |                      |     |      | LINEAR_SAMPLE J         | X         |
@@ -1423,36 +1380,32 @@ The above table shows VGPR destinations for PS when all possible terms are enabl
 
 However, if `PS_INPUT_ADDR != PS_INPUT_ENA` then the VGPR destination of enabled terms can be manipulated. An example is this is shown in the table below:
 
-| Field Name           | ENA | ADDR     | IJ / VGPR Terms      | VGPR Dest      |
-|----------------------|-----|----------|----------------------|----------------|
-| PERSP_SAMPLE_ENA     | 1   | 1        | PERSP_SAMPLE I       | VGPR0          |
-|                      |     |          | PERSP_SAMPLE J       | VGPR1          |
-| PERSP_CENTER_ENA     | 1   | 1        | PERSP_CENTER I       | VGPR2          |
-|                      |     |          | PERSP_CENTER J       | VGPR3          |
-| PERSP_CENTROID_ENA   | 0   | <b>1</b> | PERSP_CENTROID I     | VGPR4 skipped  |
-|                      |     |          | PERSP_CENTROID J     | VGPR5 skipped  |
-| PERSP_PULL_MODEL_ENA | 0   | <b>1</b> | PERSP_PULL_MODEL I/W | VGPR6 skipped  |
-|                      |     |          | PERSP_PULL_MODEL J/W | VGPR7 skipped  |
-|                      |     |          | PERSP_PULL_MODEL 1/W | VGPR8 skipped  |
-|                      |     |          | PERSP_PULL_MODEL 1/W | VGPR8 skipped  |
-| LINEAR_SAMPLE_ENA    | 0   | 0        | LINEAR_SAMPLE I      | X              |
-|                      |     |          | LINEAR_SAMPLE J      | X              |
-| LINEAR_CENTER_ENA    | 0   | 0        | LINEAR_CENTER I      | X              |
-|                      |     |          | LINEAR_CENTER J      | X              |
-| LINEAR_CENTROID_ENA  | 0   | <b>1</b> | LINEAR_CENTROID I    | VGPR9 skipped  |
-|                      |     |          | LINEAR_CENTROID J    | VGPR10 skipped |
-| LINE_STIPPLE_TEX_ENA | 0   | <b>1</b> | LINE_STIPPLE_TEX     | VGPR11 skipped |
-| POS_X_FLOAT_ENA      | 1   | 1        | POS_X_FLOAT          | VGPR12         |
-| POS_Y_FLOAT_ENA      | 1   | 1        | POS_Y_FLOAT          | VGPR13         |
-| POS_Z_FLOAT_ENA      | 0   | 0        | POS_Z_FLOAT          | X              |
-| POS_W_FLOAT_ENA      | 0   | 0        | POS_W_FLOAT          | X              |
-| FRONT_FACE_ENA       | 0   | 0        | FRONT_FACE           | X              |
-
-| Field Name          | ENA | ADDR | IJ / VGPR Terms         | VGPR Dest |
-|---------------------|-----|------|-------------------------|-----------|
-| ANCILLARY_ENA       | 0   | 0    | Ancil Data              | X         |
-| SAMPLE_COVERAGE_ENA | 0   | 0    | SAMPLE_COVERAGE         | X         |
-| POS_FIXED_PT_ENA    | 0   | 0    | Position {Y[16], X[16]} | X         |
+| Field Name           | ENA | ADDR     | IJ / VGPR Terms         | VGPR Dest      |
+|----------------------|-----|----------|-------------------------|----------------|
+| PERSP_SAMPLE_ENA     | 1   | 1        | PERSP_SAMPLE I          | VGPR0          |
+|                      |     |          | PERSP_SAMPLE J          | VGPR1          |
+| PERSP_CENTER_ENA     | 1   | 1        | PERSP_CENTER I          | VGPR2          |
+|                      |     |          | PERSP_CENTER J          | VGPR3          |
+| PERSP_CENTROID_ENA   | 0   | <b>1</b> | PERSP_CENTROID I        | VGPR4 skipped  |
+|                      |     |          | PERSP_CENTROID J        | VGPR5 skipped  |
+| PERSP_PULL_MODEL_ENA | 0   | <b>1</b> | PERSP_PULL_MODEL I/W    | VGPR6 skipped  |
+|                      |     |          | PERSP_PULL_MODEL J/W    | VGPR7 skipped  |
+|                      |     |          | PERSP_PULL_MODEL 1/W    | VGPR8 skipped  |
+| LINEAR_SAMPLE_ENA    | 0   | 0        | LINEAR_SAMPLE I         | X              |
+|                      |     |          | LINEAR_SAMPLE J         | X              |
+| LINEAR_CENTER_ENA    | 0   | 0        | LINEAR_CENTER I         | X              |
+|                      |     |          | LINEAR_CENTER J         | X              |
+| LINEAR_CENTROID_ENA  | 0   | <b>1</b> | LINEAR_CENTROID I       | VGPR9 skipped  |
+|                      |     |          | LINEAR_CENTROID J       | VGPR10 skipped |
+| LINE_STIPPLE_TEX_ENA | 0   | <b>1</b> | LINE_STIPPLE_TEX        | VGPR11 skipped |
+| POS_X_FLOAT_ENA      | 1   | 1        | POS_X_FLOAT             | VGPR12         |
+| POS_Y_FLOAT_ENA      | 1   | 1        | POS_Y_FLOAT             | VGPR13         |
+| POS_Z_FLOAT_ENA      | 0   | 0        | POS_Z_FLOAT             | X              |
+| POS_W_FLOAT_ENA      | 0   | 0        | POS_W_FLOAT             | X              |
+| FRONT_FACE_ENA       | 0   | 0        | FRONT_FACE              | X              |
+| ANCILLARY_ENA        | 0   | 0        | Ancil Data              | X              |
+| SAMPLE_COVERAGE_ENA  | 0   | 0        | SAMPLE_COVERAGE         | X              |
+| POS_FIXED_PT_ENA     | 0   | 0        | Position {Y[16], X[16]} | X              |
 
 ### 3.5.5. LDS Initialization
 
@@ -1514,11 +1467,11 @@ When used in a 64-bit signed integer operation, it is sign-extended to 64 bits. 
 |                             | Float Inline Constants   | 241                     | -0.5             |                                                                                                                                                                    |                                                                                               |
 |                             |                          | 242                     | 1.0              |                                                                                                                                                                    |                                                                                               |
 |                             |                          | 243                     | -1.0             |                                                                                                                                                                    |                                                                                               |
-|                             |                          | 244                     | 2.0              | 1/(2*PI) is 0.15915494. The hex values are:                                                                                                                        |                                                                                               |
-|                             |                          | 245                     | -2.0             | half: 0x3118                                                                                                                                                       |                                                                                               |
-|                             |                          | 246                     | 4.0              | single: 0x3e22f983                                                                                                                                                 |                                                                                               |
-|                             |                          | 247                     | -4.0             | double: 0x3fc45f306dc9c882                                                                                                                                         |                                                                                               |
-|                             |                          | 248                     | 1.0 / (2 * PI)   |                                                                                                                                                                    |                                                                                               |
+|                             |                          | 244                     | 2.0              |                                                                                                                                                                    |                                                                                               |
+|                             |                          | 245                     | -2.0             |                                                                                                                                                                    |                                                                                               |
+|                             |                          | 246                     | 4.0              |                                                                                                                                                                    |                                                                                               |
+|                             |                          | 247                     | -4.0             |                                                                                                                                                                    |                                                                                               |
+|                             |                          | 248                     | 1.0 / (2 * PI)   | 1/(2*PI) is 0.15915494. The hex values are:<br>half: 0x3118<br>single: 0x3e22f983<br>double: 0x3fc45f306dc9c882                                                    |                                                                                               |
 |                             |                          | 249                     | Reserved         | Reserved                                                                                                                                                           |                                                                                               |
 |                             |                          | 250                     | DPP16            | data parallel primitive                                                                                                                                            |                                                                                               |
 |                             |                          | 251                     | Reserved         | Reserved                                                                                                                                                           |                                                                                               |
@@ -1624,15 +1577,12 @@ Table 12. Wave Termination and Traps
 
 Table 13. Dependency, Delay and Scheduling Instructions
 
-| Instructions | Description                                                                                                                                                                           |
-|--------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| S_NOP        | NOP. Repeat SIMM16[3:0] times. (1..16)<br><i>Like a short version of S_SLEEP</i>                                                                                                      |
-| S_SLEEP      | Cause a wave to sleep for approx. 64*SIMM16[6:0] clocks.<br><i>"s_sleep 0" sleeps the wave for 0 cycles.</i>                                                                          |
-| S_WAKEUP     | Causes one wave in a work-group to signal all other waves in the same work-group to wake up from S_SLEEP early. If waves are not sleeping, they are not affected by this instruction. |
-| S_SETPRIO    | Set 2-bits of USER_PRIO: user-settable wave priority. 0 = low, 3 = high.<br>Overall wave priority is: {MIN(3, (SysPrio[1:0] + UserPrio[1:0])), WaveAge[3:0]}                          |
-
 | Instructions | Description                                                                                                                                                                                                                                                                         |
 |--------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| S_NOP        | NOP. Repeat SIMM16[3:0] times. (1..16)<br><i>Like a short version of S_SLEEP</i>                                                                                                                                                                                                    |
+| S_SLEEP      | Cause a wave to sleep for approx. 64*SIMM16[6:0] clocks.<br><i>"s_sleep 0" sleeps the wave for 0 cycles.</i>                                                                                                                                                                        |
+| S_WAKEUP     | Causes one wave in a work-group to signal all other waves in the same work-group to wake up from S_SLEEP early. If waves are not sleeping, they are not affected by this instruction.                                                                                               |
+| S_SETPRIO    | Set 2-bits of USER_PRIO: user-settable wave priority. 0 = low, 3 = high.<br>Overall wave priority is: {MIN(3, (SysPrio[1:0] + UserPrio[1:0])), WaveAge[3:0]}                                                                                                                        |
 | S_CLAUSE     | Begin a clause consisting of instructions matching the instruction after the s_clause. The clause length is: (SIMM16[5:0] + 1), and clauses must be between 2 and 63 instructions. SIMM16[5:0] must be 1-62, not 0 or 63.                                                           |
 | S_BARRIER    | Synchronize waves within a work-group. If not all waves in group have been created yet, waits for entire group before proceeding. Waves that have ended do not prevent barriers from being satisfied. Waves not in a work-group (or work-group size = 1 wave), treat this as S_NOP. |
 
@@ -1957,43 +1907,43 @@ In the table below, 0-127 can be used as scalar sources or destinations; 128-255
 
 *Table 20. Scalar Operands*
 
-|                        |                        | <b>Code</b>                             | <b>Meaning</b>                                     |                                                                                                                                                                    |
-|------------------------|------------------------|-----------------------------------------|----------------------------------------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| Scalar Source (8 bits) | Scalar Dest (7 bits)   | 0-105                                   | SGPR 0 .. 105                                      | SGPRs. One DWORD each.                                                                                                                                             |
-|                        |                        | 106                                     | VCC_LO                                             | VCC[31:0]                                                                                                                                                          |
-|                        |                        | 107                                     | VCC_HI                                             | VCC[63:32]                                                                                                                                                         |
-|                        |                        | 108-123                                 | ttmp0 .. ttmp15                                    | Trap handler temporary SGPRs (privileged)                                                                                                                          |
-|                        |                        | 124                                     | NULL                                               | Reads return zero, writes are ignored. When used as a destination, nullifies the instruction.                                                                      |
-|                        |                        | 125                                     | M0                                                 | Temporary register, use for a variety of functions                                                                                                                 |
-|                        |                        | 126                                     | EXEC_LO                                            | EXEC[31:0]                                                                                                                                                         |
-|                        |                        | 127                                     | EXEC_HI                                            | EXEC[63:32]                                                                                                                                                        |
-|                        |                        | 128                                     | 0                                                  | Inline constant zero                                                                                                                                               |
-|                        |                        | 129-192                                 | int 1 .. 64                                        | Integer inline constants                                                                                                                                           |
-|                        | 193-208                | int -1 .. -16                           |                                                    |                                                                                                                                                                    |
-|                        | 209-232                | Reserved                                | Reserved                                           |                                                                                                                                                                    |
-|                        | 233                    | DPP8                                    | 8-lane DPP (only valid as SRC0)                    |                                                                                                                                                                    |
-|                        | 234                    | DPP8FI                                  | 8-lane DPP with Fetch-Invalid (only valid as SRC0) |                                                                                                                                                                    |
-|                        | 235                    | SHARED_BASE                             | Memory Aperture Definition                         |                                                                                                                                                                    |
-|                        | 236                    | SHARED_LIMIT                            |                                                    |                                                                                                                                                                    |
-|                        | 237                    | PRIVATE_BASE                            |                                                    |                                                                                                                                                                    |
-|                        | 238                    | PRIVATE_LIMIT                           |                                                    |                                                                                                                                                                    |
-|                        | 239                    | Reserved                                | Reserved                                           |                                                                                                                                                                    |
-|                        | Float Inline Constants | 240                                     | 0.5                                                | Inline floating point constants. Can be used in 16, 32 and 64 bit floating point math. They may be used with non-float instructions but the value remains a float. |
-|                        |                        | 241                                     | -0.5                                               |                                                                                                                                                                    |
-|                        |                        | 242                                     | 1.0                                                |                                                                                                                                                                    |
-|                        |                        | 243                                     | -1.0                                               |                                                                                                                                                                    |
-|                        |                        | 244                                     | 2.0                                                | 1/(2*PI) is 0.15915494. The hex values are:<br>half: 0x3118                                                                                                        |
-|                        |                        | 245                                     | -2.0                                               | single: 0x3e22f983                                                                                                                                                 |
-| 246                    |                        | 4.0                                     | double: 0x3fc45f306dc9c882                         |                                                                                                                                                                    |
-| 247                    |                        | -4.0                                    |                                                    |                                                                                                                                                                    |
-| 248                    |                        | 1.0 / (2 * PI)                          |                                                    |                                                                                                                                                                    |
-| 249                    |                        | Reserved                                | Reserved                                           |                                                                                                                                                                    |
-| 250                    | DPP16                  | data parallel primitive                 |                                                    |                                                                                                                                                                    |
-| 251                    | Reserved               | Reserved                                |                                                    |                                                                                                                                                                    |
-| 252                    | Reserved               | Reserved                                |                                                    |                                                                                                                                                                    |
-| 253                    | SCC                    | { 31'b0, SCC }                          |                                                    |                                                                                                                                                                    |
-| 254                    | Reserved               | Reserved                                |                                                    |                                                                                                                                                                    |
-| 255                    | Literal constant       | 32 bit constant from instruction stream |                                                    |                                                                                                                                                                    |
+|                        |                          | <b>Code</b> | <b>Meaning</b>   |                                                                                                                                                                    |
+|------------------------|--------------------------|-------------|------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| Scalar Source (8 bits) | Scalar Dest (7 bits)     | 0-105       | SGPR 0 .. 105    | SGPRs. One DWORD each.                                                                                                                                             |
+|                        |                          | 106         | VCC_LO           | VCC[31:0]                                                                                                                                                          |
+|                        |                          | 107         | VCC_HI           | VCC[63:32]                                                                                                                                                         |
+|                        |                          | 108-123     | ttmp0 .. ttmp15  | Trap handler temporary SGPRs (privileged)                                                                                                                          |
+|                        |                          | 124         | NULL             | Reads return zero, writes are ignored. When used as a destination, nullifies the instruction.                                                                      |
+|                        |                          | 125         | M0               | Temporary register, use for a variety of functions                                                                                                                 |
+|                        |                          | 126         | EXEC_LO          | EXEC[31:0]                                                                                                                                                         |
+|                        |                          | 127         | EXEC_HI          | EXEC[63:32]                                                                                                                                                        |
+|                        | Integer Inline Constants | 128         | 0                | Inline constant zero                                                                                                                                               |
+|                        |                          | 129-192     | int 1 .. 64      | Integer inline constants                                                                                                                                           |
+|                        |                          | 193-208     | int -1 .. -16    |                                                                                                                                                                    |
+|                        |                          | 209-232     | Reserved         | Reserved                                                                                                                                                           |
+|                        |                          | 233         | DPP8             | 8-lane DPP (only valid as SRC0)                                                                                                                                    |
+|                        |                          | 234         | DPP8FI           | 8-lane DPP with Fetch-Invalid (only valid as SRC0)                                                                                                                 |
+|                        |                          | 235         | SHARED_BASE      | Memory Aperture Definition                                                                                                                                         |
+|                        |                          | 236         | SHARED_LIMIT     |                                                                                                                                                                    |
+|                        |                          | 237         | PRIVATE_BASE     |                                                                                                                                                                    |
+|                        |                          | 238         | PRIVATE_LIMIT    |                                                                                                                                                                    |
+|                        |                          | 239         | Reserved         | Reserved                                                                                                                                                           |
+|                        | Float Inline Constants   | 240         | 0.5              | Inline floating point constants. Can be used in 16, 32 and 64 bit floating point math. They may be used with non-float instructions but the value remains a float. |
+|                        |                          | 241         | -0.5             |                                                                                                                                                                    |
+|                        |                          | 242         | 1.0              |                                                                                                                                                                    |
+|                        |                          | 243         | -1.0             |                                                                                                                                                                    |
+|                        |                          | 244         | 2.0              |                                                                                                                                                                    |
+|                        |                          | 245         | -2.0             |                                                                                                                                                                    |
+|                        |                          | 246         | 4.0              |                                                                                                                                                                    |
+|                        |                          | 247         | -4.0             |                                                                                                                                                                    |
+|                        |                          | 248         | 1.0 / (2 * PI)   | 1/(2*PI) is 0.15915494. The hex values are:<br>half: 0x3118<br>single: 0x3e22f983<br>double: 0x3fc45f306dc9c882                                                    |
+|                        |                          | 249         | Reserved         | Reserved                                                                                                                                                           |
+|                        |                          | 250         | DPP16            | data parallel primitive                                                                                                                                            |
+|                        |                          | 251         | Reserved         | Reserved                                                                                                                                                           |
+|                        |                          | 252         | Reserved         | Reserved                                                                                                                                                           |
+|                        |                          | 253         | SCC              | { 31'b0, SCC }                                                                                                                                                     |
+|                        |                          | 254         | Reserved         | Reserved                                                                                                                                                           |
+|                        |                          | 255         | Literal constant | 32 bit constant from instruction stream                                                                                                                            |
 
 SALU destinations are in the range 0-127.
 
@@ -2038,17 +1988,14 @@ Table 21. Integer Arithmetic Instructions
 | S_ADDK_I32             | SOPK     | Ovfl      | $D = D + \text{simm16}$ , SCC = overflow. Sign extended version of simm16.       |
 | S_MULK_I32             | SOPK     | No        | $D = D * \text{simm16}$ . Return low 32bits. Sign extended version of simm16.    |
 | S_ABS_I32              | SOP1     | D!=0      | $D.i = \text{abs}(S0.i)$ . SCC=result not zero.                                  |
-| S_SEXT_I32_I16         | SOP1     | No        | $D = \{ 24\{S0[7]\}, S0[7:0] \}$ .                                               |
+| S_SEXT_I32_I8          | SOP1     | No        | $D = \{ 24\{S0[7]\}, S0[7:0] \}$ .                                               |
 | S_SEXT_I32_I16         | SOP1     | No        | $D = \{ 16\{S0[15]\}, S0[15:0] \}$ .                                             |
 | S_MUL_HI_I32           | SOP2     | No        | $D = S0 * S1$ high 32bits of result                                              |
 | S_MUL_HI_U32           | SOP2     | No        | $D = S0 * S1$ high 32bits of result                                              |
 | S_PACK_LL_B32_B16      | SOP2     | No        | $D = \{ S1[15:0], S0[15:0] \}$                                                   |
 | S_PACK_LH_B32_B16      | SOP2     | No        | $D = \{ S1[31:16], S0[15:0] \}$                                                  |
 | S_PACK_HL_B32_B16      | SOP2     | No        | $D = \{ S1[15:0], S0[31:16] \}$                                                  |
-
-| Instruction       | Encoding | Sets SCC? | Operation                        |
-|-------------------|----------|-----------|----------------------------------|
-| S_PACK_HH_B32_B16 | SOP2     | No        | $D = \{ S1[31:16], S0[31:16] \}$ |
+| S_PACK_HH_B32_B16      | SOP2     | No        | $D = \{ S1[31:16], S0[31:16] \}$                                                 |
 
 ## 6.5. Conditional Move Instructions
 
@@ -2081,39 +2028,33 @@ Bit-wise instructions operate on 32- or 64-bit data without interpreting it as h
 
 Table 24. Bit-Wise Instructions
 
-| Instruction                      | Encoding | Sets SCC? | Operation                                                                                          |
-|----------------------------------|----------|-----------|----------------------------------------------------------------------------------------------------|
-| S_MOV_{B32,B64}                  | SOP1     | No        | $D = S0$                                                                                           |
-| S_MOVK_I32                       | SOPK     | No        | $D = \text{signext}(\text{simm16})$                                                                |
-| {S_AND,S_OR,S_XOR}_{B32,B64}     | SOP2     | $D != 0$  | $D = S0 \& S1, S0 \text{ OR } S1, S0 \text{ XOR } S1$                                              |
-| {S_AND_NOT1,S_OR_NOT1}_{B32,B64} | SOP2     | $D != 0$  | $D = S0 \& \sim S1, S0 \text{ OR } \sim S1$                                                        |
-| {S_NAND,S_NOR,S_XNOR}_{B32,B64}  | SOP2     | $D != 0$  | $D = \sim (S0 \& S1), \sim (S0 \text{ OR } S1), \sim (S0 \text{ XOR } S1)$                         |
-| S_LSHL_{B32,B64}                 | SOP2     | $D != 0$  | $D = S0 \ll S1[4:0], [5:0] \text{ for B64.}$                                                       |
-| S_LSHR_{B32,B64}                 | SOP2     | $D != 0$  | $D = S0 \gg S1[4:0], [5:0] \text{ for B64.}$                                                       |
-| S_ASHR_{I32,I64}                 | SOP2     | $D != 0$  | $D = \text{sext}(S0 \gg S1[4:0]) \text{ ([5:0] for I64).}$                                         |
-| S_BFM_{B32,B64}                  | SOP2     | No        | Bit field mask<br>$D = ((1 \ll \sim S0[4:0]) - 1) \ll S1[4:0]$<br>(uses [5:0] for the B64 version) |
-
-| Instruction                                                       | Encoding | Sets SCC? | Operation                                                                                                                                                                                                                                                                                                                                                                        |
-|-------------------------------------------------------------------|----------|-----------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| S_BFE_U32, S_BFE_U64<br>S_BFE_I32, S_BFE_I64<br>(signed/unsigned) | SOP2     | D!=0      | Bit Field Extract, then sign extend result for I32/64 instructions.<br>S0 = data, S1[22:16] = width<br>I32/U32: S1[4:0] = offset<br>I64/U64: S1[5:0] = offset                                                                                                                                                                                                                    |
-| S_NOT_{B32,B64}                                                   | SOP1     | D!=0      | D = ~S0.                                                                                                                                                                                                                                                                                                                                                                         |
-| S_WQM_{B32,B64}                                                   | SOP1     | D!=0      | D = wholeQuadMode(S0)<br>Per quad (4 bits): set the result to 1111 if any of the 4 bits in the corresponding source mask are set to 1.<br>D[n*4] = (S[n*4]    S[n*4+1]    S[n*4+2]    S[n*4+3])<br>D[n*4+1] = (S[n*4]    S[n*4+1]    S[n*4+2]    S[n*4+3])<br>D[n*4+2] = (S[n*4]    S[n*4+1]    S[n*4+2]    S[n*4+3])<br>D[n*4+3] = (S[n*4]    S[n*4+1]    S[n*4+2]    S[n*4+3]) |
-| S_QUADMASK_{B32,B64}                                              | SOP1     | D!=0      | Create a 1-bit per quad mask from a 1 bit per pixel mask.<br>Creates an 8-bit mask from 32-bits, or 16 bits from 64.<br>D[0] = (S0[3:0] != 0),<br>D[1] = (S0[7:4] != 0), ...                                                                                                                                                                                                     |
-| S_BITREPLICATE_B64_B32                                            | SOP1     | No        | Replicate each bit in 32-bit S0 twice:<br>D = { ... S0[1], S0[1], S0[0], S0[0] }.<br>Two of these instructions is the inverse of S_QUADMASK.<br><i>Two of these instructions expands a quad mask into a thread-mask.</i>                                                                                                                                                         |
-| S_BREV_{B32,B64}                                                  | SOP1     | No        | D = S0[0:31] are reverse bits.                                                                                                                                                                                                                                                                                                                                                   |
-| S_BCNT0_I32_{B32,B64}                                             | SOP1     | D!=0      | D = CountZeroBits(S0).                                                                                                                                                                                                                                                                                                                                                           |
-| S_BCNT1_I32_{B32,B64}                                             | SOP1     | D!=0      | D = CountOneBits(S0).                                                                                                                                                                                                                                                                                                                                                            |
-| S_CTZ_I32_{B32,B64}                                               | SOP1     | No        | Count Trailing zeroes: Find-first One from LSB.<br>D = Bit position of first one in S0 starting from LSB. -1 if not found                                                                                                                                                                                                                                                        |
-| S_CLZ_I32_{B32,B64}                                               | SOP1     | No        | Count Leading zeroes. D = "how many zeros before the first one starting from the MSB".<br>Returns -1 if none.                                                                                                                                                                                                                                                                    |
-| S_CLS_I32_{B32,B64}                                               | SOP1     | N         | Count Leading Sign-bits: Count how many bits in a row (from MSB to LSB) are the same as the sign bit.<br>Return -1 if the input is zero or all 1's (-1). 32-bit pseudo-code:<br><pre>if (S0 == 0    S0 == -1) D = -1 else   D = 0   for (I = 31 .. 0)     if (S0[I] == S0[31])       D++     else break</pre>                                                                    |
-| S_BITSET0_{B32,B64}                                               | SOP1     | No        | D[S0[4:0], [5:0] for B64] = 0                                                                                                                                                                                                                                                                                                                                                    |
-| S_BITSET1_{B32,B64}                                               | SOP1     | No        | D[S0[4:0], [5:0] for B64] = 1                                                                                                                                                                                                                                                                                                                                                    |
-
-| Instruction                                                                                | Encoding | Sets SCC? | Operation                                                                                                                                                                            |
-|--------------------------------------------------------------------------------------------|----------|-----------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| S_{and, or, xor, and_not0, and_not1, or_not0, or_not1, nand, nor, xnor}_SAVEEXEC_{B32,B64} | SOP1     | D!=0      | Save the EXEC mask, then apply a bit-wise operation to it.<br>D = EXEC<br>EXEC = S0 <op> EXEC<br>SCC = (EXEC != 0)<br>("not1" version inverts EXEC)<br>("not0" version inverts SGPR) |
-| S_{AND_NOT{0,1}_WREXEC_B{32,64}}                                                           | SOP1     | D!=0      | NOT0: EXEC, D = ~S0 & EXEC<br>NOT1: EXEC, D = S0 & ~EXEC<br>Both D and EXEC get the same result. SCC = (result != 0). D cannot be EXEC.                                              |
-| S_MOVRELS_{B32,B64}<br>S_MOVRELD_{B32,B64}                                                 | SOP1     | No        | Move a value into an SGPR relative to the value in M0.<br>MOVRELS: D = SGPR[S0+M0]<br>MOVRELD: SGPR[D+M0] = S0<br>Index must be even for B64. M0 is an unsigned index.               |
+| Instruction                                                                                | Encoding | Sets SCC? | Operation                                                                                                                                                                                                                                                                                                                                                                                                |
+|--------------------------------------------------------------------------------------------|----------|-----------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| S_MOV_{B32,B64}                                                                            | SOP1     | No        | $D = S0$                                                                                                                                                                                                                                                                                                                                                                                                 |
+| S_MOVK_I32                                                                                 | SOPK     | No        | $D = \text{signext}(\text{simm16})$                                                                                                                                                                                                                                                                                                                                                                      |
+| {S_AND,S_OR,S_XOR}_{B32,B64}                                                               | SOP2     | $D != 0$  | $D = S0 \& S1, S0 \text{ OR } S1, S0 \text{ XOR } S1$                                                                                                                                                                                                                                                                                                                                                    |
+| {S_AND_NOT1,S_OR_NOT1}_{B32,B64}                                                           | SOP2     | $D != 0$  | $D = S0 \& \sim S1, S0 \text{ OR } \sim S1$                                                                                                                                                                                                                                                                                                                                                              |
+| {S_NAND,S_NOR,S_XNOR}_{B32,B64}                                                            | SOP2     | $D != 0$  | $D = \sim (S0 \& S1), \sim (S0 \text{ OR } S1), \sim (S0 \text{ XOR } S1)$                                                                                                                                                                                                                                                                                                                               |
+| S_LSHL_{B32,B64}                                                                           | SOP2     | $D != 0$  | $D = S0 \ll S1[4:0], [5:0] \text{ for B64.}$                                                                                                                                                                                                                                                                                                                                                             |
+| S_LSHR_{B32,B64}                                                                           | SOP2     | $D != 0$  | $D = S0 \gg S1[4:0], [5:0] \text{ for B64.}$                                                                                                                                                                                                                                                                                                                                                             |
+| S_ASHR_{I32,I64}                                                                           | SOP2     | $D != 0$  | $D = \text{sext}(S0 \gg S1[4:0]) \text{ ([5:0] for I64).}$                                                                                                                                                                                                                                                                                                                                               |
+| S_BFM_{B32,B64}                                                                            | SOP2     | No        | Bit field mask<br>$D = ((1 \ll S0[4:0]) - 1) \ll S1[4:0]$<br>(uses [5:0] for the B64 version)                                                                                                                                                                                                                                                                                                            |
+| S_BFE_U32, S_BFE_U64<br>S_BFE_I32, S_BFE_I64<br>(signed/unsigned)                          | SOP2     | D!=0      | Bit Field Extract, then sign extend result for I32/64 instructions.<br>S0 = data, S1[22:16] = width<br>I32/U32: S1[4:0] = offset<br>I64/U64: S1[5:0] = offset                                                                                                                                                                                                                                            |
+| S_NOT_{B32,B64}                                                                            | SOP1     | D!=0      | D = ~S0.                                                                                                                                                                                                                                                                                                                                                                                                 |
+| S_WQM_{B32,B64}                                                                            | SOP1     | D!=0      | D = wholeQuadMode(S0)<br>Per quad (4 bits): set the result to 1111 if any of the 4 bits in the corresponding source mask are set to 1.<br>D[n*4] = (S[n*4] \|\| S[n*4+1] \|\| S[n*4+2] \|\| S[n*4+3])<br>D[n*4+1] = (S[n*4] \|\| S[n*4+1] \|\| S[n*4+2] \|\| S[n*4+3])<br>D[n*4+2] = (S[n*4] \|\| S[n*4+1] \|\| S[n*4+2] \|\| S[n*4+3])<br>D[n*4+3] = (S[n*4] \|\| S[n*4+1] \|\| S[n*4+2] \|\| S[n*4+3]) |
+| S_QUADMASK_{B32,B64}                                                                       | SOP1     | D!=0      | Create a 1-bit per quad mask from a 1 bit per pixel mask.<br>Creates an 8-bit mask from 32-bits, or 16 bits from 64.<br>D[0] = (S0[3:0] != 0),<br>D[1] = (S0[7:4] != 0), ...                                                                                                                                                                                                                             |
+| S_BITREPLICATE_B64_B32                                                                     | SOP1     | No        | Replicate each bit in 32-bit S0 twice:<br>D = { ... S0[1], S0[1], S0[0], S0[0] }.<br>Two of these instructions is the inverse of S_QUADMASK.<br><i>Two of these instructions expands a quad mask into a thread-mask.</i>                                                                                                                                                                                 |
+| S_BREV_{B32,B64}                                                                           | SOP1     | No        | D = S0[0:31] are reverse bits.                                                                                                                                                                                                                                                                                                                                                                           |
+| S_BCNT0_I32_{B32,B64}                                                                      | SOP1     | D!=0      | D = CountZeroBits(S0).                                                                                                                                                                                                                                                                                                                                                                                   |
+| S_BCNT1_I32_{B32,B64}                                                                      | SOP1     | D!=0      | D = CountOneBits(S0).                                                                                                                                                                                                                                                                                                                                                                                    |
+| S_CTZ_I32_{B32,B64}                                                                        | SOP1     | No        | Count Trailing zeroes: Find-first One from LSB.<br>D = Bit position of first one in S0 starting from LSB. -1 if not found                                                                                                                                                                                                                                                                                |
+| S_CLZ_I32_{B32,B64}                                                                        | SOP1     | No        | Count Leading zeroes. D = "how many zeros before the first one starting from the MSB".<br>Returns -1 if none.                                                                                                                                                                                                                                                                                            |
+| S_CLS_I32_{B32,B64}                                                                        | SOP1     | N         | Count Leading Sign-bits: Count how many bits in a row (from MSB to LSB) are the same as the sign bit.<br>Return -1 if the input is zero or all 1's (-1). 32-bit pseudo-code:<br><pre>if (S0 == 0 || S0 == -1) D = -1<br>else<br>    D = 0<br>    for (I = 31 .. 0)<br>        if (S0[I] == S0[31])<br>            D++<br>        else break</pre>                                                        |
+| S_BITSET0_{B32,B64}                                                                        | SOP1     | No        | D[S0[4:0], [5:0] for B64] = 0                                                                                                                                                                                                                                                                                                                                                                            |
+| S_BITSET1_{B32,B64}                                                                        | SOP1     | No        | D[S0[4:0], [5:0] for B64] = 1                                                                                                                                                                                                                                                                                                                                                                            |
+| S_{and, or, xor, and_not0, and_not1, or_not0, or_not1, nand, nor, xnor}_SAVEEXEC_{B32,B64} | SOP1     | D!=0      | Save the EXEC mask, then apply a bit-wise operation to it.<br>D = EXEC<br>EXEC = S0 <op> EXEC<br>SCC = (EXEC != 0)<br>("not1" version inverts EXEC)<br>("not0" version inverts SGPR)                                                                                                                                                                                                                     |
+| S_{AND_NOT{0,1}_WREXEC_B{32,64}}                                                           | SOP1     | D!=0      | NOT0: EXEC, D = ~S0 & EXEC<br>NOT1: EXEC, D = S0 & ~EXEC<br>Both D and EXEC get the same result. SCC = (result != 0). D cannot be EXEC.                                                                                                                                                                                                                                                                  |
+| S_MOVRELS_{B32,B64}<br>S_MOVRELD_{B32,B64}                                                 | SOP1     | No        | Move a value into an SGPR relative to the value in M0.<br>MOVRELS: D = SGPR[S0+M0]<br>MOVRELD: SGPR[D+M0] = S0<br>Index must be even for B64. M0 is an unsigned index.                                                                                                                                                                                                                                   |
 
 ## 6.8. SALU Floating Point
 
@@ -2135,7 +2076,9 @@ The SALU supports a set of floating point operations to offload uniform value ca
 | S_RNDNE_F32                        | S_CMP_NLE_F32                   |                                      |
 |                                    | S_CMP_NEQ_F32                   |                                      |
 |                                    | S_CMP_NLT_F32                   |                                      |
+
 | Scalar F16 Arithmetic Instructions | Scalar F16 Compare Instructions |                                      |
+|------------------------------------|---------------------------------|--------------------------------------|
 | S_ADD_F16                          | S_CMP_LT_F16                    | S_CMP_U_F16                          |
 | S_SUB_F16                          | S_CMP_EQ_F16                    | S_CMP_NGE_F16                        |
 | S_MIN_F16                          | S_CMP_LE_F16                    | S_CMP_NLG_F16                        |
@@ -2145,11 +2088,7 @@ The SALU supports a set of floating point operations to offload uniform value ca
 | S_CEIL_F16                         | S_CMP_O_F16                     | S_CMP_NLT_F16                        |
 | S_FLOOR_F16                        |                                 |                                      |
 | S_TRUNC_F16                        |                                 |                                      |
-
-|             |  |  |
-|-------------|--|--|
-| S_RNDNE_F16 |  |  |
-|-------------|--|--|
+| S_RNDNE_F16                        |                                 |                                      |
 
 Note: S\_CVT\_HI\_F32\_F16 does not have an associated VALU counterpart instruction - it is a variant of S\_CVT\_F32\_F16 to convert the upper 16 bits of the SGPR source from F16 to F32.
 
@@ -2262,23 +2201,20 @@ Any of the VALU microcode formats may use a 32-bit literal constant, as well VOP
 
 **VOP3P** is for instructions that use "packed math": instructions that performs an operation on a pair of input values that are packed into the high and low 16-bits of each operand; the two 16-bit results are written to a single VGPR as two packed values.
 
-| Field | Size   | Description                                                                                                                                                                                                                                                                                      |
-|-------|--------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| OP    | varies | instruction opcode                                                                                                                                                                                                                                                                               |
-| SR0   | 9      | first instruction argument. May come from: vgpr, sgpr, VCC, M0, EXEC, SCC, or a constant                                                                                                                                                                                                         |
-| SR1   | 9      | second instruction argument. May come from: vgpr, sgpr, VCC, M0, EXEC, SCC, or a constant                                                                                                                                                                                                        |
-| VSRC1 | 8      | second instruction argument. May come from: vgpr only                                                                                                                                                                                                                                            |
-| SR2   | 9      | third instruction argument. May come from: vgpr, sgpr, VCC, M0, EXEC, SCC, or a constant                                                                                                                                                                                                         |
-| VDST  | 8      | VGPR that takes the result.<br>For <code>V_READLANE</code> and <code>V_CMP</code> , indicates the SGPR that receives the result. This cannot be M0 or EXEC.                                                                                                                                      |
-| SDST  | 8      | SGPR that takes the result of operations that produce a scalar output. Can't be M0 or EXEC. Supports NULL to not write any SDST.<br>Used for: <code>V_{ADD,SUB,SUBREV}_CO_U32</code> , <code>V_{ADD,SUB,SUBREV}_CO_CI_U32</code> , <code>V_DIV_SCALE*</code> ; not used for <code>V_CMP</code> . |
-| OMOD  | 2      | output modifier. for float results only.<br>0 = no modifier, 1=multiply result by 2, 2=multiply result by 4, 3=divide result by 2                                                                                                                                                                |
-| NEG   | 3      | negate the input (invert sign bit). float inputs only.<br>bit 0 is for src0, bit 1 is for src1 and bit 2 is for src2.                                                                                                                                                                            |
-| ABS   | 3      | apply absolute value on input. float inputs only. applied before 'neg'.<br>bit 0 is for src0, bit 1 is for src1 and bit 2 is for src2.                                                                                                                                                           |
-
-| Field | Size | Description                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   |
-|-------|------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| CLMP  | 1    | clamp or compare-signal (depends on opcode):<br>V_CMP: clmp=1 means signaling-compare when qNaN detected; 0 = non-signaling<br>Float arithmetic: clamp result to [0, 1.0]; -0 is clamped to +0.<br>Signed integer arithmetic: clamp result to [min_int, +max_int]<br>Unsigned integer arithmetic: clamp result to [0, +max_uint]<br>Where "min_int" and "max_int" are the largest negative and positive representable integers for the size of integer being used (16, 32 or 64 bit). "max_uint" is the largest unsigned int. |
-| OPSEL | 4    | Operation select for 16-bit math: 1=select high half, 0=select low half<br>[0]=src0, [1]=src1, [2]=src2, [3]=dest<br>For dest=0, dest_vgpr[31:0] = {prev_dst_vgpr[31:16], result[15:0] }<br>For dest=1, dest_vgpr[31:0] = {result[15:0], prev_dst_vgpr[15:0] }<br>OPSEL may only be used for 16-bit operands, and must be zero for any other operands/results.<br>For V_PERMLANE*, OPSEL[0] is "fetch invalid"; OPSEL[1] is "bounds control" (like DPP8).<br>DOT2_F16 and_BF16: src0 and src1 must have OPSEL[1:0] = 0        |
+| Field | Size   | Description                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   |
+|-------|--------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| OP    | varies | instruction opcode                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            |
+| SR0   | 9      | first instruction argument. May come from: vgpr, sgpr, VCC, M0, EXEC, SCC, or a constant                                                                                                                                                                                                                                                                                                                                                                                                                                      |
+| SR1   | 9      | second instruction argument. May come from: vgpr, sgpr, VCC, M0, EXEC, SCC, or a constant                                                                                                                                                                                                                                                                                                                                                                                                                                     |
+| VSRC1 | 8      | second instruction argument. May come from: vgpr only                                                                                                                                                                                                                                                                                                                                                                                                                                                                         |
+| SR2   | 9      | third instruction argument. May come from: vgpr, sgpr, VCC, M0, EXEC, SCC, or a constant                                                                                                                                                                                                                                                                                                                                                                                                                                      |
+| VDST  | 8      | VGPR that takes the result.<br>For <code>V_READLANE</code> and <code>V_CMP</code> , indicates the SGPR that receives the result. This cannot be M0 or EXEC.                                                                                                                                                                                                                                                                                                                                                                   |
+| SDST  | 8      | SGPR that takes the result of operations that produce a scalar output. Can't be M0 or EXEC. Supports NULL to not write any SDST.<br>Used for: <code>V_{ADD,SUB,SUBREV}_CO_U32</code> , <code>V_{ADD,SUB,SUBREV}_CO_CI_U32</code> , <code>V_DIV_SCALE*</code> ; not used for <code>V_CMP</code> .                                                                                                                                                                                                                              |
+| OMOD  | 2      | output modifier. for float results only.<br>0 = no modifier, 1=multiply result by 2, 2=multiply result by 4, 3=divide result by 2                                                                                                                                                                                                                                                                                                                                                                                             |
+| NEG   | 3      | negate the input (invert sign bit). float inputs only.<br>bit 0 is for src0, bit 1 is for src1 and bit 2 is for src2.                                                                                                                                                                                                                                                                                                                                                                                                         |
+| ABS   | 3      | apply absolute value on input. float inputs only. applied before 'neg'.<br>bit 0 is for src0, bit 1 is for src1 and bit 2 is for src2.                                                                                                                                                                                                                                                                                                                                                                                        |
+| CLMP  | 1      | clamp or compare-signal (depends on opcode):<br>V_CMP: clmp=1 means signaling-compare when qNaN detected; 0 = non-signaling<br>Float arithmetic: clamp result to [0, 1.0]; -0 is clamped to +0.<br>Signed integer arithmetic: clamp result to [min_int, +max_int]<br>Unsigned integer arithmetic: clamp result to [0, +max_uint]<br>Where "min_int" and "max_int" are the largest negative and positive representable integers for the size of integer being used (16, 32 or 64 bit). "max_uint" is the largest unsigned int. |
+| OPSEL | 4      | Operation select for 16-bit math: 1=select high half, 0=select low half<br>[0]=src0, [1]=src1, [2]=src2, [3]=dest<br>For dest=0, dest_vgpr[31:0] = {prev_dst_vgpr[31:16], result[15:0] }<br>For dest=1, dest_vgpr[31:0] = {result[15:0], prev_dst_vgpr[15:0] }<br>OPSEL may only be used for 16-bit operands, and must be zero for any other operands/results.<br>For V_PERMLANE*, OPSEL[0] is "fetch invalid"; OPSEL[1] is "bounds control" (like DPP8).<br>DOT2_F16 and_BF16: src0 and src1 must have OPSEL[1:0] = 0        |
 
 ## 7.2. Operands
 
@@ -2415,14 +2351,11 @@ The OPSEL field (of VOP3) is usable only for a subset of VOP3 instructions, as w
 
 Table 27. *Opcodes usable with OPSEL*
 
-|              |              |                      |
-|--------------|--------------|----------------------|
-| V_MAD_I16    | V_MAD_U16    | V_FMA_F16            |
-| V_ADD_NC_U16 | V_ADD_NC_I16 | V_CVT_PKNORM_I16_F16 |
-| V_SUB_NC_U16 | V_SUB_NC_I16 | V_CVT_PKNORM_U16_F16 |
-
 |                          |                         |                        |
 |--------------------------|-------------------------|------------------------|
+| V_MAD_I16                | V_MAD_U16               | V_FMA_F16              |
+| V_ADD_NC_U16             | V_ADD_NC_I16            | V_CVT_PKNORM_I16_F16   |
+| V_SUB_NC_U16             | V_SUB_NC_I16            | V_CVT_PKNORM_U16_F16   |
 | V_MUL_LO_U16             | V_MAD_U32_U16           | V_MAD_I32_I16          |
 | V_LSHLREV_B16            | V_LSHRREV_B16           | V_ASHRREV_I16          |
 | V_ALIGNBIT_B32           | V_ALIGNBYTE_B32         | V_DIV_FIXUP_F16        |
@@ -2550,16 +2483,16 @@ The table below lists the complete VALU instruction set by microcode encoding, e
 | V_BFE_U32          | V_ASHRREV_I16         | V_CNDMASK_B32        | V_COS_F16             |
 | V_BFI_B32          | V_ASHRREV_I64         | V_CVT_PK_RTZ_F16_F32 | V_COS_F32             |
 | V_CNDMASK_B16      | V_BCNT_U32_B32        | V_DOT2ACC_F32_F16    | V_CTZ_I32_B32         |
-| V_CUBEID_F32       | V_BFM_B32             | V_FMMAK_F16          | V_CVT_F16_F32         |
-| V_CUBEMA_F32       | V_CVT_PK_I16_F32      | V_FMMAK_F32          | V_CVT_F16_I16         |
-| V_CUBESC_F32       | V_CVT_PK_I16_I32      | V_FMAD_DX9_ZERO_F32  | V_CVT_F16_U16         |
-| V_CUBETC_F32       | V_CVT_PK_NORM_I16_F16 | V_FMAD_F16           | V_CVT_F32_F16         |
-| V_CVT_PK_U8_F32    | V_CVT_PK_NORM_I16_F32 | V_FMAD_F32           | V_CVT_F32_F64         |
+| V_CUBEID_F32       | V_BFM_B32             | V_FMAAK_F16          | V_CVT_F16_F32         |
+| V_CUBEMA_F32       | V_CVT_PK_I16_F32      | V_FMAAK_F32          | V_CVT_F16_I16         |
+| V_CUBESC_F32       | V_CVT_PK_I16_I32      | V_FMAC_DX9_ZERO_F32  | V_CVT_F16_U16         |
+| V_CUBETC_F32       | V_CVT_PK_NORM_I16_F16 | V_FMAC_F16           | V_CVT_F32_F16         |
+| V_CVT_PK_U8_F32    | V_CVT_PK_NORM_I16_F32 | V_FMAC_F32           | V_CVT_F32_F64         |
 | V_DIV_FIXUP_F16    | V_CVT_PK_NORM_U16_F16 | V_FMAMK_F16          | V_CVT_F32_I32         |
 | V_DIV_FIXUP_F32    | V_CVT_PK_NORM_U16_F32 | V_FMAMK_F32          | V_CVT_F32_U32         |
 | V_DIV_FIXUP_F64    | V_CVT_PK_U16_F32      | V_LDEXP_F16          | V_CVT_F32_UBYTE0      |
-| V_DIV_FMAD_F32     | V_CVT_PK_U16_U32      | V_LSHLREV_B32        | V_CVT_F32_UBYTE1      |
-| V_DIV_FMAD_F64     | V_LDEXP_F32           | V_LSHRREV_B32        | V_CVT_F32_UBYTE2      |
+| V_DIV_FMAS_F32     | V_CVT_PK_U16_U32      | V_LSHLREV_B32        | V_CVT_F32_UBYTE1      |
+| V_DIV_FMAS_F64     | V_LDEXP_F32           | V_LSHRREV_B32        | V_CVT_F32_UBYTE2      |
 | V_DIV_SCALE_F32    | V_LDEXP_F64           | V_MAX_F16            | V_CVT_F32_UBYTE3      |
 | V_DIV_SCALE_F64    | V_LSHLREV_B16         | V_MAX_F32            | V_CVT_F64_F32         |
 | V_DOT2_BF16_BF16   | V_LSHLREV_B64         | V_MAX_I32            | V_CVT_F64_I32         |
@@ -2576,7 +2509,7 @@ The table below lists the complete VALU instruction set by microcode encoding, e
 | V_MAD_I32_I24      | V_MUL_F64             | V_MUL_I32_I24        | V_CVT_U16_F16         |
 | V_MAD_I64_I32      | V_MUL_HI_I32          | V_MUL_U32_U24        | V_CVT_U32_F32         |
 | V_MAD_U16          | V_MUL_HI_U32          | V_OR_B32             | V_CVT_U32_F64         |
-| V_MAD_U32_U16      | V_MUL_LO_U16          | V_PK_FMAD_F16        | V_CVT_U32_U16         |
+| V_MAD_U32_U16      | V_MUL_LO_U16          | V_PK_FMAC_F16        | V_CVT_U32_U16         |
 | V_MAD_U32_U24      | V_MUL_LO_U32          | V_SUBREV_CO_CI_U32   | V_EXP_F16             |
 | V_MAD_U64_U32      | V_OR_B16              | V_SUBREV_F16         | V_EXP_F32             |
 | V_MAX3_F16         | V_PACK_B32_F16        | V_SUBREV_F32         | V_FLOOR_F16           |
@@ -2588,48 +2521,45 @@ The table below lists the complete VALU instruction set by microcode encoding, e
 | V_MAXMIN_F16       | V_SUB_NC_U16          | V_XNOR_B32           | V_FREXP_EXP_I16_F16   |
 | V_MAXMIN_F32       | V_TRIG_PREOP_F64      | V_XOR_B32            | V_FREXP_EXP_I32_F32   |
 | V_MAXMIN_I32       | V_WRITELANE_B32       |                      | V_FREXP_EXP_I32_F64   |
-
-| VOP3               | VOP3 - 2 operands | VOP2 | VOP1                |
-|--------------------|-------------------|------|---------------------|
-| V_MAXMIN_U32       | V_XOR_B16         |      | V_FREXP_MANT_F16    |
-| V_MED3_F16         |                   |      | V_FREXP_MANT_F32    |
-| V_MED3_F32         |                   |      | V_FREXP_MANT_F64    |
-| V_MED3_I16         |                   |      | V_LOG_F16           |
-| V_MED3_I32         |                   |      | V_LOG_F32           |
-| V_MED3_U16         |                   |      | V_MOVRELDD_B32      |
-| V_MED3_U32         |                   |      | V_MOVRELSD_2_B32    |
-| V_MIN3_F16         |                   |      | V_MOVRELSD_B32      |
-| V_MIN3_F32         |                   |      | V_MOVRELS_B32       |
-| V_MIN3_I16         |                   |      | V_MOV_B16           |
-| V_MIN3_I32         |                   |      | V_MOV_B32           |
-| V_MIN3_U16         |                   |      | V_NOP               |
-| V_MIN3_U32         |                   |      | V_NOT_B16           |
-| V_MINMAX_F16       |                   |      | V_NOT_B32           |
-| V_MINMAX_F32       |                   |      | V_PERMLANE64_B32    |
-| V_MINMAX_I32       |                   |      | V_PIPEFLUSH         |
-| V_MINMAX_U32       |                   |      | V_RCP_F16           |
-| V_MQSQAD_PK_U16_U8 |                   |      | V_RCP_F32           |
-| V_MQSQAD_U32_U8    |                   |      | V_RCP_F64           |
-| V_MSAD_U8          |                   |      | V_RCP_IFLAG_F32     |
-| V_MULLIT_F32       |                   |      | V_READFIRSTLANE_B32 |
-| V_OR3_B32          |                   |      | V_RNDNE_F16         |
-| V_PERMLANE16_B32   |                   |      | V_RNDNE_F32         |
-| V_PERMLANEX16_B32  |                   |      | V_RNDNE_F64         |
-| V_PERM_B32         |                   |      | V_RSQ_F16           |
-| V_QSQAD_PK_U16_U8  |                   |      | V_RSQ_F32           |
-| V_SAD_HI_U8        |                   |      | V_RSQ_F64           |
-| V_SAD_U16          |                   |      | V_SAT_PK_U8_I16     |
-| V_SAD_U32          |                   |      | V_SIN_F16           |
-| V_SAD_U8           |                   |      | V_SIN_F32           |
-| V_XAD_U32          |                   |      | V_SORT_F16          |
-| V_XOR3_B32         |                   |      | V_SORT_F32          |
-|                    |                   |      | V_SORT_F64          |
-|                    |                   |      | V_SWAPREL_B32       |
-|                    |                   |      | V_SWAP_B16          |
-|                    |                   |      | V_SWAP_B32          |
-|                    |                   |      | V_TRUNC_F16         |
-|                    |                   |      | V_TRUNC_F32         |
-|                    |                   |      | V_TRUNC_F64         |
+| V_MAXMIN_U32       | V_XOR_B16             |                      | V_FREXP_MANT_F16      |
+| V_MED3_F16         |                       |                      | V_FREXP_MANT_F32      |
+| V_MED3_F32         |                       |                      | V_FREXP_MANT_F64      |
+| V_MED3_I16         |                       |                      | V_LOG_F16             |
+| V_MED3_I32         |                       |                      | V_LOG_F32             |
+| V_MED3_U16         |                       |                      | V_MOVRELDD_B32        |
+| V_MED3_U32         |                       |                      | V_MOVRELSD_2_B32      |
+| V_MIN3_F16         |                       |                      | V_MOVRELSD_B32        |
+| V_MIN3_F32         |                       |                      | V_MOVRELS_B32         |
+| V_MIN3_I16         |                       |                      | V_MOV_B16             |
+| V_MIN3_I32         |                       |                      | V_MOV_B32             |
+| V_MIN3_U16         |                       |                      | V_NOP                 |
+| V_MIN3_U32         |                       |                      | V_NOT_B16             |
+| V_MINMAX_F16       |                       |                      | V_NOT_B32             |
+| V_MINMAX_F32       |                       |                      | V_PERMLANE64_B32      |
+| V_MINMAX_I32       |                       |                      | V_PIPEFLUSH           |
+| V_MINMAX_U32       |                       |                      | V_RCP_F16             |
+| V_MQSQAD_PK_U16_U8 |                       |                      | V_RCP_F32             |
+| V_MQSQAD_U32_U8    |                       |                      | V_RCP_F64             |
+| V_MSAD_U8          |                       |                      | V_RCP_IFLAG_F32       |
+| V_MULLIT_F32       |                       |                      | V_READFIRSTLANE_B32   |
+| V_OR3_B32          |                       |                      | V_RNDNE_F16           |
+| V_PERMLANE16_B32   |                       |                      | V_RNDNE_F32           |
+| V_PERMLANEX16_B32  |                       |                      | V_RNDNE_F64           |
+| V_PERM_B32         |                       |                      | V_RSQ_F16             |
+| V_QSQAD_PK_U16_U8  |                       |                      | V_RSQ_F32             |
+| V_SAD_HI_U8        |                       |                      | V_RSQ_F64             |
+| V_SAD_U16          |                       |                      | V_SAT_PK_U8_I16       |
+| V_SAD_U32          |                       |                      | V_SIN_F16             |
+| V_SAD_U8           |                       |                      | V_SIN_F32             |
+| V_XAD_U32          |                       |                      | V_SORT_F16            |
+| V_XOR3_B32         |                       |                      | V_SORT_F32            |
+|                    |                       |                      | V_SORT_F64            |
+|                    |                       |                      | V_SWAPREL_B32         |
+|                    |                       |                      | V_SWAP_B16            |
+|                    |                       |                      | V_SWAP_B32            |
+|                    |                       |                      | V_TRUNC_F16           |
+|                    |                       |                      | V_TRUNC_F32           |
+|                    |                       |                      | V_TRUNC_F64           |
 
 | VOPC - Compare Ops                                         |                              |                                                                                                                                                           |            |
 |------------------------------------------------------------|------------------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------|------------|
@@ -2691,17 +2621,14 @@ Packed math uses the instructions below and the microcode format "VOP3P". This f
 
 Table 29. Packed Math Opcodes:
 
-| Packed Math ops |               |              |                  |
-|-----------------|---------------|--------------|------------------|
-| V_PK_MUL_F16    | V_PK_FMA_F16  | V_PK_MIN_F16 |                  |
-| V_PK_ADD_F16    | V_PK_FMAC_F16 | V_PK_MAX_F16 |                  |
-| V_PK_ADD_I16    | V_PK_MAD_I16  | V_PK_MIN_I16 | V_PK_LSHLREV_B16 |
-
 | Packed Math ops           |                 |                 |                  |
 |---------------------------|-----------------|-----------------|------------------|
-| V_PK_ADD_U16              | V_PK_MAD_U16    | V_PK_MIN_U16    | V_PK_LSHRREV_B16 |
-| V_PK_SUB_I16              | V_PK_MUL_LO_U16 | V_PK_MAX_I16    | V_PK_ASHRREV_I16 |
-| V_PK_SUB_U16              |                 | V_PK_MAX_U16    |                  |
+| V_PK_MUL_F16              | V_PK_FMA_F16     | V_PK_MIN_F16     |                  |
+| V_PK_ADD_F16              | V_PK_FMAC_F16    | V_PK_MAX_F16     |                  |
+| V_PK_ADD_I16              | V_PK_MAD_I16     | V_PK_MIN_I16     | V_PK_LSHLREV_B16 |
+| V_PK_ADD_U16              | V_PK_MAD_U16     | V_PK_MIN_U16     | V_PK_LSHRREV_B16 |
+| V_PK_SUB_I16              | V_PK_MUL_LO_U16  | V_PK_MAX_I16     | V_PK_ASHRREV_I16 |
+| V_PK_SUB_U16              |                 | V_PK_MAX_U16     |                  |
 | V_FMA_MIX_F32             | V_FMA_MIXLO_F16 | V_FMA_MIXHI_F16 |                  |
 | V_WMMA_F32_16X16X16_F16   |                 | V_DOT2_F32_BF16 |                  |
 | V_WMMA_F32_16X16X16_BF16  |                 | V_DOT2_F32_F16  |                  |
@@ -2722,21 +2649,18 @@ V\_FMA\_MIX\_\* and WMMA instructions are not packed math, but perform a single 
 
 Diagram of VOP3P instruction encoding. The 32-bit instruction is divided into fields: NEG (3 bits), OPSLH (2 bits), SRC2g (9 bits), OP (7 bits), CM (1 bit), OPSLH (1 bit), OPSEL (3 bits), NEG\_HI3 (3 bits), and VDST8 (8 bits). The VDST8 field is further divided into SRC0g (9 bits) and SRC1g (9 bits). Bit 31 is at the top left, and bit 0 is at the bottom right.
 
-| Field         | Size | Description                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       |
-|---------------|------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| OP            | 7    | instruction opcode                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                |
-| SR0           | 9    | first instruction argument. May come from: vgrpr, sgpr, VCC, M0, exec or a constant<br>WMMA: must be a VGPR                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       |
-| SR1           | 9    | second instruction argument. May come from: vgrpr, sgpr, VCC, M0, exec or a constant<br>WMMA: must be a VGPR                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      |
-| SR2           | 9    | third instruction argument. May come from: vgrpr, sgpr, VCC, M0, exec or a constant                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               |
-| VDST          | 8    | vgrpr that takes the result.<br>For V_READLANE, indicates the SGPR that receives the result.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      |
-| NEG           | 3    | negate the input (invert sign bit) for the lower-16bit operand. float inputs only.<br>bit 0 is for src0, bit 1 is for src1 and bit 2 is for src2.<br>For V_FMA_MIX_* opcodes, this modifies all inputs.<br>For DOT...IU... and WMMA...IU... NEG[1:0] = signed(1)/unsigned(0) for src0 and src1, and Neg[2] behavior is undefined.                                                                                                                                                                                                                                                                                                                                                                                                                                                                 |
-| NEG_HI        | 3    | negate the input (invert sign bit) for the higher-16bit operand. float inputs only.<br>bit 0 is for src0, bit 1 is for src1 and bit 2 is for src2.<br>For V_FMA_MIX_* opcodes, this acts as an ABS (absolute value) modifier.<br>For DOT...IU... and WMMA...IU... NEG_HI behavior is undefined.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   |
-| OPSEL [13:11] | 3    | Select the high (1) or low (0) operand as input to the operation that results in the lower-half of the destination. [0] = src0, [1] = src1, [2] = src2<br>If either the source operand or destination operand is 32bits, the corresponding OPSEL bit must set to zero. <i>This rule does not apply to MIX instructions, which have a unique interpretation of OPSEL. See notes below.</i> OPSEL works for 16-bit VGPR, SGPR and literal-constant sources; for inline constant sources OPSEL must be zero (value only exists in lower 16 bits).<br>OPSEL[0] and [1] are unused for WMMA ops, and OPSEL[2] is used only with WMMA ops with 16-bit output to control whether the C matrix is read from upper or lower bits in the VGPR, and whether the D matrix is stored into upper or lower bits. |
-
-| Field                      | Size | Description                                                                                                                                                                                                                                                                                                                                                                                                                                                       |
-|----------------------------|------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| OPSEL_HI<br>{[14],[60:59]} | 3    | Select the high (1) or low (0) operand as input to the operation that results in the upper-half of the destination. [0] = src0, [1] = src1, [2] = src2. Concatenation of ISA fields { OPSLH2, OPSLH }. If either the source operand or destination operand is 32bits or is a constant, the corresponding OPSEL_HI bit must set to zero. <i>This rule does not apply to <b>MIX</b> instructions, which have a unique interpretation of OPSEL. See notes below.</i> |
-| CLMP                       | 1    | clamp result.<br>Float arithmetic: clamp result to [0, 1.0]; -0 is clamped to +0.<br>Signed integer arithmetic: clamp result to [min_int, +max_int]<br>Unsigned integer arithmetic: clamp result to [0, +max_uint]<br>Where "min_int" and "max_int" are the largest negative and positive representable integers for the size of integer being used (16, 32 or 64 bit). "max_uint" is the largest unsigned int.                                                   |
+| Field                      | Size | Description                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       |
+|----------------------------|------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| OP                         | 7    | instruction opcode                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                |
+| SR0                        | 9    | first instruction argument. May come from: vgrpr, sgpr, VCC, M0, exec or a constant<br>WMMA: must be a VGPR                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       |
+| SR1                        | 9    | second instruction argument. May come from: vgrpr, sgpr, VCC, M0, exec or a constant<br>WMMA: must be a VGPR                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      |
+| SR2                        | 9    | third instruction argument. May come from: vgrpr, sgpr, VCC, M0, exec or a constant                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               |
+| VDST                       | 8    | vgrpr that takes the result.<br>For V_READLANE, indicates the SGPR that receives the result.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      |
+| NEG                        | 3    | negate the input (invert sign bit) for the lower-16bit operand. float inputs only.<br>bit 0 is for src0, bit 1 is for src1 and bit 2 is for src2.<br>For V_FMA_MIX_* opcodes, this modifies all inputs.<br>For DOT...IU... and WMMA...IU... NEG[1:0] = signed(1)/unsigned(0) for src0 and src1, and Neg[2] behavior is undefined.                                                                                                                                                                                                                                                                                                                                                                                                                                                                 |
+| NEG_HI                     | 3    | negate the input (invert sign bit) for the higher-16bit operand. float inputs only.<br>bit 0 is for src0, bit 1 is for src1 and bit 2 is for src2.<br>For V_FMA_MIX_* opcodes, this acts as an ABS (absolute value) modifier.<br>For DOT...IU... and WMMA...IU... NEG_HI behavior is undefined.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   |
+| OPSEL [13:11]              | 3    | Select the high (1) or low (0) operand as input to the operation that results in the lower-half of the destination. [0] = src0, [1] = src1, [2] = src2<br>If either the source operand or destination operand is 32bits, the corresponding OPSEL bit must set to zero. <i>This rule does not apply to MIX instructions, which have a unique interpretation of OPSEL. See notes below.</i> OPSEL works for 16-bit VGPR, SGPR and literal-constant sources; for inline constant sources OPSEL must be zero (value only exists in lower 16 bits).<br>OPSEL[0] and [1] are unused for WMMA ops, and OPSEL[2] is used only with WMMA ops with 16-bit output to control whether the C matrix is read from upper or lower bits in the VGPR, and whether the D matrix is stored into upper or lower bits. |
+| OPSEL_HI<br>{[14],[60:59]} | 3    | Select the high (1) or low (0) operand as input to the operation that results in the upper-half of the destination. [0] = src0, [1] = src1, [2] = src2. Concatenation of ISA fields { OPSLH2, OPSLH }. If either the source operand or destination operand is 32bits or is a constant, the corresponding OPSEL_HI bit must set to zero. <i>This rule does not apply to <b>MIX</b> instructions, which have a unique interpretation of OPSEL. See notes below.</i>                                                                                                                                                                                                                                                                                                                                 |
+| CLMP                       | 1    | clamp result.<br>Float arithmetic: clamp result to [0, 1.0]; -0 is clamped to +0.<br>Signed integer arithmetic: clamp result to [min_int, +max_int]<br>Unsigned integer arithmetic: clamp result to [0, +max_uint]<br>Where "min_int" and "max_int" are the largest negative and positive representable integers for the size of integer being used (16, 32 or 64 bit). "max_uint" is the largest unsigned int.                                                                                                                                                                                                                                                                                                                                                                                   |
 
 ### OPSEL for MIX instructions
 
@@ -2766,14 +2690,11 @@ For the WMMMA\_F16\_F16\_16x16x16 or VOPD DOT2\_F32\_F16, hardware automatically
 
 Any packed math instructions that use data sizes less than 16 bits do not work with inline constants, other than the DOT instructions below:
 
-| Opcode       | inline                                 | OPSEL                    |
-|--------------|----------------------------------------|--------------------------|
-| DOT4_I32_IU8 | use 32bit inline src0/1 (ignore OPSEL) | OPSEL/OPSEL_HI on src0/1 |
-| DOT8_I32_IU4 | use 32bit inline src0/1 (ignore OPSEL) | OPSEL/OPSEL_HI on src0/1 |
-| DOT4_U32_U8  | use 32bit inline src0/1 (ignore OPSEL) | OPSEL/OPSEL_HI on src0/1 |
-
 | Opcode           | inline                                                | OPSEL                    |
 |------------------|-------------------------------------------------------|--------------------------|
+| DOT4_I32_IU8     | use 32bit inline src0/1 (ignore OPSEL)                | OPSEL/OPSEL_HI on src0/1 |
+| DOT8_I32_IU4     | use 32bit inline src0/1 (ignore OPSEL)                | OPSEL/OPSEL_HI on src0/1 |
+| DOT4_U32_U8      | use 32bit inline src0/1 (ignore OPSEL)                | OPSEL/OPSEL_HI on src0/1 |
 | DOT8_U32_U4      | use 32bit inline src0/1 (ignore OPSEL)                | OPSEL/OPSEL_HI on src0/1 |
 | DOT2_F32_F16     | use FP32 inline, supports OPSEL                       | OPSEL/OPSEL_HI on src0/1 |
 | DOT2_F32_BF16    | upper16(FP32)/same as replicate (src0/1) ignore OPSEL | OPSEL/OPSEL_HI on src0/1 |
@@ -2892,29 +2813,17 @@ Both VOP3/VOP3P and DPP16 have ABS and NEG fields:
 
 #### DPP16 Instruction Fields
 
-| Field    | BITS  | Description                                                                                                                                                                                                                                                                                                                                                          |
-|----------|-------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| row_mask | 31:28 | Applies to the VGPR destination write only, does not impact the thread mask when fetching source VGPR data. For VOPC, the SGPR/VCC bit associated with the disabled lane receives zero.<br>31==0: lanes[63:48] are disabled (wave 64 only)<br>30==0: lanes[47:32] are disabled (wave 64 only)<br>29==0: lanes[31:16] are disabled<br>28==0: lanes[15:0] are disabled |
-
-| Field                | BITS      | Description                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        |                      |         |            |     |                  |         |                  |         |                  |         |                |     |                     |     |                     |           |                     |           |
-|----------------------|-----------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|----------------------|---------|------------|-----|------------------|---------|------------------|---------|------------------|---------|----------------|-----|---------------------|-----|---------------------|-----------|---------------------|-----------|
-| bank_mask            | 27:24     | Applies to the VGPR destination write only, does not impact the thread mask when fetching source VGPR data. For VOPC, the SGPR/VCC bit associated with the disabled lane receives zero.<br>In wave32 mode:<br>27==0: lanes[12:15, 28:31] are disabled<br>26==0: lanes[8:11, 24:27] are disabled<br>25==0: lanes[4:7, 20:23] are disabled<br>24==0: lanes[0:3, 16:19] are disabled<br>In wave64 mode:<br>27==0: lanes[12:15, 28:31, 44:47, 60:63] are disabled<br>26==0: lanes[8:11, 24:27, 40:43, 56:59] are disabled<br>25==0: lanes[4:7, 20:23, 36:39, 52:55] are disabled<br>24==0: lanes[0:3, 16:19, 32:35, 48:51] are disabled<br>Notice: the term "bank" here is not the same as was used for the VGPR bank. |                      |         |            |     |                  |         |                  |         |                  |         |                |     |                     |     |                     |           |                     |           |
-| src1_imod            | 23:22     | 23: Apply Absolute value to SRC1<br>22: Apply Negate to SRC1 (done after absolute value)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           |                      |         |            |     |                  |         |                  |         |                  |         |                |     |                     |     |                     |           |                     |           |
-| src0_imod            | 21:20     | 21: Apply Absolute value to SRC0<br>20: Apply Negate to SRC0 (done after absolute value)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           |                      |         |            |     |                  |         |                  |         |                  |         |                |     |                     |     |                     |           |                     |           |
-| BC                   | 19        | Bound_ctrl is used to determine what a thread should do if its source operand is from a disabled thread or invalid input: use the value zero, or disable the write. <i>For example, a right shift into lane 0 is an invalid input, so the VALU uses Bound_ctrl to decide if lane 0's src0 should be 0 or if it's VGPR write enable should be disabled.</i><br>19==0: Do not write when source is invalid or out-of-range (DPP_BOUND_OFF)<br>19==1: User zero as input if source is invalid or out-of-range. (DPP_BOUND_ZERO)                                                                                                                                                                                       |                      |         |            |     |                  |         |                  |         |                  |         |                |     |                     |     |                     |           |                     |           |
-| FI                   | 18        | Fetch inactive lane behavior:<br>18 == 0: If source lane is invalid (disabled thread or out-of-range), use "bound_ctrl" to determine the source value.<br>18 == 1: If the source lane is disabled, fetch the source value anyway (ignoring the bound_ctrl bit). If the source lane is out-of-range, behavior is decided by the bound_ctrl bit.                                                                                                                                                                                                                                                                                                                                                                     |                      |         |            |     |                  |         |                  |         |                  |         |                |     |                     |     |                     |           |                     |           |
-| rsvd                 | 17        | Reserved                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           |                      |         |            |     |                  |         |                  |         |                  |         |                |     |                     |     |                     |           |                     |           |
-| dpp_ctrl             | 16:8      | Data Share control word.<br><table border="1"> <tbody> <tr><td>DPP_QUAD_PERM{00:FF}</td><td>000-0FF</td></tr> <tr><td>DPP_UNUSED</td><td>100</td></tr> <tr><td>DPP_ROW_SL{1:15}</td><td>101-10F</td></tr> <tr><td>DPP_ROW_SR{1:15}</td><td>111-11F</td></tr> <tr><td>DPP_ROW_RR{1:15}</td><td>121-12F</td></tr> <tr><td>DPP_ROW_MIRROR</td><td>140</td></tr> <tr><td>DPP_ROW_HALF_MIRROR</td><td>141</td></tr> <tr><td>DPP_ROW_SHARE{0:15}</td><td>150 - 15F</td></tr> <tr><td>DPP_ROW_XMASK{0:15}</td><td>160 - 16F</td></tr> </tbody> </table>                                                                                                                                                                   | DPP_QUAD_PERM{00:FF} | 000-0FF | DPP_UNUSED | 100 | DPP_ROW_SL{1:15} | 101-10F | DPP_ROW_SR{1:15} | 111-11F | DPP_ROW_RR{1:15} | 121-12F | DPP_ROW_MIRROR | 140 | DPP_ROW_HALF_MIRROR | 141 | DPP_ROW_SHARE{0:15} | 150 - 15F | DPP_ROW_XMASK{0:15} | 160 - 16F |
-| DPP_QUAD_PERM{00:FF} | 000-0FF   |                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    |                      |         |            |     |                  |         |                  |         |                  |         |                |     |                     |     |                     |           |                     |           |
-| DPP_UNUSED           | 100       |                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    |                      |         |            |     |                  |         |                  |         |                  |         |                |     |                     |     |                     |           |                     |           |
-| DPP_ROW_SL{1:15}     | 101-10F   |                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    |                      |         |            |     |                  |         |                  |         |                  |         |                |     |                     |     |                     |           |                     |           |
-| DPP_ROW_SR{1:15}     | 111-11F   |                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    |                      |         |            |     |                  |         |                  |         |                  |         |                |     |                     |     |                     |           |                     |           |
-| DPP_ROW_RR{1:15}     | 121-12F   |                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    |                      |         |            |     |                  |         |                  |         |                  |         |                |     |                     |     |                     |           |                     |           |
-| DPP_ROW_MIRROR       | 140       |                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    |                      |         |            |     |                  |         |                  |         |                  |         |                |     |                     |     |                     |           |                     |           |
-| DPP_ROW_HALF_MIRROR  | 141       |                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    |                      |         |            |     |                  |         |                  |         |                  |         |                |     |                     |     |                     |           |                     |           |
-| DPP_ROW_SHARE{0:15}  | 150 - 15F |                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    |                      |         |            |     |                  |         |                  |         |                  |         |                |     |                     |     |                     |           |                     |           |
-| DPP_ROW_XMASK{0:15}  | 160 - 16F |                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    |                      |         |            |     |                  |         |                  |         |                  |         |                |     |                     |     |                     |           |                     |           |
-| Src0                 | 7:0       | VGPR address of srcA operand                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       |                      |         |            |     |                  |         |                  |         |                  |         |                |     |                     |     |                     |           |                     |           |
+| Field                | BITS      | Description                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        |
+|----------------------|-----------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| row_mask             | 31:28     | Applies to the VGPR destination write only, does not impact the thread mask when fetching source VGPR data. For VOPC, the SGPR/VCC bit associated with the disabled lane receives zero.<br>31==0: lanes[63:48] are disabled (wave 64 only)<br>30==0: lanes[47:32] are disabled (wave 64 only)<br>29==0: lanes[31:16] are disabled<br>28==0: lanes[15:0] are disabled                                                                                                                                                                                                                                                                                                                                               |
+| bank_mask            | 27:24     | Applies to the VGPR destination write only, does not impact the thread mask when fetching source VGPR data. For VOPC, the SGPR/VCC bit associated with the disabled lane receives zero.<br>In wave32 mode:<br>27==0: lanes[12:15, 28:31] are disabled<br>26==0: lanes[8:11, 24:27] are disabled<br>25==0: lanes[4:7, 20:23] are disabled<br>24==0: lanes[0:3, 16:19] are disabled<br>In wave64 mode:<br>27==0: lanes[12:15, 28:31, 44:47, 60:63] are disabled<br>26==0: lanes[8:11, 24:27, 40:43, 56:59] are disabled<br>25==0: lanes[4:7, 20:23, 36:39, 52:55] are disabled<br>24==0: lanes[0:3, 16:19, 32:35, 48:51] are disabled<br>Notice: the term "bank" here is not the same as was used for the VGPR bank. |
+| src1_imod            | 23:22     | 23: Apply Absolute value to SRC1<br>22: Apply Negate to SRC1 (done after absolute value)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           |
+| src0_imod            | 21:20     | 21: Apply Absolute value to SRC0<br>20: Apply Negate to SRC0 (done after absolute value)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           |
+| BC                   | 19        | Bound_ctrl is used to determine what a thread should do if its source operand is from a disabled thread or invalid input: use the value zero, or disable the write. <i>For example, a right shift into lane 0 is an invalid input, so the VALU uses Bound_ctrl to decide if lane 0's src0 should be 0 or if it's VGPR write enable should be disabled.</i><br>19==0: Do not write when source is invalid or out-of-range (DPP_BOUND_OFF)<br>19==1: User zero as input if source is invalid or out-of-range. (DPP_BOUND_ZERO)                                                                                                                                                                                       |
+| FI                   | 18        | Fetch inactive lane behavior:<br>18 == 0: If source lane is invalid (disabled thread or out-of-range), use "bound_ctrl" to determine the source value.<br>18 == 1: If the source lane is disabled, fetch the source value anyway (ignoring the bound_ctrl bit). If the source lane is out-of-range, behavior is decided by the bound_ctrl bit.                                                                                                                                                                                                                                                                                                                                                                     |
+| rsvd                 | 17        | Reserved                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           |
+| dpp_ctrl             | 16:8      | Data Share control word.<br>DPP_QUAD_PERM{00:FF} 000-0FF<br>DPP_UNUSED           100    <br>DPP_ROW_SL{1:15}     101-10F<br>DPP_ROW_SR{1:15}     111-11F<br>DPP_ROW_RR{1:15}     121-12F<br>DPP_ROW_MIRROR       140    <br>DPP_ROW_HALF_MIRROR  141    <br>DPP_ROW_SHARE{0:15}  150-15F<br>DPP_ROW_XMASK{0:15}  160-16F                                                                                                                                                                                                                                                                                                                                                                                           |
+| Src0                 | 7:0       | VGPR address of srcA operand                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       |
 
 Table 31. BC and FI Behavior
 
@@ -3321,10 +3230,7 @@ Table 37. *Microcode Formats*
 | GLC     | 1        | Globally Coherent. Controls how loads and stores are handled by the L0 texture cache.<br><b>ATOMIC</b><br>GLC = 0 Previous data value is not returned.<br>GLC = 1 Previous data value is returned. |
 | DLC     | 1        | Device Level Coherent.                                                                                                                                                                             |
 | SLC     | 1        | System Level Coherent.                                                                                                                                                                             |
-
-| Field | Bit Size | Description                                                                                                                                                     |
-|-------|----------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| TFE   | 1        | Texel Fault Enable for PRT (partially resident textures). When set to 1 and fetch returns a NACK, status is written to the VGPR after the last fetch-dest VGPR. |
+| TFE     | 1        | Texel Fault Enable for PRT (partially resident textures). When set to 1 and fetch returns a NACK, status is written to the VGPR after the last fetch-dest VGPR.                                     |
 
 Table 38. MTBUF Instructions
 
@@ -3351,32 +3257,29 @@ Table 38. MTBUF Instructions
 
 Table 39. MUBUF Instructions
 
-| Opcode                      | Description - all address components for buffer ops are uint |
-|-----------------------------|--------------------------------------------------------------|
-| BUFFER_LOAD_U8              | load unsigned byte (extend 0's to MSB's of DWORD VGPR)       |
-| BUFFER_LOAD_D16_U8          | load unsigned byte into VGPR[15:0]                           |
-| BUFFER_LOAD_D16_HI_U8       | load unsigned byte into VGPR[31:16]                          |
-| BUFFER_LOAD_I8              | load signed byte (sign extend to MSB's of DWORD VGPR)        |
-| BUFFER_LOAD_D16_I8          | load signed byte into VGPR[15:0]                             |
-| BUFFER_LOAD_D16_HI_I8       | load signed byte into VGPR[31:16]                            |
-| BUFFER_LOAD_U16             | load unsigned short (extend 0's to MSB's of DWORD VGPR)      |
-| BUFFER_LOAD_I16             | load signed short (sign extend to MSB's of DWORD VGPR)       |
-| BUFFER_LOAD_D16_B16         | load short into VGPR[15:0]                                   |
-| BUFFER_LOAD_D16_HI_B16      | load short into VGPR[31:16]                                  |
-| BUFFER_LOAD_B32             | load DWORD                                                   |
-| BUFFER_LOAD_B64             | load 2 DWORD per element                                     |
-| BUFFER_LOAD_B96             | load 3 DWORD per element                                     |
-| BUFFER_LOAD_B128            | load 4 DWORD per element                                     |
-| BUFFER_LOAD_FORMAT_X        | load X component w/ format convert                           |
-| BUFFER_LOAD_FORMAT_XY       | load XY components w/ format convert                         |
-| BUFFER_LOAD_FORMAT_XYZ      | load XYZ components w/ format convert                        |
-| BUFFER_LOAD_FORMAT_XYZW     | load XYZW components w/ format convert                       |
-| BUFFER_LOAD_D16_FORMAT_X    | load X component w/ format convert, 16b                      |
-| BUFFER_LOAD_D16_HI_FORMAT_X | load X component w/ format convert, 16b                      |
-| BUFFER_LOAD_D16_FORMAT_XY   | load XY components w/ format convert, 16b                    |
-
 | Opcode                       | Description - all address components for buffer ops are uint                                                |
 |------------------------------|-------------------------------------------------------------------------------------------------------------|
+| BUFFER_LOAD_U8               | load unsigned byte (extend 0's to MSB's of DWORD VGPR)                                                      |
+| BUFFER_LOAD_D16_U8           | load unsigned byte into VGPR[15:0]                                                                          |
+| BUFFER_LOAD_D16_HI_U8        | load unsigned byte into VGPR[31:16]                                                                         |
+| BUFFER_LOAD_I8               | load signed byte (sign extend to MSB's of DWORD VGPR)                                                       |
+| BUFFER_LOAD_D16_I8           | load signed byte into VGPR[15:0]                                                                            |
+| BUFFER_LOAD_D16_HI_I8        | load signed byte into VGPR[31:16]                                                                           |
+| BUFFER_LOAD_U16              | load unsigned short (extend 0's to MSB's of DWORD VGPR)                                                     |
+| BUFFER_LOAD_I16              | load signed short (sign extend to MSB's of DWORD VGPR)                                                      |
+| BUFFER_LOAD_D16_B16          | load short into VGPR[15:0]                                                                                  |
+| BUFFER_LOAD_D16_HI_B16       | load short into VGPR[31:16]                                                                                 |
+| BUFFER_LOAD_B32              | load DWORD                                                                                                  |
+| BUFFER_LOAD_B64              | load 2 DWORD per element                                                                                    |
+| BUFFER_LOAD_B96              | load 3 DWORD per element                                                                                    |
+| BUFFER_LOAD_B128             | load 4 DWORD per element                                                                                    |
+| BUFFER_LOAD_FORMAT_X         | load X component w/ format convert                                                                          |
+| BUFFER_LOAD_FORMAT_XY        | load XY components w/ format convert                                                                        |
+| BUFFER_LOAD_FORMAT_XYZ       | load XYZ components w/ format convert                                                                       |
+| BUFFER_LOAD_FORMAT_XYZW      | load XYZW components w/ format convert                                                                      |
+| BUFFER_LOAD_D16_FORMAT_X     | load X component w/ format convert, 16b                                                                     |
+| BUFFER_LOAD_D16_HI_FORMAT_X  | load X component w/ format convert, 16b                                                                     |
+| BUFFER_LOAD_D16_FORMAT_XY    | load XY components w/ format convert, 16b                                                                   |
 | BUFFER_LOAD_D16_FORMAT_XYZ   | load XYZ components w/ format convert, 16b                                                                  |
 | BUFFER_LOAD_D16_FORMAT_XYZW  | load XYZW components w/ format convert, 16b                                                                 |
 | BUFFER_STORE_B8              | store byte (ignore MSB's of DWORD VGPR)                                                                     |
@@ -3423,15 +3326,12 @@ Table 39. MUBUF Instructions
 | BUFFER_ATOMIC_SWAP_B64       | 64b , dst = src, returns previous value of dst if glc==1                                                    |
 | BUFFER_ATOMIC_MAX_U32        | 32b , dst = (src > dst) ? src : dst, (unsigned) returns previous value if glc==1                            |
 | BUFFER_ATOMIC_MAX_U64        | 64b , dst = (src > dst) ? src : dst, (unsigned) returns previous value if glc==1                            |
-
-| Opcode                | Description - all address components for buffer ops are uint                     |
-|-----------------------|----------------------------------------------------------------------------------|
-| BUFFER_ATOMIC_MIN_U32 | 32b , dst = (src < dst) ? src : dst, (unsigned) returns previous value if glc==1 |
-| BUFFER_ATOMIC_MIN_U64 | 64b , dst = (src < dst) ? src : dst, (unsigned) returns previous value if glc==1 |
-| BUFFER_ATOMIC_XOR_B32 | 32b , dst ^= src, returns previous value if glc==1                               |
-| BUFFER_ATOMIC_XOR_B64 | 64b , dst ^= src, returns previous value if glc==1                               |
-| BUFFER_GL0_INV        | invalidate the shader L0 cache (texture cache) associated with this wave.        |
-| BUFFER_GL1_INV        | invalidate the GL1 (L1) cache associated with this wave, for this wave's VMID    |
+| BUFFER_ATOMIC_MIN_U32        | 32b , dst = (src < dst) ? src : dst, (unsigned) returns previous value if glc==1                            |
+| BUFFER_ATOMIC_MIN_U64        | 64b , dst = (src < dst) ? src : dst, (unsigned) returns previous value if glc==1                            |
+| BUFFER_ATOMIC_XOR_B32        | 32b , dst ^= src, returns previous value if glc==1                                                              |
+| BUFFER_ATOMIC_XOR_B64        | 64b , dst ^= src, returns previous value if glc==1                                                              |
+| BUFFER_GL0_INV               | invalidate the shader L0 cache (texture cache) associated with this wave.                                   |
+| BUFFER_GL1_INV               | invalidate the GL1 (L1) cache associated with this wave, for this wave's VMID                               |
 
 - BUFFER\*\_FORMAT instructions include a data-format conversion specified in the resource constant (V#).
 - In the table above, "D16" means the data in the VGPR is 16-bits, not the usual 32 bits.
@@ -3467,16 +3367,13 @@ Table 40. Address VGPRs
 
 Table 41. Data format in VGPRs and Memory
 
-| Instruction           | Memory Format | VGPR Format                  | Notes               |
-|-----------------------|---------------|------------------------------|---------------------|
-| BUFFER_LOAD_U8        | ubyte         | V0[31:0] = {24'b0, byte}     |                     |
-| BUFFER_LOAD_D16_U8    | ubyte         | V0[15:0] = {8'b0, byte}      | writes only 16 bits |
-| BUFFER_LOAD_D16_HI_U8 | ubyte         | V0[31:16] = {8'h0, byte}     | writes only 16 bits |
-| BUFFER_LOAD_S8        | sbyte         | V0[31:0] = { 24{sign}, byte} |                     |
-| BUFFER_LOAD_D16_S8    | sbyte         | V0[15:0] {8{sign}, byte}     | writes only 16 bits |
-
 | Instruction                 | Memory Format | VGPR Format                                                                              | Notes                                       |
 |-----------------------------|---------------|------------------------------------------------------------------------------------------|---------------------------------------------|
+| BUFFER_LOAD_U8              | ubyte         | V0[31:0] = {24'b0, byte}                                                                 |                                             |
+| BUFFER_LOAD_D16_U8          | ubyte         | V0[15:0] = {8'b0, byte}                                                                  | writes only 16 bits                         |
+| BUFFER_LOAD_D16_HI_U8       | ubyte         | V0[31:16] = {8'h0, byte}                                                                 | writes only 16 bits                         |
+| BUFFER_LOAD_S8              | sbyte         | V0[31:0] = { 24{sign}, byte}                                                             |                                             |
+| BUFFER_LOAD_D16_S8          | sbyte         | V0[15:0] {8{sign}, byte}                                                                 | writes only 16 bits                         |
 | BUFFER_LOAD_D16_HI_S8       | sbyte         | V0[31:16] = {8{sign}, byte}                                                              | writes only 16 bits                         |
 | BUFFER_LOAD_U16             | ushort        | V0[31:0] = { 16'b0, short}                                                               |                                             |
 | BUFFER_LOAD_S16             | sshort        | V0[31:0] = { 16{sign}, short}                                                            |                                             |
@@ -3495,16 +3392,13 @@ Table 41. Data format in VGPRs and Memory
 
 Where "V0" is the VDATA VGPR; V1 is the VDATA+1 VGPR, etc.
 
-| Instruction             | VGPR Format      | Memory Format | Notes |
-|-------------------------|------------------|---------------|-------|
-| BUFFER_STORE_B8         | byte in [7:0]    | byte          |       |
-| BUFFER_STORE_D16_HI_B8  | byte in [23:16]  | byte          |       |
-| BUFFER_STORE_B16        | short in [15:0]  | short         |       |
-| BUFFER_STORE_D16_HI_B16 | short in [31:16] | short         |       |
-| BUFFER_STORE_B32        | data in [31:0]   | DWORD         |       |
-
 | Instruction                  | VGPR Format                                                                    | Memory Format | Notes                                       |
 |------------------------------|--------------------------------------------------------------------------------|---------------|---------------------------------------------|
+| BUFFER_STORE_B8              | byte in [7:0]                                                                  | byte          |                                             |
+| BUFFER_STORE_D16_HI_B8       | byte in [23:16]                                                                | byte          |                                             |
+| BUFFER_STORE_B16             | short in [15:0]                                                                | short         |                                             |
+| BUFFER_STORE_D16_HI_B16      | short in [31:16]                                                               | short         |                                             |
+| BUFFER_STORE_B32             | data in [31:0]                                                                 | DWORD         |                                             |
 | BUFFER_STORE_FORMAT_X        | float, uint or sint<br>data in V0[31:0]                                        | FORMAT field  | data type in VGPR is based on FORMAT field. |
 | BUFFER_STORE_D16_FORMAT_X    | float, ushort or sshort<br>data in V0[15:0]                                    |               |                                             |
 | BUFFER_STORE_D16_FORMAT_XY   | float, ushort or sshort<br>data in V0[15:0], V0[31:16]                         |               |                                             |
@@ -3854,17 +3748,14 @@ Memory operations of different types (e.g. loads, stores and samples) can comple
 
 This section describes the image instruction set, and the microcode fields available to those instructions.
 
-| <b>MIMG Instructions</b>                                                                   |                                                                                                                                                                                                                                       |
-|--------------------------------------------------------------------------------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| MIMG Instructions                                                                       |                                                                                                                                                                                                                                                                            |
+|-----------------------------------------------------------------------------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | <code>IMAGE_SAMPLE</code><br><code>IMAGE_SAMPLE_G16</code>                                 | Load and filter data from a image object<br>Sample with 16-bit gradients                                                                                                                                                              |
 | <code>IMAGE_GATHER4</code>                                                                 | Load and return samples from 4 texels for software filtering. Returns a single component, starting with the lower-left texel and in counter-clockwise order.                                                                          |
 | <code>IMAGE_GATHER4H</code>                                                                | 4H: fetch 1 component per texel from 4x1 texels<br>"DMASK" selects which component to load (R,G,B,A) and must have only one bit set to 1.                                                                                             |
 | <code>IMAGE_LOAD_{-, PCK, PCK_SGN}</code><br><code>IMAGE_LOAD_MIP_{-, PCK, PCK_SGN}</code> | Load data from an image object<br>Load data from an image object from a specified mip level.                                                                                                                                          |
 | <code>IMAGE_MSAA_LOAD</code>                                                               | Load up to 4 samples of 1 component from an MSAA resource with a user-specified fragment ID.<br>Uses <code>DMASK</code> as component select - it behaves like <code>gather4</code> ops and returns 4 VGPR (2 if <code>D16=1</code> ). |
 | <code>IMAGE_STORE_{-, PCK}</code><br><code>IMAGE_STORE_MIP_{-, PCK}</code>                 | Store data to an image object to a specific mipmap level                                                                                                                                                                              |
-
-| MIMG Instructions                                                                       |                                                                                                                                                                                                                                                                            |
-|-----------------------------------------------------------------------------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | IMAGE_ATOMIC_{SWAP, CMPSWAP, ADD, SUB, SMIN, UMIN, SMAX, UMAX, AND, OR, XOR, INC, DEC } | Image atomic operations                                                                                                                                                                                                                                                    |
 | IMAGE_GET_RESINFO                                                                       | Return resource info into 4 VGPRs for the MIP level specified. These are 32bit integer values:<br>VDATA3-0 = { #mipLevels, depth, height, width }<br>For cubemaps, depth = 6 * Number_of_array_faces.<br>( <i>DX expects the # of cubes, but gets # of faces instead</i> ) |
 | IMAGE_GET_LOD                                                                           | Return the calculated LOD. <i>Treated as a Sample instruction.</i><br>Returns the "raw" LOD and the "clamped" LOD into VDATA as two 32 bit floats:<br>First VGPR = clampLOD<br>Second VGPR = rawLOD                                                                        |
@@ -3877,34 +3768,26 @@ Diagram of MIMG instruction fields showing a 32-bit register layout from bit 31 
 
 Table 48. Instruction Fields
 
-| Instruction Fields |                  |                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          |       |             |       |             |       |            |         |                  |
-|--------------------|------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|-------|-------------|-------|-------------|-------|------------|---------|------------------|
-| Field              | Size             | Description                                                                                                                                                                                                                                                                                                                                                                                                                                                                              |       |             |       |             |       |            |         |                  |
-| OP                 | 8                | Opcode                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   |       |             |       |             |       |            |         |                  |
-| VADDR              | 8                | Address of VGPR to supply first component of address.                                                                                                                                                                                                                                                                                                                                                                                                                                    |       |             |       |             |       |            |         |                  |
-| VDATA              | 8                | Address of VGPR to supply first component of store-data or receive first component of load-data.                                                                                                                                                                                                                                                                                                                                                                                         |       |             |       |             |       |            |         |                  |
-| SSAMP              | 5                | SGPR to supply S# (sampler constant) in 4 consecutive SGPRs.<br><i>missing 2 LSB's of SGPR-address since must be aligned to 4.</i>                                                                                                                                                                                                                                                                                                                                                       |       |             |       |             |       |            |         |                  |
-| SRSRC              | 5                | SGPR to supply T# (resource constant) in 8 consecutive SGPRs.<br><i>missing 2 LSB's of SGPR-address since must be aligned to 4.</i>                                                                                                                                                                                                                                                                                                                                                      |       |             |       |             |       |            |         |                  |
-| UNRM               | 1                | Force address to be un-normalized. Must be set to 1 for Image stores & atomics.<br>0: for image ops with samplers, S,T,R from [0.0, 1.0] span the entire texture map;<br>1: for image ops with samplers, S,T,R from [0.0 to N] span the texture map, where N is width, height or depth. Array/cube slice, lod, bias etc. are not affected. Image ops without sampler are not affected. UINT inputs are "unnormalized".<br>This bit is logically OR'd with the S#.force_unnormalized bit. |       |             |       |             |       |            |         |                  |
-| R128               | 1                | Texture Resource Size: 1 = 128bits, 0 = 256bits                                                                                                                                                                                                                                                                                                                                                                                                                                          |       |             |       |             |       |            |         |                  |
-| A16                | 1                | Address components are 16-bits (instead of the usual 32 bits).<br>When set, all address components are 16 bits (packed into 2 per DWORD), except:<br>Texel offsets (3 6bit UINT packed into 1 DWORD)<br>PCF reference (for "_C" instructions)<br>Address components are 16b uint for image ops without sampler; 16b float with sampler.                                                                                                                                                  |       |             |       |             |       |            |         |                  |
-| DIM                | 3                | Surface Dimension:<br><table border="1" style="display: inline-table; margin-left: 20px;"><tr><td>0: 1D</td><td>4: 1d array</td></tr><tr><td>1: 2D</td><td>5: 2d array</td></tr><tr><td>2: 3D</td><td>6: 2d msaa</td></tr><tr><td>3: cube</td><td>7: 2d msaa array</td></tr></table>                                                                                                                                                                                                     | 0: 1D | 4: 1d array | 1: 2D | 5: 2d array | 2: 3D | 6: 2d msaa | 3: cube | 7: 2d msaa array |
-| 0: 1D              | 4: 1d array      |                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          |       |             |       |             |       |            |         |                  |
-| 1: 2D              | 5: 2d array      |                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          |       |             |       |             |       |            |         |                  |
-| 2: 3D              | 6: 2d msaa       |                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          |       |             |       |             |       |            |         |                  |
-| 3: cube            | 7: 2d msaa array |                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          |       |             |       |             |       |            |         |                  |
-
-| Instruction Fields |       |                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               |
-|--------------------|-------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| DMASK              | 4     | <p>Data VGPR enable mask: 1 .. 4 consecutive VGPRs</p> <p>Loads: defines which components are returned: 0=red,1=green,2=blue,3=alpha</p> <p>Stores: defines which components are written with data from VGPRs (missing components get 0). Enabled components come from consecutive VGPRs.</p> <p>E.G. DMASK=1001 : Red is in VGPRn and alpha in VGPRn+1.</p> <p>For D16 loads, DMASK indicates which components to return;</p> <p>For D16 stores, the DMASK the mask indicates which components to store but has restrictions: Data is read out of consecutive VGPRs: LSB's of VDATA, then MSB's of VDATA then LSB's of VDATA+1 and last if needed MSB's of VDATA+1. This is regardless of which DMASK bits are set, only how many bits are set. The position of the DMASK bits controls which components are written in memory.</p> <p><i>If DMASK=0, the TA overrides DMASK=1 and puts zeros in VGPR followed by LWE status if exists. TFE status is not generated since the fetch is dropped.</i></p> <p>For IMAGE_GATHER4* instructions, DMASK indicates which component (RGBA), and the number of VGPRs to use is determined automatically by hardware (4 VGPRs when D16=0, and 2 VGPRs when D16=1).</p> |
-| GLC                | 1     | <p>Group Level Coherent.</p> <p>Atomics:</p> <p>1 = return the memory value before the atomic operation is performed.</p> <p>0 = do not return anything.</p>                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  |
-| DLC                | 1     | Device Level Coherent. Controls behavior of L1 cache (GL1).                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   |
-| SLC                | 1     | System Level Coherent.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        |
-| TFE                | 1     | Texel Fault Enable for PRT (Partially Resident Textures). When set, fetch may return a NACK that causes a VGPR write into DST+1 (first GPR after all fetch-dest gprs).                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        |
-| LWE                | 1     | <p>LOD Warning Enable. When set to 1, a texture fetch may return "LOD_CLAMPED = 1", and causes a VGPR write into DST+1 (first GPR after all fetch-dest gprs). LWE only works for sampler ops; LWE is ignored for non-sampler ops.</p>                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         |
-| D16                | 1     | <p>VGPR-Data-16bit. On loads, convert data in memory to 16-bit format before storing it in VGPRs. For stores, convert 16-bit data in VGPRs to the memory format before going to memory. Whether the data is treated as float or int is decided by NFMT. Allowed only with these opcodes:</p> <ul style="list-style-type: none"> <li>• IMAGE_SAMPLE*</li> <li>• IMAGE_GATHER4</li> <li>• IMAGE_MSAA_LOAD</li> <li>• IMAGE_LOAD</li> <li>• IMAGE_LOAD_MIP</li> <li>• IMAGE_STORE</li> <li>• IMAGE_STORE_MIP</li> </ul>                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          |
-| NSA                | 1     | <p>Non-Sequential Address</p> <p>When NSA=0, the image addresses must be in sequential VGPRs starting at 'VADDR'.</p> <p>When NSA=1, the instruction encoding allows up to 5 address components to be specified separately by using an additional instruction DWORD.</p>                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      |
-| ADDR1-4            | 4 x 8 | Four 8-bit VGPR address fields, used by NSA. The "VADDR" field provides ADDR0.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                |
+| Field   | Size  | Description                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   |
+|---------|-------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| OP      | 8     | Opcode                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        |
+| VADDR   | 8     | Address of VGPR to supply first component of address.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         |
+| VDATA   | 8     | Address of VGPR to supply first component of store-data or receive first component of load-data.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              |
+| SSAMP   | 5     | SGPR to supply S# (sampler constant) in 4 consecutive SGPRs.<br><i>missing 2 LSB's of SGPR-address since must be aligned to 4.</i>                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            |
+| SRSRC   | 5     | SGPR to supply T# (resource constant) in 8 consecutive SGPRs.<br><i>missing 2 LSB's of SGPR-address since must be aligned to 4.</i>                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           |
+| UNRM    | 1     | Force address to be un-normalized. Must be set to 1 for Image stores & atomics.<br>0: for image ops with samplers, S,T,R from [0.0, 1.0] span the entire texture map;<br>1: for image ops with samplers, S,T,R from [0.0 to N] span the texture map, where N is width, height or depth. Array/cube slice, lod, bias etc. are not affected. Image ops without sampler are not affected. UINT inputs are "unnormalized".<br>This bit is logically OR'd with the S#.force_unnormalized bit.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      |
+| R128    | 1     | Texture Resource Size: 1 = 128bits, 0 = 256bits                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               |
+| A16     | 1     | Address components are 16-bits (instead of the usual 32 bits).<br>When set, all address components are 16 bits (packed into 2 per DWORD), except:<br>Texel offsets (3 6bit UINT packed into 1 DWORD)<br>PCF reference (for "_C" instructions)<br>Address components are 16b uint for image ops without sampler; 16b float with sampler.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       |
+| DIM     | 3     | Surface Dimension:<br><table><tr><td>0: 1D</td><td>4: 1d array</td></tr><tr><td>1: 2D</td><td>5: 2d array</td></tr><tr><td>2: 3D</td><td>6: 2d msaa</td></tr><tr><td>3: cube</td><td>7: 2d msaa array</td></tr></table>                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       |
+| DMASK   | 4     | <p>Data VGPR enable mask: 1 .. 4 consecutive VGPRs</p> <p>Loads: defines which components are returned: 0=red,1=green,2=blue,3=alpha</p> <p>Stores: defines which components are written with data from VGPRs (missing components get 0). Enabled components come from consecutive VGPRs.</p> <p>E.G. DMASK=1001 : Red is in VGPRn and alpha in VGPRn+1.</p> <p>For D16 loads, DMASK indicates which components to return;</p> <p>For D16 stores, the DMASK the mask indicates which components to store but has restrictions: Data is read out of consecutive VGPRs: LSB's of VDATA, then MSB's of VDATA then LSB's of VDATA+1 and last if needed MSB's of VDATA+1. This is regardless of which DMASK bits are set, only how many bits are set. The position of the DMASK bits controls which components are written in memory.</p> <p><i>If DMASK=0, the TA overrides DMASK=1 and puts zeros in VGPR followed by LWE status if exists. TFE status is not generated since the fetch is dropped.</i></p> <p>For IMAGE_GATHER4* instructions, DMASK indicates which component (RGBA), and the number of VGPRs to use is determined automatically by hardware (4 VGPRs when D16=0, and 2 VGPRs when D16=1).</p> |
+| GLC     | 1     | <p>Group Level Coherent.</p> <p>Atomics:</p> <p>1 = return the memory value before the atomic operation is performed.</p> <p>0 = do not return anything.</p>                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  |
+| DLC     | 1     | Device Level Coherent. Controls behavior of L1 cache (GL1).                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   |
+| SLC     | 1     | System Level Coherent.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        |
+| TFE     | 1     | Texel Fault Enable for PRT (Partially Resident Textures). When set, fetch may return a NACK that causes a VGPR write into DST+1 (first GPR after all fetch-dest gprs).                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        |
+| LWE     | 1     | <p>LOD Warning Enable. When set to 1, a texture fetch may return "LOD_CLAMPED = 1", and causes a VGPR write into DST+1 (first GPR after all fetch-dest gprs). LWE only works for sampler ops; LWE is ignored for non-sampler ops.</p>                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         |
+| D16     | 1     | <p>VGPR-Data-16bit. On loads, convert data in memory to 16-bit format before storing it in VGPRs. For stores, convert 16-bit data in VGPRs to the memory format before going to memory. Whether the data is treated as float or int is decided by NFMT. Allowed only with these opcodes:</p> <ul> <li>• IMAGE_SAMPLE*</li> <li>• IMAGE_GATHER4</li> <li>• IMAGE_MSAA_LOAD</li> <li>• IMAGE_LOAD</li> <li>• IMAGE_LOAD_MIP</li> <li>• IMAGE_STORE</li> <li>• IMAGE_STORE_MIP</li> </ul>                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        |
+| NSA     | 1     | <p>Non-Sequential Address</p> <p>When NSA=0, the image addresses must be in sequential VGPRs starting at 'VADDR'.</p> <p>When NSA=1, the instruction encoding allows up to 5 address components to be specified separately by using an additional instruction DWORD.</p>                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      |
+| ADDR1-4 | 4 x 8 | Four 8-bit VGPR address fields, used by NSA. The "VADDR" field provides ADDR0.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                |
 
 ### 10.1.1. Texture Fault Enable (TFE) and LOD Warning Enable (LWE)
 
@@ -3968,56 +3851,53 @@ MSAA surfaces support only load, store and atomics; not load-mip or store-mip.
 
 The table below shows the contents of address VGPRs for the various image opcodes.
 
-| Opcode      | a16[0] | type          | acnt | VGPR <sub>n</sub> [31:0] | VGPR <sub>n+1</sub> [31:0] | VGPR <sub>n+2</sub> [31:0] | VGPR <sub>n+3</sub> [31:0] |
-|-------------|--------|---------------|------|--------------------------|----------------------------|----------------------------|----------------------------|
-| GET_RESINFO | x      | Any           | 0    | mipid                    |                            |                            |                            |
-| MSAA_LOAD   | 0      | 2D MSAA       | 2    | s                        | t                          | fragid                     |                            |
-|             |        | 2D Array MSAA | 3    | s                        | t                          | slice                      | fragid                     |
-|             | 1      | 2D MSAA       | 2    | t, s                     | -, fragid                  |                            |                            |
-|             |        | 2D Array MSAA | 3    | t, s                     | fragid, slice              |                            |                            |
-
-| Opcode           | a16[0]          | type            | acnt     | VGPR <sub>n</sub> [31:0] | VGPR <sub>n+1</sub> [31:0] | VGPR <sub>n+2</sub> [31:0] | VGPR <sub>n+3</sub> [31:0] |
-|------------------|-----------------|-----------------|----------|--------------------------|----------------------------|----------------------------|----------------------------|
-| LOAD             | 0               | 1D              | 0        | s                        |                            |                            |                            |
-| LOAD_PCK         |                 | 2D              | 1        | s                        | t                          |                            |                            |
-| LOAD_PCK_SGN     |                 | 3D              | 2        | s                        | t                          | r                          |                            |
-| STORE            |                 | Cube/Cube Array | 2        | s                        | t                          | face                       |                            |
-| STORE_PCK        |                 | 1D Array        | 1        | s                        | slice                      |                            |                            |
-|                  |                 | 2D Array        | 2        | s                        | t                          | slice                      |                            |
-|                  |                 | 2D MSAA         | 2        | s                        | t                          | frigid                     |                            |
-|                  |                 | 2D Array MSAA   | 3        | s                        | t                          | slice                      | frigid                     |
-|                  |                 | 1D              | 0        | -, s                     |                            |                            |                            |
-|                  |                 | 2D              | 1        | t, s                     |                            |                            |                            |
-|                  | 3D              | 2               | t, s     | -, r                     |                            |                            |                            |
-|                  | Cube/Cube Array | 2               | t, s     | -, face                  |                            |                            |                            |
+| Opcode           | a16[0] | type            | acnt | VGPR <sub>n</sub> [31:0] | VGPR <sub>n+1</sub> [31:0] | VGPR <sub>n+2</sub> [31:0] | VGPR <sub>n+3</sub> [31:0] |
+|------------------|--------|-----------------|------|--------------------------|----------------------------|----------------------------|----------------------------|
+| GET_RESINFO      | x      | Any             | 0    | mipid                    |                            |                            |                            |
+| MSAA_LOAD        | 0      | 2D MSAA         | 2    | s                        | t                          | fragid                     |                            |
+|                  |        | 2D Array MSAA   | 3    | s                        | t                          | slice                      | fragid                     |
+|                  | 1      | 2D MSAA         | 2    | t, s                     | -, fragid                  |                            |                            |
+|                  |        | 2D Array MSAA   | 3    | t, s                     | fragid, slice              |                            |                            |
+| LOAD             | 0      | 1D              | 0    | s                        |                            |                            |                            |
+| LOAD_PCK         |        | 2D              | 1    | s                        | t                          |                            |                            |
+| LOAD_PCK_SGN     |        | 3D              | 2    | s                        | t                          | r                          |                            |
+| STORE            |        | Cube/Cube Array | 2    | s                        | t                          | face                       |                            |
+| STORE_PCK        |        | 1D Array        | 1    | s                        | slice                      |                            |                            |
+|                  |        | 2D Array        | 2    | s                        | t                          | slice                      |                            |
+|                  |        | 2D MSAA         | 2    | s                        | t                          | frigid                     |                            |
+|                  |        | 2D Array MSAA   | 3    | s                        | t                          | slice                      | frigid                     |
+|                  |        | 1D              | 0    | -, s                     |                            |                            |                            |
+|                  |        | 2D              | 1    | t, s                     |                            |                            |                            |
+|                  | 3D     | 2               | t, s | -, r                     |                            |                            |                            |
+|                  | Cube/Cube Array | 2               | t, s | -, face                  |                            |                            |                            |
 |                  | 1D Array        | 1               | slice, s |                          |                            |                            |                            |
 |                  | 2D Array        | 2               | t, s     | -, slice                 |                            |                            |                            |
 |                  | 2D MSAA         | 2               | t, s     | -, frigid                |                            |                            |                            |
 |                  | 2D Array MSAA   | 3               | t, s     | frigid, slice            |                            |                            |                            |
-| ATOMIC           | 0               | 1D              | 0        | s                        |                            |                            |                            |
-|                  |                 | 2D              | 1        | s                        | t                          |                            |                            |
-|                  |                 | 3D              | 2        | s                        | t                          | r                          |                            |
-|                  |                 | 1D Array        | 1        | s                        | slice                      |                            |                            |
-|                  |                 | 2D Array        | 2        | s                        | t                          | slice                      |                            |
-|                  |                 | 2D MSAA         | 2        | s                        | t                          | frigid                     |                            |
-|                  |                 | 2D Array MSAA   | 3        | s                        | t                          | slice                      | frigid                     |
-|                  |                 | 1D              | 0        | -, s                     |                            |                            |                            |
-|                  |                 | 2D              | 1        | t, s                     |                            |                            |                            |
-|                  |                 | 3D              | 2        | t, s                     | -, r                       |                            |                            |
+| ATOMIC           | 0      | 1D              | 0    | s                        |                            |                            |                            |
+|                  |        | 2D              | 1    | s                        | t                          |                            |                            |
+|                  |        | 3D              | 2    | s                        | t                          | r                          |                            |
+|                  |        | 1D Array        | 1    | s                        | slice                      |                            |                            |
+|                  |        | 2D Array        | 2    | s                        | t                          | slice                      |                            |
+|                  |        | 2D MSAA         | 2    | s                        | t                          | frigid                     |                            |
+|                  |        | 2D Array MSAA   | 3    | s                        | t                          | slice                      | frigid                     |
+|                  |        | 1D              | 0    | -, s                     |                            |                            |                            |
+|                  |        | 2D              | 1    | t, s                     |                            |                            |                            |
+|                  |        | 3D              | 2    | t, s                     | -, r                       |                            |                            |
 |                  | 1D Array        | 1               | slice, s |                          |                            |                            |                            |
 |                  | 2D Array        | 2               | t, s     | -, slice                 |                            |                            |                            |
 |                  | 2D MSAA         | 2               | t, s     | -, frigid                |                            |                            |                            |
 |                  | 2D Array MSAA   | 3               | t, s     | frigid, slice            |                            |                            |                            |
-| LOAD_MIP         | 0               | 1D              | 1        | s                        | mipid                      |                            |                            |
-| LOAD_MIP_PCK     |                 | 2D              | 2        | s                        | t                          | mipid                      |                            |
-| LOAD_MIP_PCK_SGN |                 | 3D              | 3        | s                        | t                          | r                          | mipid                      |
-| STORE_MIP        |                 | Cube/Cube Array | 3        | s                        | t                          | face                       | mipid                      |
-| STORE_MIP_PCK    |                 | 1D Array        | 2        | s                        | slice                      | mipid                      |                            |
-|                  |                 | 2D Array        | 3        | s                        | t                          | slice                      | mipid                      |
-|                  |                 | 1D              | 1        | mipid, s                 |                            |                            |                            |
-|                  |                 | 2D              | 2        | t, s                     | -, mipid                   |                            |                            |
-|                  |                 | 3D              | 3        | t, s                     | mipid, r                   |                            |                            |
-|                  |                 | Cube/Cube Array | 3        | t, s                     | mipid, face                |                            |                            |
+| LOAD_MIP         | 0      | 1D              | 1    | s                        | mipid                      |                            |                            |
+| LOAD_MIP_PCK     |        | 2D              | 2    | s                        | t                          | mipid                      |                            |
+| LOAD_MIP_PCK_SGN |        | 3D              | 3    | s                        | t                          | r                          | mipid                      |
+| STORE_MIP        |        | Cube/Cube Array | 3    | s                        | t                          | face                       | mipid                      |
+| STORE_MIP_PCK    |        | 1D Array        | 2    | s                        | slice                      | mipid                      |                            |
+|                  |        | 2D Array        | 3    | s                        | t                          | slice                      | mipid                      |
+|                  |        | 1D              | 1    | mipid, s                 |                            |                            |                            |
+|                  |        | 2D              | 2    | t, s                     | -, mipid                   |                            |                            |
+|                  |        | 3D              | 3    | t, s                     | mipid, r                   |                            |                            |
+|                  |        | Cube/Cube Array | 3    | t, s                     | mipid, face                |                            |                            |
 |                  | 1D Array        | 2               | slice, s | -, mipid                 |                            |                            |                            |
 |                  | 2D Array        | 3               | t, s     | mipid, slice             |                            |                            |                            |
 
@@ -4077,29 +3957,26 @@ Certain sample and gather opcodes require additional values from VGPRs beyond wh
 |                  |        | 3    | Cube(Array) | t, s                     | clamp, face                |                            |                            |
 |                  |        | 2    | 1D Array    | slice, s                 | -, clamp                   |                            |                            |
 |                  |        | 3    | 2D Array    | t, s                     | clamp, slice               |                            |                            |
-
-| Opcode       | a16[0] | acnt     | type        | VGPR <sub>n</sub> [31:0] | VGPR <sub>n+1</sub> [31:0] | VGPR <sub>n+2</sub> [31:0] | VGPR <sub>n+3</sub> [31:0] |
-|--------------|--------|----------|-------------|--------------------------|----------------------------|----------------------------|----------------------------|
-| Gather       | 0      | 1        | 2D          | s                        | t                          |                            |                            |
-|              |        | 2        | Cube(Array) | s                        | t                          | face                       |                            |
-|              |        | 2        | 2D Array    | s                        | t                          | slice                      |                            |
-|              | 1      | 1        | 2D          | t, s                     |                            |                            |                            |
-|              |        | 2        | Cube(Array) | t, s                     | -, face                    |                            |                            |
-|              |        | 2        | 2D Array    | t, s                     | -, slice                   |                            |                            |
-|              |        | 2        | 2D          | s                        | t                          | lod                        |                            |
-|              |        | 3        | Cube(Array) | s                        | t                          | face                       | lod                        |
-| Gather "_L"  | 0      | 2        | 2D Array    | s                        | t                          | lod                        |                            |
-|              |        | 3        | Cube(Array) | s                        | t                          | face                       | lod                        |
-|              |        | 3        | 2D Array    | s                        | t                          | slice                      | lod                        |
-|              | 1      | 2        | 2D          | t, s                     | -, lod                     |                            |                            |
-|              |        | 3        | Cube(Array) | t, s                     | lod, face                  |                            |                            |
-| 3            |        | 2D Array | t, s        | lod, slice               |                            |                            |                            |
-| Gather "_CL" | 0      | 2        | 2D          | s                        | t                          | clamp                      |                            |
-|              |        | 3        | Cube(Array) | s                        | t                          | face                       | clamp                      |
-|              |        | 3        | 2D Array    | s                        | t                          | slice                      | clamp                      |
-|              | 1      | 2        | 2D          | t, s                     | -, clamp                   |                            |                            |
-|              |        | 3        | Cube(Array) | t, s                     | clamp, face                |                            |                            |
-|              |        | 3        | 2D Array    | t, s                     | clamp, slice               |                            |                            |
+| Gather           | 0      | 1    | 2D          | s                        | t                          |                            |                            |
+|                  |        | 2    | Cube(Array) | s                        | t                          | face                       |                            |
+|                  |        | 2    | 2D Array    | s                        | t                          | slice                      |                            |
+|                  | 1      | 1    | 2D          | t, s                     |                            |                            |                            |
+|                  |        | 2    | Cube(Array) | t, s                     | -, face                    |                            |                            |
+|                  |        | 2    | 2D Array    | t, s                     | -, slice                   |                            |                            |
+|                  |        | 2    | 2D          | s                        | t                          | lod                        |                            |
+|                  |        | 3    | Cube(Array) | s                        | t                          | face                       | lod                        |
+| Gather "_L"      | 0      | 2    | 2D Array    | s                        | t                          | lod                        |                            |
+|                  |        | 3    | Cube(Array) | s                        | t                          | face                       | lod                        |
+|                  |        | 3    | 2D Array    | s                        | t                          | slice                      | lod                        |
+|                  | 1      | 2    | 2D          | t, s                     | -, lod                     |                            |                            |
+|                  |        | 3    | Cube(Array) | t, s                     | lod, face                  |                            |                            |
+| 3                |        | 2D Array    | t, s        | lod, slice               |                            |                            |                            |
+| Gather "_CL"     | 0      | 2    | 2D          | s                        | t                          | clamp                      |                            |
+|                  |        | 3    | Cube(Array) | s                        | t                          | face                       | clamp                      |
+|                  |        | 3    | 2D Array    | s                        | t                          | slice                      | clamp                      |
+|                  | 1      | 2    | 2D          | t, s                     | -, clamp                   |                            |                            |
+|                  |        | 3    | Cube(Array) | t, s                     | clamp, face                |                            |                            |
+|                  |        | 3    | 2D Array    | t, s                     | clamp, slice               |                            |                            |
 
 The table below lists and briefly describes the legal suffixes for image instructions:
 
@@ -4483,13 +4360,10 @@ The instruction specifies which VGPR supplies the address (per work-item), and t
 
 Diagram of the FLAT instruction field layout. The 64-bit instruction is divided into several fields: VDST (8 bits, bits 63-56), SVE (1 bit, bit 55), SADDR (8 bits, bits 54-47), OP (8 bits, bits 46-39), SEG (1 bit, bit 38), SLC (1 bit, bit 37), GLC (1 bit, bit 36), DLC (1 bit, bit 35), DATA (32 bits, bits 34-3), and ADDR (32 bits, bits 2-0). The top 31 bits are labeled with binary values: 1 1 0 1 1 1. The bottom bit is labeled 0.
 
-| Field | Size | Description                                                                                                                                                                                                                                                                                                                                              |
-|-------|------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| OP    | 8    | Opcode: <i>see next table</i>                                                                                                                                                                                                                                                                                                                            |
-| ADDR  | 8    | VGPR that holds address or offset. For 64-bit addresses, ADDR has the LSB's and ADDR+1 has the MSBs. For offset a single VGPR has a 32 bit unsigned offset. For FLAT_*: specifies an address. For GLOBAL_* when SADDR is NULL: specifies an address. For GLOBAL_* when SADDR is not NULL: specifies an offset. For SCRATCH, specifies an offset if SVE=1 |
-
 | Field  | Size | Description                                                                                                                                                                                                                                                                                                                    |
 |--------|------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| OP     | 8    | Opcode: <i>see next table</i>                                                                                                                                                                                                                                                                                                  |
+| ADDR   | 8    | VGPR that holds address or offset. For 64-bit addresses, ADDR has the LSB's and ADDR+1 has the MSBs. For offset a single VGPR has a 32 bit unsigned offset. For FLAT_*: specifies an address. For GLOBAL_* when SADDR is NULL: specifies an address. For GLOBAL_* when SADDR is not NULL: specifies an offset. For SCRATCH, specifies an offset if SVE=1 |
 | DATA   | 8    | VGPR that holds the first DWORD of store-data. Instructions can use 0-4 DWORDs.                                                                                                                                                                                                                                                |
 | VDST   | 8    | VGPR destination for data returned to the shader, either from LOADs or Atomics with GLC=1 (return pre-op value).                                                                                                                                                                                                               |
 | SLC    | 1    | System Level Coherent. Used in conjunction with GLC to determine cache policies.                                                                                                                                                                                                                                               |
@@ -4530,38 +4404,35 @@ Table 56. Instructions
 | none                    | GLOBAL_STORE_ADDTID_B32   | none                     |
 | FLAT_ATOMIC_SWAP_B32    | GLOBAL_ATOMIC_SWAP_B32    | none                     |
 | FLAT_ATOMIC_CMPSWAP_B32 | GLOBAL_ATOMIC_CMPSWAP_B32 | none                     |
-
-| Flat                    | GLOBAL                                           | Scratch |
-|-------------------------|--------------------------------------------------|---------|
-| FLAT_ATOMIC_ADD_U32     | GLOBAL_ATOMIC_ADD_U32                            | none    |
-| FLAT_ATOMIC_ADD_F32     | GLOBAL_ATOMIC_ADD_F32                            | none    |
-| FLAT_ATOMIC_SUB_U32     | GLOBAL_ATOMIC_SUB_U32                            | none    |
-| FLAT_ATOMIC_MIN_I32     | GLOBAL_ATOMIC_MIN_I32                            | none    |
-| FLAT_ATOMIC_MIN_U32     | GLOBAL_ATOMIC_MIN_U32                            | none    |
-| FLAT_ATOMIC_MAX_I32     | GLOBAL_ATOMIC_MAX_I32                            | none    |
-| FLAT_ATOMIC_MAX_U32     | GLOBAL_ATOMIC_MAX_U32                            | none    |
-| FLAT_ATOMIC_AND_B32     | GLOBAL_ATOMIC_AND_B32                            | none    |
-| FLAT_ATOMIC_OR_B32      | GLOBAL_ATOMIC_OR_B32                             | none    |
-| FLAT_ATOMIC_XOR_B32     | GLOBAL_ATOMIC_XOR_B32                            | none    |
-| FLAT_ATOMIC_INC_U32     | GLOBAL_ATOMIC_INC_U32                            | none    |
-| FLAT_ATOMIC_DEC_U32     | GLOBAL_ATOMIC_DEC_U32                            | none    |
-| FLAT_ATOMIC_CMPSWAP_F32 | GLOBAL_ATOMIC_CMPSWAP_F32                        | none    |
-| FLAT_ATOMIC_MIN_F32     | GLOBAL_ATOMIC_MIN_F32                            | none    |
-| FLAT_ATOMIC_MAX_F32     | GLOBAL_ATOMIC_MAX_F32                            | none    |
-| FLAT_ATOMIC_SWAP_B64    | GLOBAL_ATOMIC_SWAP_B64                           | none    |
-| FLAT_ATOMIC_CMPSWAP_B64 | GLOBAL_ATOMIC_CMPSWAP_B64                        | none    |
-| FLAT_ATOMIC_ADD_U64     | GLOBAL_ATOMIC_ADD_U64                            | none    |
-| FLAT_ATOMIC_SUB_U64     | GLOBAL_ATOMIC_SUB_U64                            | none    |
-| FLAT_ATOMIC_MIN_I64     | GLOBAL_ATOMIC_MIN_I64                            | none    |
-| FLAT_ATOMIC_MIN_U64     | GLOBAL_ATOMIC_MIN_U64                            | none    |
-| FLAT_ATOMIC_MAX_I64     | GLOBAL_ATOMIC_MAX_I64                            | none    |
-| FLAT_ATOMIC_MAX_U64     | GLOBAL_ATOMIC_MAX_U64                            | none    |
-| FLAT_ATOMIC_AND_B64     | GLOBAL_ATOMIC_AND_B64                            | none    |
-| FLAT_ATOMIC_OR_B64      | GLOBAL_ATOMIC_OR_B64                             | none    |
-| FLAT_ATOMIC_XOR_B64     | GLOBAL_ATOMIC_XOR_B64                            | none    |
-| FLAT_ATOMIC_INC_U64     | GLOBAL_ATOMIC_INC_U64                            | none    |
-| FLAT_ATOMIC_DEC_U64     | GLOBAL_ATOMIC_DEC_U64                            | none    |
-| none                    | GLOBAL_ATOMIC_CSUB_U32<br>(GLC must be set to 1) | none    |
+| FLAT_ATOMIC_ADD_U32     | GLOBAL_ATOMIC_ADD_U32     | none                     |
+| FLAT_ATOMIC_ADD_F32     | GLOBAL_ATOMIC_ADD_F32     | none                     |
+| FLAT_ATOMIC_SUB_U32     | GLOBAL_ATOMIC_SUB_U32     | none                     |
+| FLAT_ATOMIC_MIN_I32     | GLOBAL_ATOMIC_MIN_I32     | none                     |
+| FLAT_ATOMIC_MIN_U32     | GLOBAL_ATOMIC_MIN_U32     | none                     |
+| FLAT_ATOMIC_MAX_I32     | GLOBAL_ATOMIC_MAX_I32     | none                     |
+| FLAT_ATOMIC_MAX_U32     | GLOBAL_ATOMIC_MAX_U32     | none                     |
+| FLAT_ATOMIC_AND_B32     | GLOBAL_ATOMIC_AND_B32     | none                     |
+| FLAT_ATOMIC_OR_B32      | GLOBAL_ATOMIC_OR_B32      | none                     |
+| FLAT_ATOMIC_XOR_B32     | GLOBAL_ATOMIC_XOR_B32     | none                     |
+| FLAT_ATOMIC_INC_U32     | GLOBAL_ATOMIC_INC_U32     | none                     |
+| FLAT_ATOMIC_DEC_U32     | GLOBAL_ATOMIC_DEC_U32     | none                     |
+| FLAT_ATOMIC_CMPSWAP_F32 | GLOBAL_ATOMIC_CMPSWAP_F32 | none                     |
+| FLAT_ATOMIC_MIN_F32     | GLOBAL_ATOMIC_MIN_F32     | none                     |
+| FLAT_ATOMIC_MAX_F32     | GLOBAL_ATOMIC_MAX_F32     | none                     |
+| FLAT_ATOMIC_SWAP_B64    | GLOBAL_ATOMIC_SWAP_B64    | none                     |
+| FLAT_ATOMIC_CMPSWAP_B64 | GLOBAL_ATOMIC_CMPSWAP_B64 | none                     |
+| FLAT_ATOMIC_ADD_U64     | GLOBAL_ATOMIC_ADD_U64     | none                     |
+| FLAT_ATOMIC_SUB_U64     | GLOBAL_ATOMIC_SUB_U64     | none                     |
+| FLAT_ATOMIC_MIN_I64     | GLOBAL_ATOMIC_MIN_I64     | none                     |
+| FLAT_ATOMIC_MIN_U64     | GLOBAL_ATOMIC_MIN_U64     | none                     |
+| FLAT_ATOMIC_MAX_I64     | GLOBAL_ATOMIC_MAX_I64     | none                     |
+| FLAT_ATOMIC_MAX_U64     | GLOBAL_ATOMIC_MAX_U64     | none                     |
+| FLAT_ATOMIC_AND_B64     | GLOBAL_ATOMIC_AND_B64     | none                     |
+| FLAT_ATOMIC_OR_B64      | GLOBAL_ATOMIC_OR_B64      | none                     |
+| FLAT_ATOMIC_XOR_B64     | GLOBAL_ATOMIC_XOR_B64     | none                     |
+| FLAT_ATOMIC_INC_U64     | GLOBAL_ATOMIC_INC_U64     | none                     |
+| FLAT_ATOMIC_DEC_U64     | GLOBAL_ATOMIC_DEC_U64     | none                     |
+| none                    | GLOBAL_ATOMIC_CSUB_U32<br>(GLC must be set to 1) | none                     |
 
 ## 11.1. Instructions
 
@@ -5208,20 +5079,17 @@ This "short stack" has a limited size beyond that the stack wraps around and ove
 
 **`DS_BVH_STACK_RTN_B32`** `vgpr(dst)`, `vgpr(stack_addr)`, `vgpr(lvaddr)`, `vgpr[4](data)`
 
-| Field   | Size | Description                                                                                   |
-|---------|------|-----------------------------------------------------------------------------------------------|
-| OP      | 8    | Instruction == <code>DS_STORE_STACK</code> (LDS only)                                         |
-| GDS     | 1    | 1 = GDS, 0 = LDS (must be: 0 = LDS)                                                           |
-| OFFSET0 | 8    | unused                                                                                        |
-| OFFSET1 | 8    | bits[5:4] carry StackSize (8, 16, 32, 64)                                                     |
-| VDST    | 8    | Destination VGPR for resulting address (e.g. X or top of stack)<br>Returns the next "LV addr" |
-
-| Field | Size | Description                                                                                                                                                                                                                                                                                                                                                                         |
-|-------|------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| ADDR  | 8    | STACK_VGPR: Both a source and destination VGPR: supplies the LDS stack address and is written back with updated address.<br>stack_addr[31:18] = stack_base[15:2] : stack base address (relative to allocated LDS space).<br>stack_addr[17:16] = stack_size[1:0] : 0=8DWORDs, 1=16, 2=32, 3=64 DWORDs per thread<br>stack_addr[15:0] = stack_index[15:0]. (bits [1:0] must be zero). |
-| DATA0 | 8    | LVADDR: Last Visited Address. Is compared with data values (next field) to determine the next node to visit.                                                                                                                                                                                                                                                                        |
-| DATA1 | 8    | 4 VGPRs (X,Y,Z,W).                                                                                                                                                                                                                                                                                                                                                                  |
-| M0    | 16   | Unused.                                                                                                                                                                                                                                                                                                                                                                             |
+| Field   | Size | Description                                                                                                                                                                                                                                                                                                                                                                         |
+|---------|------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| OP      | 8    | Instruction == <code>DS_STORE_STACK</code> (LDS only)                                                                                                                                                                                                                                                                                                                               |
+| GDS     | 1    | 1 = GDS, 0 = LDS (must be: 0 = LDS)                                                                                                                                                                                                                                                                                                                                                 |
+| OFFSET0 | 8    | unused                                                                                                                                                                                                                                                                                                                                                                              |
+| OFFSET1 | 8    | bits[5:4] carry StackSize (8, 16, 32, 64)                                                                                                                                                                                                                                                                                                                                           |
+| VDST    | 8    | Destination VGPR for resulting address (e.g. X or top of stack)<br>Returns the next "LV addr"                                                                                                                                                                                                                                                                                       |
+| ADDR    | 8    | STACK_VGPR: Both a source and destination VGPR: supplies the LDS stack address and is written back with updated address.<br>stack_addr[31:18] = stack_base[15:2] : stack base address (relative to allocated LDS space).<br>stack_addr[17:16] = stack_size[1:0] : 0=8DWORDs, 1=16, 2=32, 3=64 DWORDs per thread<br>stack_addr[15:0] = stack_index[15:0]. (bits [1:0] must be zero). |
+| DATA0   | 8    | LVADDR: Last Visited Address. Is compared with data values (next field) to determine the next node to visit.                                                                                                                                                                                                                                                                        |
+| DATA1   | 8    | 4 VGPRs (X,Y,Z,W).                                                                                                                                                                                                                                                                                                                                                                  |
+| M0      | 16   | Unused.                                                                                                                                                                                                                                                                                                                                                                             |
 
 ## 12.6. Global Data Share
 
@@ -5251,15 +5119,12 @@ Table 61. GDS Streamout Register Targets
 
 Table 62. DS\_ADD\_GS\_REG\_RTN\* and DS\_SUB\_GS\_REG\_RTN:
 
-| Field   | Size | Description                                                  |
-|---------|------|--------------------------------------------------------------|
-| OP      | 8    | ds_add_gs_reg_rtn, ds_sub_gs_reg_rtn                         |
-| OFFSET0 | 8    | gs_reg_index[3:0]=offset0[5:2] indexes the GS register array |
-| VDST    | 8    | VGPR to write pre-op value to                                |
-
-| Field | Size | Description                                                                             |
-|-------|------|-----------------------------------------------------------------------------------------|
-| DATA0 | 8    | operand, from the first valid data; if no valid data (i.e., EXEC==0), the operand is 0. |
+| Field   | Size | Description                                                                             |
+|---------|------|-----------------------------------------------------------------------------------------|
+| OP      | 8    | ds_add_gs_reg_rtn, ds_sub_gs_reg_rtn                                                    |
+| OFFSET0 | 8    | gs_reg_index[3:0]=offset0[5:2] indexes the GS register array                            |
+| VDST    | 8    | VGPR to write pre-op value to                                                           |
+| DATA0   | 8    | operand, from the first valid data; if no valid data (i.e., EXEC==0), the operand is 0. |
 
 - The input comes from the first valid data of DATA0.
 - If offset[5:2] is 8-15: The operation is mapped to 64b operation to take 2 dst registers as a combined one. The source data is still 32b. The post-op result is 64b and store back to the 2 dst registers. The return value takes 2 VGPRs.
@@ -5834,51 +5699,48 @@ Table 69. SOP1 Fields
 
 Table 70. SOP1 Opcodes
 
-| Opcode # | Name           | Opcode # | Name                   |
-|----------|----------------|----------|------------------------|
-| 0        | S_MOV_B32      | 42       | S_XNOR_SAVEXEC_B32     |
-| 1        | S_MOV_B64      | 43       | S_XNOR_SAVEXEC_B64     |
-| 2        | S_CMOV_B32     | 44       | S_AND_NOT0_SAVEXEC_B32 |
-| 3        | S_CMOV_B64     | 45       | S_AND_NOT0_SAVEXEC_B64 |
-| 4        | S_BREV_B32     | 46       | S_OR_NOT0_SAVEXEC_B32  |
-| 5        | S_BREV_B64     | 47       | S_OR_NOT0_SAVEXEC_B64  |
-| 8        | S_CTZ_I32_B32  | 48       | S_AND_NOT1_SAVEXEC_B32 |
-| 9        | S_CTZ_I32_B64  | 49       | S_AND_NOT1_SAVEXEC_B64 |
-| 10       | S_CLZ_I32_U32  | 50       | S_OR_NOT1_SAVEXEC_B32  |
-| 11       | S_CLZ_I32_U64  | 51       | S_OR_NOT1_SAVEXEC_B64  |
-| 12       | S_CLS_I32      | 52       | S_AND_NOT0_WREXEC_B32  |
-| 13       | S_CLS_I32_I64  | 53       | S_AND_NOT0_WREXEC_B64  |
-| 14       | S_SEXT_I32_I8  | 54       | S_AND_NOT1_WREXEC_B32  |
-| 15       | S_SEXT_I32_I16 | 55       | S_AND_NOT1_WREXEC_B64  |
-
-| Opcode # | Name                   | Opcode # | Name              |
-|----------|------------------------|----------|-------------------|
-| 16       | S_BITSET0_B32          | 64       | S_MOVRELS_B32     |
-| 17       | S_BITSET0_B64          | 65       | S_MOVRELS_B64     |
-| 18       | S_BITSET1_B32          | 66       | S_MOVRELD_B32     |
-| 19       | S_BITSET1_B64          | 67       | S_MOVRELD_B64     |
-| 20       | S_BITREPLICATE_B64_B32 | 68       | S_MOVRELSD_2_B32  |
-| 21       | S_ABS_I32              | 71       | S_GETPC_B64       |
-| 22       | S_BCNT0_I32_B32        | 72       | S_SETPC_B64       |
-| 23       | S_BCNT0_I32_B64        | 73       | S_SWAPPC_B64      |
-| 24       | S_BCNT1_I32_B32        | 74       | S_RFE_B64         |
-| 25       | S_BCNT1_I32_B64        | 76       | S_SENDMSG_RTN_B32 |
-| 26       | S_QUADMASK_B32         | 77       | S_SENDMSG_RTN_B64 |
-| 27       | S_QUADMASK_B64         | 96       | S_CEIL_F32        |
-| 28       | S_WQM_B32              | 97       | S_FLOOR_F32       |
-| 29       | S_WQM_B64              | 98       | S_TRUNC_F32       |
-| 30       | S_NOT_B32              | 99       | S_RNDNE_F32       |
-| 31       | S_NOT_B64              | 100      | S_CVT_F32_I32     |
-| 32       | S_AND_SAVEXEC_B32      | 101      | S_CVT_F32_U32     |
-| 33       | S_AND_SAVEXEC_B64      | 102      | S_CVT_I32_F32     |
-| 34       | S_OR_SAVEXEC_B32       | 103      | S_CVT_U32_F32     |
-| 35       | S_OR_SAVEXEC_B64       | 104      | S_CVT_F16_F32     |
-| 36       | S_XOR_SAVEXEC_B32      | 105      | S_CVT_F32_F16     |
-| 37       | S_XOR_SAVEXEC_B64      | 106      | S_CVT_HI_F32_F16  |
-| 38       | S_NAND_SAVEXEC_B32     | 107      | S_CEIL_F16        |
-| 39       | S_NAND_SAVEXEC_B64     | 108      | S_FLOOR_F16       |
-| 40       | S_NOR_SAVEXEC_B32      | 109      | S_TRUNC_F16       |
-| 41       | S_NOR_SAVEXEC_B64      | 110      | S_RNDNE_F16       |
+| Opcode # | Name                   | Opcode # | Name                   |
+|----------|------------------------|----------|------------------------|
+| 0        | S_MOV_B32              | 42       | S_XNOR_SAVEXEC_B32     |
+| 1        | S_MOV_B64              | 43       | S_XNOR_SAVEXEC_B64     |
+| 2        | S_CMOV_B32             | 44       | S_AND_NOT0_SAVEXEC_B32 |
+| 3        | S_CMOV_B64             | 45       | S_AND_NOT0_SAVEXEC_B64 |
+| 4        | S_BREV_B32             | 46       | S_OR_NOT0_SAVEXEC_B32  |
+| 5        | S_BREV_B64             | 47       | S_OR_NOT0_SAVEXEC_B64  |
+| 8        | S_CTZ_I32_B32          | 48       | S_AND_NOT1_SAVEXEC_B32 |
+| 9        | S_CTZ_I32_B64          | 49       | S_AND_NOT1_SAVEXEC_B64 |
+| 10       | S_CLZ_I32_U32          | 50       | S_OR_NOT1_SAVEXEC_B32  |
+| 11       | S_CLZ_I32_U64          | 51       | S_OR_NOT1_SAVEXEC_B64  |
+| 12       | S_CLS_I32              | 52       | S_AND_NOT0_WREXEC_B32  |
+| 13       | S_CLS_I32_I64          | 53       | S_AND_NOT0_WREXEC_B64  |
+| 14       | S_SEXT_I32_I8          | 54       | S_AND_NOT1_WREXEC_B32  |
+| 15       | S_SEXT_I32_I16         | 55       | S_AND_NOT1_WREXEC_B64  |
+| 16       | S_BITSET0_B32          | 64       | S_MOVRELS_B32          |
+| 17       | S_BITSET0_B64          | 65       | S_MOVRELS_B64          |
+| 18       | S_BITSET1_B32          | 66       | S_MOVRELD_B32          |
+| 19       | S_BITSET1_B64          | 67       | S_MOVRELD_B64          |
+| 20       | S_BITREPLICATE_B64_B32 | 68       | S_MOVRELSD_2_B32       |
+| 21       | S_ABS_I32              | 71       | S_GETPC_B64            |
+| 22       | S_BCNT0_I32_B32        | 72       | S_SETPC_B64            |
+| 23       | S_BCNT0_I32_B64        | 73       | S_SWAPPC_B64           |
+| 24       | S_BCNT1_I32_B32        | 74       | S_RFE_B64              |
+| 25       | S_BCNT1_I32_B64        | 76       | S_SENDMSG_RTN_B32      |
+| 26       | S_QUADMASK_B32         | 77       | S_SENDMSG_RTN_B64      |
+| 27       | S_QUADMASK_B64         | 96       | S_CEIL_F32             |
+| 28       | S_WQM_B32              | 97       | S_FLOOR_F32            |
+| 29       | S_WQM_B64              | 98       | S_TRUNC_F32            |
+| 30       | S_NOT_B32              | 99       | S_RNDNE_F32            |
+| 31       | S_NOT_B64              | 100      | S_CVT_F32_I32          |
+| 32       | S_AND_SAVEXEC_B32      | 101      | S_CVT_F32_U32          |
+| 33       | S_AND_SAVEXEC_B64      | 102      | S_CVT_I32_F32          |
+| 34       | S_OR_SAVEXEC_B32       | 103      | S_CVT_U32_F32          |
+| 35       | S_OR_SAVEXEC_B64       | 104      | S_CVT_F16_F32          |
+| 36       | S_XOR_SAVEXEC_B32      | 105      | S_CVT_F32_F16          |
+| 37       | S_XOR_SAVEXEC_B64      | 106      | S_CVT_HI_F32_F16       |
+| 38       | S_NAND_SAVEXEC_B32     | 107      | S_CEIL_F16             |
+| 39       | S_NAND_SAVEXEC_B64     | 108      | S_FLOOR_F16            |
+| 40       | S_NOR_SAVEXEC_B32      | 109      | S_TRUNC_F16            |
+| 41       | S_NOR_SAVEXEC_B64      | 110      | S_RNDNE_F16            |
 
 ### 15.1.4. SOPC
 
@@ -5950,9 +5812,6 @@ Table 72. SOPC Opcodes
 | 11       | S_CMP_LE_U32  | 73       | S_CMP_NGE_F32 |
 | 12       | S_BITCMP0_B32 | 89       | S_CMP_NGE_F16 |
 | 13       | S_BITCMP1_B32 | 74       | S_CMP_NLG_F32 |
-
-| Opcode # | Name          | Opcode # | Name          |
-|----------|---------------|----------|---------------|
 | 14       | S_BITCMP0_B64 | 90       | S_CMP_NLG_F16 |
 | 15       | S_BITCMP1_B64 | 75       | S_CMP_NGT_F32 |
 | 16       | S_CMP_EQ_U64  | 91       | S_CMP_NGT_F16 |
@@ -6215,23 +6074,20 @@ Table 80. VOP1 Opcodes
 | 10       | V_CVT_F16_F32         | 63       | V_FREXP_EXP_I32_F32 |
 | 11       | V_CVT_F32_F16         | 64       | V_FREXP_MANT_F32    |
 | 12       | V_CVT_NEAREST_I32_F32 | 66       | V_MOVRELD_B32       |
-
-| Opcode # | Name                | Opcode # | Name                |
-|----------|---------------------|----------|---------------------|
-| 13       | V_CVT_FLOOR_I32_F32 | 67       | V_MOVRELS_B32       |
-| 14       | V_CVT_OFF_F32_I4    | 68       | V_MOVRELSD_B32      |
-| 15       | V_CVT_F32_F64       | 72       | V_MOVRELSD_2_B32    |
-| 16       | V_CVT_F64_F32       | 80       | V_CVT_F16_U16       |
-| 17       | V_CVT_F32_UBYTE0    | 81       | V_CVT_F16_I16       |
-| 18       | V_CVT_F32_UBYTE1    | 82       | V_CVT_U16_F16       |
-| 19       | V_CVT_F32_UBYTE2    | 83       | V_CVT_I16_F16       |
-| 20       | V_CVT_F32_UBYTE3    | 84       | V_RCP_F16           |
-| 21       | V_CVT_U32_F64       | 85       | V_SQRT_F16          |
-| 22       | V_CVT_F64_U32       | 86       | V_RSQ_F16           |
-| 23       | V_TRUNC_F64         | 87       | V_LOG_F16           |
-| 24       | V_CEIL_F64          | 88       | V_EXP_F16           |
-| 25       | V_RNDNE_F64         | 89       | V_FREXP_MANT_F16    |
-| 26       | V_FLOOR_F64         | 90       | V_FREXP_EXP_I16_F16 |
+| 13       | V_CVT_FLOOR_I32_F32   | 67       | V_MOVRELS_B32       |
+| 14       | V_CVT_OFF_F32_I4      | 68       | V_MOVRELSD_B32      |
+| 15       | V_CVT_F32_F64         | 72       | V_MOVRELSD_2_B32    |
+| 16       | V_CVT_F64_F32         | 80       | V_CVT_F16_U16       |
+| 17       | V_CVT_F32_UBYTE0      | 81       | V_CVT_F16_I16       |
+| 18       | V_CVT_F32_UBYTE1      | 82       | V_CVT_U16_F16       |
+| 19       | V_CVT_F32_UBYTE2      | 83       | V_CVT_I16_F16       |
+| 20       | V_CVT_F32_UBYTE3      | 84       | V_RCP_F16           |
+| 21       | V_CVT_U32_F64         | 85       | V_SQRT_F16          |
+| 22       | V_CVT_F64_U32         | 86       | V_RSQ_F16           |
+| 23       | V_TRUNC_F64           | 87       | V_LOG_F16           |
+| 24       | V_CEIL_F64            | 88       | V_EXP_F16           |
+| 25       | V_RNDNE_F64           | 89       | V_FREXP_MANT_F16    |
+| 26       | V_FLOOR_F64           | 90       | V_FREXP_EXP_I16_F16 |
 | 27       | V_PIPEFLUSH         | 91       | V_FLOOR_F16         |
 | 28       | V_MOV_B16           | 92       | V_CEIL_F16          |
 | 32       | V_FRACT_F32         | 93       | V_TRUNC_F16         |
@@ -6348,23 +6204,20 @@ Table 82. VOPC Fields
 
 Table 83. VOPC Opcodes
 
-| Opcode # | Name          | Opcode # | Name           |
-|----------|---------------|----------|----------------|
-| 0        | V_CMP_F_F16   | 128      | V_CMPX_F_F16   |
-| 1        | V_CMP_LT_F16  | 129      | V_CMPX_LT_F16  |
-| 2        | V_CMP_EQ_F16  | 130      | V_CMPX_EQ_F16  |
-| 3        | V_CMP_LE_F16  | 131      | V_CMPX_LE_F16  |
-| 4        | V_CMP_GT_F16  | 132      | V_CMPX_GT_F16  |
-| 5        | V_CMP_LG_F16  | 133      | V_CMPX_LG_F16  |
-| 6        | V_CMP_GE_F16  | 134      | V_CMPX_GE_F16  |
-| 7        | V_CMP_O_F16   | 135      | V_CMPX_O_F16   |
-| 8        | V_CMP_U_F16   | 136      | V_CMPX_U_F16   |
-| 9        | V_CMP_NGE_F16 | 137      | V_CMPX_NGE_F16 |
-| 10       | V_CMP_NLG_F16 | 138      | V_CMPX_NLG_F16 |
-| 11       | V_CMP_NGT_F16 | 139      | V_CMPX_NGT_F16 |
-
-| Opcode # | Name          | Opcode # | Name           |
-|----------|---------------|----------|----------------|
+| Opcode # | Name            | Opcode # | Name             |
+|----------|-----------------|----------|------------------|
+| 0        | V_CMP_F_F16     | 128      | V_CMPX_F_F16     |
+| 1        | V_CMP_LT_F16    | 129      | V_CMPX_LT_F16    |
+| 2        | V_CMP_EQ_F16    | 130      | V_CMPX_EQ_F16    |
+| 3        | V_CMP_LE_F16    | 131      | V_CMPX_LE_F16    |
+| 4        | V_CMP_GT_F16    | 132      | V_CMPX_GT_F16    |
+| 5        | V_CMP_LG_F16    | 133      | V_CMPX_LG_F16    |
+| 6        | V_CMP_GE_F16    | 134      | V_CMPX_GE_F16    |
+| 7        | V_CMP_O_F16     | 135      | V_CMPX_O_F16     |
+| 8        | V_CMP_U_F16     | 136      | V_CMPX_U_F16     |
+| 9        | V_CMP_NGE_F16   | 137      | V_CMPX_NGE_F16   |
+| 10       | V_CMP_NLG_F16   | 138      | V_CMPX_NLG_F16   |
+| 11       | V_CMP_NGT_F16   | 139      | V_CMPX_NGT_F16   |
 | 12       | V_CMP_NLE_F16 | 140      | V_CMPX_NLE_F16 |
 | 13       | V_CMP_NEQ_F16 | 141      | V_CMPX_NEQ_F16 |
 | 14       | V_CMP_NLT_F16 | 142      | V_CMPX_NLT_F16 |
@@ -6412,9 +6265,6 @@ Table 83. VOPC Opcodes
 | 59       | V_CMP_LE_U16  | 187      | V_CMPX_LE_U16  |
 | 60       | V_CMP_GT_U16  | 188      | V_CMPX_GT_U16  |
 | 61       | V_CMP_NE_U16  | 189      | V_CMPX_NE_U16  |
-
-| Opcode # | Name            | Opcode # | Name             |
-|----------|-----------------|----------|------------------|
 | 62       | V_CMP_GE_U16    | 190      | V_CMPX_GE_U16    |
 | 64       | V_CMP_F_I32     | 192      | V_CMPX_F_I32     |
 | 65       | V_CMP_LT_I32    | 193      | V_CMPX_LT_I32    |
@@ -6518,15 +6368,12 @@ Table 84. VOP3 Fields
 
 Table 85. VOP3 Opcodes
 
-| Opcode # | Name                | Opcode # | Name             |
-|----------|---------------------|----------|------------------|
-| 384      | V_NOP               | 803      | V_CVT_PK_U16_U32 |
-| 385      | V_MOV_B32           | 804      | V_CVT_PK_I16_I32 |
-| 386      | V_READFIRSTLANE_B32 | 805      | V_SUB_NC_I32     |
-| 387      | V_CVT_I32_F64       | 806      | V_ADD_NC_I32     |
-
 | Opcode # | Name                  | Opcode # | Name             |
 |----------|-----------------------|----------|------------------|
+| 384      | V_NOP                 | 803      | V_CVT_PK_U16_U32 |
+| 385      | V_MOV_B32             | 804      | V_CVT_PK_I16_I32 |
+| 386      | V_READFIRSTLANE_B32   | 805      | V_SUB_NC_I32     |
+| 387      | V_CVT_I32_F64         | 806      | V_ADD_NC_I32     |
 | 388      | V_CVT_F64_I32         | 807      | V_ADD_F64        |
 | 389      | V_CVT_F32_I32         | 808      | V_MUL_F64        |
 | 390      | V_CVT_F32_U32         | 809      | V_MIN_F64        |
@@ -6574,159 +6421,147 @@ Table 85. VOP3 Opcodes
 | 443      | V_CLS_I32             | 24       | V_CMP_U_F32      |
 | 444      | V_FREXP_EXP_I32_F64   | 25       | V_CMP_NGE_F32    |
 | 445      | V_FREXP_MANT_F64      | 26       | V_CMP_NLG_F32    |
-
-| Opcode # | Name                | Opcode # | Name          |
-|----------|---------------------|----------|---------------|
-| 446      | V_FRACT_F64         | 27       | V_CMP_NGT_F32 |
-| 447      | V_FREXP_EXP_I32_F32 | 28       | V_CMP_NLE_F32 |
-| 448      | V_FREXP_MANT_F32    | 29       | V_CMP_NEQ_F32 |
-| 450      | V_MOVRELD_B32       | 30       | V_CMP_NLT_F32 |
-| 451      | V_MOVRELS_B32       | 31       | V_CMP_T_F32   |
-| 452      | V_MOVRELSD_B32      | 32       | V_CMP_F_F64   |
-| 456      | V_MOVRELSD_2_B32    | 33       | V_CMP_LT_F64  |
-| 464      | V_CVT_F16_U16       | 34       | V_CMP_EQ_F64  |
-| 465      | V_CVT_F16_I16       | 35       | V_CMP_LE_F64  |
-| 466      | V_CVT_U16_F16       | 36       | V_CMP_GT_F64  |
-| 467      | V_CVT_I16_F16       | 37       | V_CMP_LG_F64  |
-| 468      | V_RCP_F16           | 38       | V_CMP_GE_F64  |
-| 469      | V_SQRT_F16          | 39       | V_CMP_O_F64   |
-| 470      | V_RSQ_F16           | 40       | V_CMP_U_F64   |
-| 471      | V_LOG_F16           | 41       | V_CMP_NGE_F64 |
-| 472      | V_EXP_F16           | 42       | V_CMP_NLG_F64 |
-| 473      | V_FREXP_MANT_F16    | 43       | V_CMP_NGT_F64 |
-| 474      | V_FREXP_EXP_I16_F16 | 44       | V_CMP_NLE_F64 |
-| 475      | V_FLOOR_F16         | 45       | V_CMP_NEQ_F64 |
-| 476      | V_CEIL_F16          | 46       | V_CMP_NLT_F64 |
-| 477      | V_TRUNC_F16         | 47       | V_CMP_T_F64   |
-| 478      | V_RNDNE_F16         | 49       | V_CMP_LT_I16  |
-| 479      | V_FRACT_F16         | 50       | V_CMP_EQ_I16  |
-| 480      | V_SIN_F16           | 51       | V_CMP_LE_I16  |
-| 481      | V_COS_F16           | 52       | V_CMP_GT_I16  |
-| 482      | V_SAT_PK_U8_I16     | 53       | V_CMP_NE_I16  |
-| 483      | V_CVT_NORM_I16_F16  | 54       | V_CMP_GE_I16  |
-| 484      | V_CVT_NORM_U16_F16  | 57       | V_CMP_LT_U16  |
-| 489      | V_NOT_B16           | 58       | V_CMP_EQ_U16  |
-| 490      | V_CVT_I32_I16       | 59       | V_CMP_LE_U16  |
-| 491      | V_CVT_U32_U16       | 60       | V_CMP_GT_U16  |
-| 257      | V_CNDMASK_B32       | 61       | V_CMP_NE_U16  |
-| 259      | V_ADD_F32           | 62       | V_CMP_GE_U16  |
-| 260      | V_SUB_F32           | 64       | V_CMP_F_I32   |
-| 261      | V_SUBREV_F32        | 65       | V_CMP_LT_I32  |
-| 262      | V_FMAC_DX9_ZERO_F32 | 66       | V_CMP_EQ_I32  |
-| 263      | V_MUL_DX9_ZERO_F32  | 67       | V_CMP_LE_I32  |
-| 264      | V_MUL_F32           | 68       | V_CMP_GT_I32  |
-| 265      | V_MUL_I32_I24       | 69       | V_CMP_NE_I32  |
-| 266      | V_MUL_HI_I32_I24    | 70       | V_CMP_GE_I32  |
-| 267      | V_MUL_U32_U24       | 71       | V_CMP_T_I32   |
-| 268      | V_MUL_HI_U32_U24    | 72       | V_CMP_F_U32   |
-| 271      | V_MIN_F32           | 73       | V_CMP_LT_U32  |
-| 272      | V_MAX_F32           | 74       | V_CMP_EQ_U32  |
-| 273      | V_MIN_I32           | 75       | V_CMP_LE_U32  |
-| 274      | V_MAX_I32           | 76       | V_CMP_GT_U32  |
-| 275      | V_MIN_U32           | 77       | V_CMP_NE_U32  |
-
-| Opcode # | Name                 | Opcode # | Name            |
-|----------|----------------------|----------|-----------------|
-| 276      | V_MAX_U32            | 78       | V_CMP_GE_U32    |
-| 280      | V_LSHLREV_B32        | 79       | V_CMP_T_U32     |
-| 281      | V_LSHRREV_B32        | 80       | V_CMP_F_I64     |
-| 282      | V_ASHRREV_I32        | 81       | V_CMP_LT_I64    |
-| 283      | V_AND_B32            | 82       | V_CMP_EQ_I64    |
-| 284      | V_OR_B32             | 83       | V_CMP_LE_I64    |
-| 285      | V_XOR_B32            | 84       | V_CMP_GT_I64    |
-| 286      | V_XNOR_B32           | 85       | V_CMP_NE_I64    |
-| 293      | V_ADD_NC_U32         | 86       | V_CMP_GE_I64    |
-| 294      | V_SUB_NC_U32         | 87       | V_CMP_T_I64     |
-| 295      | V_SUBREV_NC_U32      | 88       | V_CMP_F_U64     |
-| 299      | V_FMAC_F32           | 89       | V_CMP_LT_U64    |
-| 303      | V_CVT_PK_RTZ_F16_F32 | 90       | V_CMP_EQ_U64    |
-| 306      | V_ADD_F16            | 91       | V_CMP_LE_U64    |
-| 307      | V_SUB_F16            | 92       | V_CMP_GT_U64    |
-| 308      | V_SUBREV_F16         | 93       | V_CMP_NE_U64    |
-| 309      | V_MUL_F16            | 94       | V_CMP_GE_U64    |
-| 310      | V_FMAC_F16           | 95       | V_CMP_T_U64     |
-| 313      | V_MAX_F16            | 125      | V_CMP_CLASS_F16 |
-| 314      | V_MIN_F16            | 126      | V_CMP_CLASS_F32 |
-| 315      | V_LDEXP_F16          | 127      | V_CMP_CLASS_F64 |
-| 521      | V_FMA_DX9_ZERO_F32   | 128      | V_CMPX_F_F16    |
-| 522      | V_MAD_I32_I24        | 129      | V_CMPX_LT_F16   |
-| 523      | V_MAD_U32_U24        | 130      | V_CMPX_EQ_F16   |
-| 524      | V_CUBEID_F32         | 131      | V_CMPX_LE_F16   |
-| 525      | V_CUBESC_F32         | 132      | V_CMPX_GT_F16   |
-| 526      | V_CUBETC_F32         | 133      | V_CMPX_LG_F16   |
-| 527      | V_CUBEMA_F32         | 134      | V_CMPX_GE_F16   |
-| 528      | V_BFE_U32            | 135      | V_CMPX_O_F16    |
-| 529      | V_BFE_I32            | 136      | V_CMPX_U_F16    |
-| 530      | V_BFI_B32            | 137      | V_CMPX_NGE_F16  |
-| 531      | V_FMA_F32            | 138      | V_CMPX_NLG_F16  |
-| 532      | V_FMA_F64            | 139      | V_CMPX_NGT_F16  |
-| 533      | V_LERP_U8            | 140      | V_CMPX_NLE_F16  |
-| 534      | V_ALIGNBIT_B32       | 141      | V_CMPX_NEQ_F16  |
-| 535      | V_ALIGNBYTE_B32      | 142      | V_CMPX_NLT_F16  |
-| 536      | V_MULLIT_F32         | 143      | V_CMPX_T_F16    |
-| 537      | V_MIN3_F32           | 144      | V_CMPX_F_F32    |
-| 538      | V_MIN3_I32           | 145      | V_CMPX_LT_F32   |
-| 539      | V_MIN3_U32           | 146      | V_CMPX_EQ_F32   |
-| 540      | V_MAX3_F32           | 147      | V_CMPX_LE_F32   |
-| 541      | V_MAX3_I32           | 148      | V_CMPX_GT_F32   |
-| 542      | V_MAX3_U32           | 149      | V_CMPX_LG_F32   |
-| 543      | V_MED3_F32           | 150      | V_CMPX_GE_F32   |
-| 544      | V_MED3_I32           | 151      | V_CMPX_O_F32    |
-| 545      | V_MED3_U32           | 152      | V_CMPX_U_F32    |
-| 546      | V_SAD_U8             | 153      | V_CMPX_NGE_F32  |
-
-| Opcode # | Name              | Opcode # | Name           |
-|----------|-------------------|----------|----------------|
-| 547      | V_SAD_HI_U8       | 154      | V_CMPX_NLG_F32 |
-| 548      | V_SAD_U16         | 155      | V_CMPX_NGT_F32 |
-| 549      | V_SAD_U32         | 156      | V_CMPX_NLE_F32 |
-| 550      | V_CVT_PK_U8_F32   | 157      | V_CMPX_NEQ_F32 |
-| 551      | V_DIV_FIXUP_F32   | 158      | V_CMPX_NLT_F32 |
-| 552      | V_DIV_FIXUP_F64   | 159      | V_CMPX_T_F32   |
-| 567      | V_DIV_FMAD_F32    | 160      | V_CMPX_F_F64   |
-| 568      | V_DIV_FMAD_F64    | 161      | V_CMPX_LT_F64  |
-| 569      | V_MSAD_U8         | 162      | V_CMPX_EQ_F64  |
-| 570      | V_QSAD_PK_U16_U8  | 163      | V_CMPX_LE_F64  |
-| 571      | V_MQSAD_PK_U16_U8 | 164      | V_CMPX_GT_F64  |
-| 573      | V_MQSAD_U32_U8    | 165      | V_CMPX_LG_F64  |
-| 576      | V_XOR3_B32        | 166      | V_CMPX_GE_F64  |
-| 577      | V_MAD_U16         | 167      | V_CMPX_O_F64   |
-| 580      | V_PERM_B32        | 168      | V_CMPX_U_F64   |
-| 581      | V_XAD_U32         | 169      | V_CMPX_NGE_F64 |
-| 582      | V_LSHL_ADD_U32    | 170      | V_CMPX_NLG_F64 |
-| 583      | V_ADD_LSHL_U32    | 171      | V_CMPX_NGT_F64 |
-| 584      | V_FMA_F16         | 172      | V_CMPX_NLE_F64 |
-| 585      | V_MIN3_F16        | 173      | V_CMPX_NEQ_F64 |
-| 586      | V_MIN3_I16        | 174      | V_CMPX_NLT_F64 |
-| 587      | V_MIN3_U16        | 175      | V_CMPX_T_F64   |
-| 588      | V_MAX3_F16        | 177      | V_CMPX_LT_I16  |
-| 589      | V_MAX3_I16        | 178      | V_CMPX_EQ_I16  |
-| 590      | V_MAX3_U16        | 179      | V_CMPX_LE_I16  |
-| 591      | V_MED3_F16        | 180      | V_CMPX_GT_I16  |
-| 592      | V_MED3_I16        | 181      | V_CMPX_NE_I16  |
-| 593      | V_MED3_U16        | 182      | V_CMPX_GE_I16  |
-| 595      | V_MAD_I16         | 185      | V_CMPX_LT_U16  |
-| 596      | V_DIV_FIXUP_F16   | 186      | V_CMPX_EQ_U16  |
-| 597      | V_ADD3_U32        | 187      | V_CMPX_LE_U16  |
-| 598      | V_LSHL_OR_B32     | 188      | V_CMPX_GT_U16  |
-| 599      | V_AND_OR_B32      | 189      | V_CMPX_NE_U16  |
-| 600      | V_OR3_B32         | 190      | V_CMPX_GE_U16  |
-| 601      | V_MAD_U32_U16     | 192      | V_CMPX_F_I32   |
-| 602      | V_MAD_I32_I16     | 193      | V_CMPX_LT_I32  |
-| 603      | V_PERMLANE16_B32  | 194      | V_CMPX_EQ_I32  |
-| 604      | V_PERMLANEX16_B32 | 195      | V_CMPX_LE_I32  |
-| 605      | V_CNDMASK_B16     | 196      | V_CMPX_GT_I32  |
-| 606      | V_MAXMIN_F32      | 197      | V_CMPX_NE_I32  |
-| 607      | V_MINMAX_F32      | 198      | V_CMPX_GE_I32  |
-| 608      | V_MAXMIN_F16      | 199      | V_CMPX_T_I32   |
-| 609      | V_MINMAX_F16      | 200      | V_CMPX_F_U32   |
-| 610      | V_MAXMIN_U32      | 201      | V_CMPX_LT_U32  |
-| 611      | V_MINMAX_U32      | 202      | V_CMPX_EQ_U32  |
-| 612      | V_MAXMIN_I32      | 203      | V_CMPX_LE_U32  |
-| 613      | V_MINMAX_I32      | 204      | V_CMPX_GT_U32  |
-
-| Opcode # | Name                  | Opcode # | Name             |
-|----------|-----------------------|----------|------------------|
+| 446      | V_FRACT_F64           | 27       | V_CMP_NGT_F32    |
+| 447      | V_FREXP_EXP_I32_F32   | 28       | V_CMP_NLE_F32    |
+| 448      | V_FREXP_MANT_F32      | 29       | V_CMP_NEQ_F32    |
+| 450      | V_MOVRELD_B32         | 30       | V_CMP_NLT_F32    |
+| 451      | V_MOVRELS_B32         | 31       | V_CMP_T_F32      |
+| 452      | V_MOVRELSD_B32        | 32       | V_CMP_F_F64      |
+| 456      | V_MOVRELSD_2_B32      | 33       | V_CMP_LT_F64     |
+| 464      | V_CVT_F16_U16         | 34       | V_CMP_EQ_F64     |
+| 465      | V_CVT_F16_I16         | 35       | V_CMP_LE_F64     |
+| 466      | V_CVT_U16_F16         | 36       | V_CMP_GT_F64     |
+| 467      | V_CVT_I16_F16         | 37       | V_CMP_LG_F64     |
+| 468      | V_RCP_F16             | 38       | V_CMP_GE_F64     |
+| 469      | V_SQRT_F16            | 39       | V_CMP_O_F64      |
+| 470      | V_RSQ_F16             | 40       | V_CMP_U_F64      |
+| 471      | V_LOG_F16             | 41       | V_CMP_NGE_F64    |
+| 472      | V_EXP_F16             | 42       | V_CMP_NLG_F64    |
+| 473      | V_FREXP_MANT_F16      | 43       | V_CMP_NGT_F64    |
+| 474      | V_FREXP_EXP_I16_F16   | 44       | V_CMP_NLE_F64    |
+| 475      | V_FLOOR_F16           | 45       | V_CMP_NEQ_F64    |
+| 476      | V_CEIL_F16            | 46       | V_CMP_NLT_F64    |
+| 477      | V_TRUNC_F16           | 47       | V_CMP_T_F64      |
+| 478      | V_RNDNE_F16           | 49       | V_CMP_LT_I16     |
+| 479      | V_FRACT_F16           | 50       | V_CMP_EQ_I16     |
+| 480      | V_SIN_F16             | 51       | V_CMP_LE_I16     |
+| 481      | V_COS_F16             | 52       | V_CMP_GT_I16     |
+| 482      | V_SAT_PK_U8_I16       | 53       | V_CMP_NE_I16     |
+| 483      | V_CVT_NORM_I16_F16    | 54       | V_CMP_GE_I16     |
+| 484      | V_CVT_NORM_U16_F16    | 57       | V_CMP_LT_U16     |
+| 489      | V_NOT_B16             | 58       | V_CMP_EQ_U16     |
+| 490      | V_CVT_I32_I16         | 59       | V_CMP_LE_U16     |
+| 491      | V_CVT_U32_U16         | 60       | V_CMP_GT_U16     |
+| 257      | V_CNDMASK_B32         | 61       | V_CMP_NE_U16     |
+| 259      | V_ADD_F32             | 62       | V_CMP_GE_U16     |
+| 260      | V_SUB_F32             | 64       | V_CMP_F_I32      |
+| 261      | V_SUBREV_F32          | 65       | V_CMP_LT_I32     |
+| 262      | V_FMAC_DX9_ZERO_F32   | 66       | V_CMP_EQ_I32     |
+| 263      | V_MUL_DX9_ZERO_F32    | 67       | V_CMP_LE_I32     |
+| 264      | V_MUL_F32             | 68       | V_CMP_GT_I32     |
+| 265      | V_MUL_I32_I24         | 69       | V_CMP_NE_I32     |
+| 266      | V_MUL_HI_I32_I24      | 70       | V_CMP_GE_I32     |
+| 267      | V_MUL_U32_U24         | 71       | V_CMP_T_I32      |
+| 268      | V_MUL_HI_U32_U24      | 72       | V_CMP_F_U32      |
+| 271      | V_MIN_F32             | 73       | V_CMP_LT_U32     |
+| 272      | V_MAX_F32             | 74       | V_CMP_EQ_U32     |
+| 273      | V_MIN_I32             | 75       | V_CMP_LE_U32     |
+| 274      | V_MAX_I32             | 76       | V_CMP_GT_U32     |
+| 275      | V_MIN_U32             | 77       | V_CMP_NE_U32     |
+| 276      | V_MAX_U32             | 78       | V_CMP_GE_U32     |
+| 280      | V_LSHLREV_B32         | 79       | V_CMP_T_U32      |
+| 281      | V_LSHRREV_B32         | 80       | V_CMP_F_I64      |
+| 282      | V_ASHRREV_I32         | 81       | V_CMP_LT_I64     |
+| 283      | V_AND_B32             | 82       | V_CMP_EQ_I64     |
+| 284      | V_OR_B32              | 83       | V_CMP_LE_I64     |
+| 285      | V_XOR_B32             | 84       | V_CMP_GT_I64     |
+| 286      | V_XNOR_B32            | 85       | V_CMP_NE_I64     |
+| 293      | V_ADD_NC_U32          | 86       | V_CMP_GE_I64     |
+| 294      | V_SUB_NC_U32          | 87       | V_CMP_T_I64      |
+| 295      | V_SUBREV_NC_U32       | 88       | V_CMP_F_U64      |
+| 299      | V_FMAC_F32            | 89       | V_CMP_LT_U64     |
+| 303      | V_CVT_PK_RTZ_F16_F32  | 90       | V_CMP_EQ_U64     |
+| 306      | V_ADD_F16             | 91       | V_CMP_LE_U64     |
+| 307      | V_SUB_F16             | 92       | V_CMP_GT_U64     |
+| 308      | V_SUBREV_F16          | 93       | V_CMP_NE_U64     |
+| 309      | V_MUL_F16             | 94       | V_CMP_GE_U64     |
+| 310      | V_FMAC_F16            | 95       | V_CMP_T_U64      |
+| 313      | V_MAX_F16             | 125      | V_CMP_CLASS_F16  |
+| 314      | V_MIN_F16             | 126      | V_CMP_CLASS_F32  |
+| 315      | V_LDEXP_F16           | 127      | V_CMP_CLASS_F64  |
+| 521      | V_FMA_DX9_ZERO_F32    | 128      | V_CMPX_F_F16     |
+| 522      | V_MAD_I32_I24         | 129      | V_CMPX_LT_F16    |
+| 523      | V_MAD_U32_U24         | 130      | V_CMPX_EQ_F16    |
+| 524      | V_CUBEID_F32          | 131      | V_CMPX_LE_F16    |
+| 525      | V_CUBESC_F32          | 132      | V_CMPX_GT_F16    |
+| 526      | V_CUBETC_F32          | 133      | V_CMPX_LG_F16    |
+| 527      | V_CUBEMA_F32          | 134      | V_CMPX_GE_F16    |
+| 528      | V_BFE_U32             | 135      | V_CMPX_O_F16     |
+| 529      | V_BFE_I32             | 136      | V_CMPX_U_F16     |
+| 530      | V_BFI_B32             | 137      | V_CMPX_NGE_F16   |
+| 531      | V_FMA_F32             | 138      | V_CMPX_NLG_F16   |
+| 532      | V_FMA_F64             | 139      | V_CMPX_NGT_F16   |
+| 533      | V_LERP_U8             | 140      | V_CMPX_NLE_F16   |
+| 534      | V_ALIGNBIT_B32        | 141      | V_CMPX_NEQ_F16   |
+| 535      | V_ALIGNBYTE_B32       | 142      | V_CMPX_NLT_F16   |
+| 536      | V_MULLIT_F32          | 143      | V_CMPX_T_F16     |
+| 537      | V_MIN3_F32            | 144      | V_CMPX_F_F32     |
+| 538      | V_MIN3_I32            | 145      | V_CMPX_LT_F32    |
+| 539      | V_MIN3_U32            | 146      | V_CMPX_EQ_F32    |
+| 540      | V_MAX3_F32            | 147      | V_CMPX_LE_F32    |
+| 541      | V_MAX3_I32            | 148      | V_CMPX_GT_F32    |
+| 542      | V_MAX3_U32            | 149      | V_CMPX_LG_F32    |
+| 543      | V_MED3_F32            | 150      | V_CMPX_GE_F32    |
+| 544      | V_MED3_I32            | 151      | V_CMPX_O_F32     |
+| 545      | V_MED3_U32            | 152      | V_CMPX_U_F32     |
+| 546      | V_SAD_U8              | 153      | V_CMPX_NGE_F32   |
+| 547      | V_SAD_HI_U8           | 154      | V_CMPX_NLG_F32   |
+| 548      | V_SAD_U16             | 155      | V_CMPX_NGT_F32   |
+| 549      | V_SAD_U32             | 156      | V_CMPX_NLE_F32   |
+| 550      | V_CVT_PK_U8_F32       | 157      | V_CMPX_NEQ_F32   |
+| 551      | V_DIV_FIXUP_F32       | 158      | V_CMPX_NLT_F32   |
+| 552      | V_DIV_FIXUP_F64       | 159      | V_CMPX_T_F32     |
+| 567      | V_DIV_FMAS_F32        | 160      | V_CMPX_F_F64     |
+| 568      | V_DIV_FMAS_F64        | 161      | V_CMPX_LT_F64    |
+| 569      | V_MSAD_U8             | 162      | V_CMPX_EQ_F64    |
+| 570      | V_QSAD_PK_U16_U8      | 163      | V_CMPX_LE_F64    |
+| 571      | V_MQSAD_PK_U16_U8     | 164      | V_CMPX_GT_F64    |
+| 573      | V_MQSAD_U32_U8        | 165      | V_CMPX_LG_F64    |
+| 576      | V_XOR3_B32            | 166      | V_CMPX_GE_F64    |
+| 577      | V_MAD_U16             | 167      | V_CMPX_O_F64     |
+| 580      | V_PERM_B32            | 168      | V_CMPX_U_F64     |
+| 581      | V_XAD_U32             | 169      | V_CMPX_NGE_F64   |
+| 582      | V_LSHL_ADD_U32        | 170      | V_CMPX_NLG_F64   |
+| 583      | V_ADD_LSHL_U32        | 171      | V_CMPX_NGT_F64   |
+| 584      | V_FMA_F16             | 172      | V_CMPX_NLE_F64   |
+| 585      | V_MIN3_F16            | 173      | V_CMPX_NEQ_F64   |
+| 586      | V_MIN3_I16            | 174      | V_CMPX_NLT_F64   |
+| 587      | V_MIN3_U16            | 175      | V_CMPX_T_F64     |
+| 588      | V_MAX3_F16            | 177      | V_CMPX_LT_I16    |
+| 589      | V_MAX3_I16            | 178      | V_CMPX_EQ_I16    |
+| 590      | V_MAX3_U16            | 179      | V_CMPX_LE_I16    |
+| 591      | V_MED3_F16            | 180      | V_CMPX_GT_I16    |
+| 592      | V_MED3_I16            | 181      | V_CMPX_NE_I16    |
+| 593      | V_MED3_U16            | 182      | V_CMPX_GE_I16    |
+| 595      | V_MAD_I16             | 185      | V_CMPX_LT_U16    |
+| 596      | V_DIV_FIXUP_F16       | 186      | V_CMPX_EQ_U16    |
+| 597      | V_ADD3_U32            | 187      | V_CMPX_LE_U16    |
+| 598      | V_LSHL_OR_B32         | 188      | V_CMPX_GT_U16    |
+| 599      | V_AND_OR_B32          | 189      | V_CMPX_NE_U16    |
+| 600      | V_OR3_B32             | 190      | V_CMPX_GE_U16    |
+| 601      | V_MAD_U32_U16         | 192      | V_CMPX_F_I32     |
+| 602      | V_MAD_I32_I16         | 193      | V_CMPX_LT_I32    |
+| 603      | V_PERMLANE16_B32      | 194      | V_CMPX_EQ_I32    |
+| 604      | V_PERMLANEX16_B32     | 195      | V_CMPX_LE_I32    |
+| 605      | V_CNDMASK_B16         | 196      | V_CMPX_GT_I32    |
+| 606      | V_MAXMIN_F32          | 197      | V_CMPX_NE_I32    |
+| 607      | V_MINMAX_F32          | 198      | V_CMPX_GE_I32    |
+| 608      | V_MAXMIN_F16          | 199      | V_CMPX_T_I32     |
+| 609      | V_MINMAX_F16          | 200      | V_CMPX_F_U32     |
+| 610      | V_MAXMIN_U32          | 201      | V_CMPX_LT_U32    |
+| 611      | V_MINMAX_U32          | 202      | V_CMPX_EQ_U32    |
+| 612      | V_MAXMIN_I32          | 203      | V_CMPX_LE_U32    |
+| 613      | V_MINMAX_I32          | 204      | V_CMPX_GT_U32    |
 | 614      | V_DOT2_F16_F16        | 205      | V_CMPX_NE_U32    |
 | 615      | V_DOT2_BF16_BF16      | 206      | V_CMPX_GE_U32    |
 | 771      | V_ADD_NC_U16          | 207      | V_CMPX_T_U32     |
@@ -6859,11 +6694,8 @@ Table 88. VOP3P Fields
 | SRC0       | [40:32] | Source 0. First operand for the instruction.<br>0-105 SGPR0 - SGPR105: Scalar general-purpose registers.<br>106 VCC_LO: VCC[31:0].<br>107 VCC_HI: VCC[63:32].<br>108-123 TTMP0 - TTMP15: Trap handler temporary register.<br>124 NULL<br>125 M0. Misc register 0.<br>126 EXEC_LO: EXEC[31:0].<br>127 EXEC_HI: EXEC[63:32].<br>128 0.<br>129-192 Signed integer 1 to 64.<br>193-208 Signed integer -1 to -16.<br>209-232 Reserved.<br>233 DPP8<br>234 DPP8FI<br>235 SHARED_BASE (Memory Aperture definition).<br>236 SHARED_LIMIT (Memory Aperture definition).<br>237 PRIVATE_BASE (Memory Aperture definition).<br>238 PRIVATE_LIMIT (Memory Aperture definition).<br>239 Reserved.<br>240 0.5.<br>241 -0.5.<br>242 1.0.<br>243 -1.0.<br>244 2.0.<br>245 -2.0.<br>246 4.0.<br>247 -4.0.<br>248 1/(2*PI).<br>250 DPP16<br>253 SCC.<br>254 Reserved.<br>255 Literal constant.<br>256 - 511 VGPR 0 - 255 |
 | SRC1       | [49:41] | Second input operand. Same options as SRC0.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            |
 | SRC2       | [58:50] | Third input operand. Same options as SRC0.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             |
-
-| Field Name | Bits    | Format or Description                                                          |
-|------------|---------|--------------------------------------------------------------------------------|
-| OPSEL_HI   | [60:59] | See OPSEL_HI2.                                                                 |
-| NEG        | [63:61] | Negate input for low 16-bits of sources. [61] = src0, [62] = src1, [63] = src2 |
+| OPSEL_HI   | [60:59] | See OPSEL_HI2.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         |
+| NEG        | [63:61] | Negate input for low 16-bits of sources. [61] = src0, [62] = src1, [63] = src2                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         |
 
 Table 89. VOP3P Opcodes
 
@@ -6951,7 +6783,7 @@ Table 91. VOPD X-Opcodes
 |                     |                            |
 |---------------------|----------------------------|
 | 0 V_DUAL_FMAC_F32   | 7 V_DUAL_MUL_DX9_ZERO_F32  |
-| 1 V_DUAL_FMMAK_F32  | 8 V_DUAL_MOV_B32           |
+| 1 V_DUAL_FMAAK_F32  | 8 V_DUAL_MOV_B32           |
 | 2 V_DUAL_FMAMK_F32  | 9 V_DUAL_CNDMASK_B32       |
 | 3 V_DUAL_MUL_F32    | 10 V_DUAL_MAX_F32          |
 | 4 V_DUAL_ADD_F32    | 11 V_DUAL_MIN_F32          |
@@ -7076,55 +6908,51 @@ These opcodes perform parameter interpolation using vertex data in pixel shaders
 
 Table 96. VINTERP Fields
 
-| Field Name | Bits    | Format or Description                                                              |
-|------------|---------|------------------------------------------------------------------------------------|
-| VDST       | [7:0]   | Destination VGPR                                                                   |
-| WAITEXP    | [10:8]  | Wait for EXPcnt to be less-than or equal-to this value before issuing instruction. |
-| OPSEL      | [14:11] | Select low or high for low sources 0=[11], 1=[12], 2=[13], dst=[14].               |
-| CLMP       | [15]    | 1 = clamp result.                                                                  |
-| OP         | [22:16] | Opcode. see next table.                                                            |
-| ENCODING   | [31:26] | 'b11001101                                                                         |
-| SRCC0      | [40:32] | Source 0. First operand for the instruction: VGPR 0-255.                           |
-
-| Field Name | Bits      | Format or Description                              |                                                                                |
-|------------|-----------|----------------------------------------------------|--------------------------------------------------------------------------------|
-| SRC0       | [40:32]   | Source 0. First operand for the instruction.       |                                                                                |
-|            | 0-105     | SGPR0 - SGPR105: Scalar general-purpose registers. |                                                                                |
-|            | 106       | VCC_LO: VCC[31:0].                                 |                                                                                |
-|            | 107       | VCC_HI: VCC[63:32].                                |                                                                                |
-|            | 108-123   | TTMP0 - TTMP15: Trap handler temporary register.   |                                                                                |
-|            | 124       | NULL                                               |                                                                                |
-|            | 125       | M0. Misc register 0.                               |                                                                                |
-|            | 126       | EXEC_LO: EXEC[31:0].                               |                                                                                |
-|            | 127       | EXEC_HI: EXEC[63:32].                              |                                                                                |
-|            | 128       | 0.                                                 |                                                                                |
-|            | 129-192   | Signed integer 1 to 64.                            |                                                                                |
-|            | 193-208   | Signed integer -1 to -16.                          |                                                                                |
-|            | 209-232   | Reserved.                                          |                                                                                |
-|            | 233       | DPP8                                               |                                                                                |
-|            | 234       | DPP8FI                                             |                                                                                |
-|            | 235       | SHARED_BASE (Memory Aperture definition).          |                                                                                |
-|            | 236       | SHARED_LIMIT (Memory Aperture definition).         |                                                                                |
-|            | 237       | PRIVATE_BASE (Memory Aperture definition).         |                                                                                |
-|            | 238       | PRIVATE_LIMIT (Memory Aperture definition).        |                                                                                |
-|            | 239       | Reserved.                                          |                                                                                |
-|            | 240       | 0.5.                                               |                                                                                |
-|            | 241       | -0.5.                                              |                                                                                |
-|            | 242       | 1.0.                                               |                                                                                |
-|            | 243       | -1.0.                                              |                                                                                |
-|            | 244       | 2.0.                                               |                                                                                |
-|            | 245       | -2.0.                                              |                                                                                |
-|            | 246       | 4.0.                                               |                                                                                |
-|            | 247       | -4.0.                                              |                                                                                |
-|            | 248       | 1/(2*PI).                                          |                                                                                |
-|            | 250       | DPP16                                              |                                                                                |
-|            | 253       | SCC.                                               |                                                                                |
-|            | 254       | Reserved.                                          |                                                                                |
-|            | 255       | Literal constant.                                  |                                                                                |
-|            | 256 - 511 | VGPR 0 - 255                                       |                                                                                |
-|            | SRC1      | [49:41]                                            | Second input operand. Same options as SRC0.                                    |
-|            | SRC2      | [58:50]                                            | Third input operand. Same options as SRC0.                                     |
-|            | NEG       | [63:61]                                            | Negate input for low 16-bits of sources. [61] = src0, [62] = src1, [63] = src2 |
+| Field Name | Bits      | Format or Description                                                              |
+|------------|-----------|------------------------------------------------------------------------------------|
+| VDST       | [7:0]     | Destination VGPR                                                                   |
+| WAITEXP    | [10:8]    | Wait for EXPcnt to be less-than or equal-to this value before issuing instruction. |
+| OPSEL      | [14:11]   | Select low or high for low sources 0=[11], 1=[12], 2=[13], dst=[14].               |
+| CLMP       | [15]      | 1 = clamp result.                                                                  |
+| OP         | [22:16]   | Opcode. see next table.                                                            |
+| ENCODING   | [31:26]   | 'b11001101                                                                         |
+| SRCC0      | [40:32]   | Source 0. First operand for the instruction: VGPR 0-255.                           |
+|            | 0-105     | SGPR0 - SGPR105: Scalar general-purpose registers.                                 |
+|            | 106       | VCC_LO: VCC[31:0].                                                                 |
+|            | 107       | VCC_HI: VCC[63:32].                                                                |
+|            | 108-123   | TTMP0 - TTMP15: Trap handler temporary register.                                   |
+|            | 124       | NULL                                                                               |
+|            | 125       | M0. Misc register 0.                                                               |
+|            | 126       | EXEC_LO: EXEC[31:0].                                                               |
+|            | 127       | EXEC_HI: EXEC[63:32].                                                              |
+|            | 128       | 0.                                                                                 |
+|            | 129-192   | Signed integer 1 to 64.                                                            |
+|            | 193-208   | Signed integer -1 to -16.                                                          |
+|            | 209-232   | Reserved.                                                                          |
+|            | 233       | DPP8                                                                               |
+|            | 234       | DPP8FI                                                                             |
+|            | 235       | SHARED_BASE (Memory Aperture definition).                                          |
+|            | 236       | SHARED_LIMIT (Memory Aperture definition).                                         |
+|            | 237       | PRIVATE_BASE (Memory Aperture definition).                                         |
+|            | 238       | PRIVATE_LIMIT (Memory Aperture definition).                                        |
+|            | 239       | Reserved.                                                                          |
+|            | 240       | 0.5.                                                                               |
+|            | 241       | -0.5.                                                                              |
+|            | 242       | 1.0.                                                                               |
+|            | 243       | -1.0.                                                                              |
+|            | 244       | 2.0.                                                                               |
+|            | 245       | -2.0.                                                                              |
+|            | 246       | 4.0.                                                                               |
+|            | 247       | -4.0.                                                                              |
+|            | 248       | 1/(2*PI).                                                                          |
+|            | 250       | DPP16                                                                              |
+|            | 253       | SCC.                                                                               |
+|            | 254       | Reserved.                                                                          |
+|            | 255       | Literal constant.                                                                  |
+|            | 256 - 511 | VGPR 0 - 255                                                                       |
+| SRC1       | [49:41]   | Second input operand. Same options as SRC0.                                        |
+| SRC2       | [58:50]   | Third input operand. Same options as SRC0.                                         |
+| NEG        | [63:61]   | Negate input for low 16-bits of sources. [61] = src0, [62] = src1, [63] = src2     |
 
 Table 97. *VINTERP OpCodes*
 
@@ -7194,34 +7022,31 @@ Table 99. DS Fields
 
 Table 100. DS Opcodes
 
-| Opcode # | Name                        | Opcode # | Name                        |
-|----------|-----------------------------|----------|-----------------------------|
-| 0        | DS_ADD_U32                  | 65       | DS_SUB_U64                  |
-| 1        | DS_SUB_U32                  | 66       | DS_RSUB_U64                 |
-| 2        | DS_RSUB_U32                 | 67       | DS_INC_U64                  |
-| 3        | DS_INC_U32                  | 68       | DS_DEC_U64                  |
-| 4        | DS_DEC_U32                  | 69       | DS_MIN_I64                  |
-| 5        | DS_MIN_I32                  | 70       | DS_MAX_I64                  |
-| 6        | DS_MAX_I32                  | 71       | DS_MIN_U64                  |
-| 7        | DS_MIN_U32                  | 72       | DS_MAX_U64                  |
-| 8        | DS_MAX_U32                  | 73       | DS_AND_B64                  |
-| 9        | DS_AND_B32                  | 74       | DS_OR_B64                   |
-| 10       | DS_OR_B32                   | 75       | DS_XOR_B64                  |
-| 11       | DS_XOR_B32                  | 76       | DS_MSKOR_B64                |
-| 12       | DS_MSKOR_B32                | 77       | DS_STORE_B64                |
-| 13       | DS_STORE_B32                | 78       | DS_STORE_2ADDR_B64          |
-| 14       | DS_STORE_2ADDR_B32          | 79       | DS_STORE_2ADDR_STRIDE64_B64 |
-| 15       | DS_STORE_2ADDR_STRIDE64_B32 | 80       | DS_CMPSTORE_B64             |
-| 16       | DS_CMPSTORE_B32             | 81       | DS_CMPSTORE_F64             |
-| 17       | DS_CMPSTORE_F32             | 82       | DS_MIN_F64                  |
-| 18       | DS_MIN_F32                  | 83       | DS_MAX_F64                  |
-| 19       | DS_MAX_F32                  | 96       | DS_ADD_RTN_U64              |
-| 20       | DS_NOP                      | 97       | DS_SUB_RTN_U64              |
-| 21       | DS_ADD_F32                  | 98       | DS_RSUB_RTN_U64             |
-| 24       | Reserved                    | 99       | DS_INC_RTN_U64              |
-
 | Opcode # | Name                                | Opcode # | Name                                |
 |----------|-------------------------------------|----------|-------------------------------------|
+| 0        | DS_ADD_U32                          | 65       | DS_SUB_U64                          |
+| 1        | DS_SUB_U32                          | 66       | DS_RSUB_U64                         |
+| 2        | DS_RSUB_U32                         | 67       | DS_INC_U64                          |
+| 3        | DS_INC_U32                          | 68       | DS_DEC_U64                          |
+| 4        | DS_DEC_U32                          | 69       | DS_MIN_I64                          |
+| 5        | DS_MIN_I32                          | 70       | DS_MAX_I64                          |
+| 6        | DS_MAX_I32                          | 71       | DS_MIN_U64                          |
+| 7        | DS_MIN_U32                          | 72       | DS_MAX_U64                          |
+| 8        | DS_MAX_U32                          | 73       | DS_AND_B64                          |
+| 9        | DS_AND_B32                          | 74       | DS_OR_B64                           |
+| 10       | DS_OR_B32                           | 75       | DS_XOR_B64                          |
+| 11       | DS_XOR_B32                          | 76       | DS_MSKOR_B64                        |
+| 12       | DS_MSKOR_B32                        | 77       | DS_STORE_B64                        |
+| 13       | DS_STORE_B32                        | 78       | DS_STORE_2ADDR_B64                  |
+| 14       | DS_STORE_2ADDR_B32                  | 79       | DS_STORE_2ADDR_STRIDE64_B64         |
+| 15       | DS_STORE_2ADDR_STRIDE64_B32         | 80       | DS_CMPSTORE_B64                     |
+| 16       | DS_CMPSTORE_B32                     | 81       | DS_CMPSTORE_F64                     |
+| 17       | DS_CMPSTORE_F32                     | 82       | DS_MIN_F64                          |
+| 18       | DS_MIN_F32                          | 83       | DS_MAX_F64                          |
+| 19       | DS_MAX_F32                          | 96       | DS_ADD_RTN_U64                      |
+| 20       | DS_NOP                              | 97       | DS_SUB_RTN_U64                      |
+| 21       | DS_ADD_F32                          | 98       | DS_RSUB_RTN_U64                     |
+| 24       | Reserved                            | 99       | DS_INC_RTN_U64                      |
 | 25       | Reserved                            | 100      | DS_DEC_RTN_U64                      |
 | 26       | Reserved                            | 101      | DS_MIN_RTN_I64                      |
 | 27       | Reserved                            | 102      | DS_MAX_RTN_I64                      |
@@ -7316,17 +7141,14 @@ Table 101. MTBUF Fields
 
 Table 102. MTBUF Opcodes
 
-| Opcode # | Name                     | Opcode # | Name                         |
-|----------|--------------------------|----------|------------------------------|
-| 0        | TBUFFER_LOAD_FORMAT_X    | 8        | TBUFFER_LOAD_D16_FORMAT_X    |
-| 1        | TBUFFER_LOAD_FORMAT_XY   | 9        | TBUFFER_LOAD_D16_FORMAT_XY   |
-| 2        | TBUFFER_LOAD_FORMAT_XYZ  | 10       | TBUFFER_LOAD_D16_FORMAT_XYZ  |
-| 3        | TBUFFER_LOAD_FORMAT_XYZW | 11       | TBUFFER_LOAD_D16_FORMAT_XYZW |
-| 4        | TBUFFER_STORE_FORMAT_X   | 12       | TBUFFER_STORE_D16_FORMAT_X   |
-| 5        | TBUFFER_STORE_FORMAT_XY  | 13       | TBUFFER_STORE_D16_FORMAT_XY  |
-
 | Opcode # | Name                      | Opcode # | Name                          |
 |----------|---------------------------|----------|-------------------------------|
+| 0        | TBUFFER_LOAD_FORMAT_X     | 8        | TBUFFER_LOAD_D16_FORMAT_X     |
+| 1        | TBUFFER_LOAD_FORMAT_XY    | 9        | TBUFFER_LOAD_D16_FORMAT_XY    |
+| 2        | TBUFFER_LOAD_FORMAT_XYZ   | 10       | TBUFFER_LOAD_D16_FORMAT_XYZ   |
+| 3        | TBUFFER_LOAD_FORMAT_XYZW  | 11       | TBUFFER_LOAD_D16_FORMAT_XYZW  |
+| 4        | TBUFFER_STORE_FORMAT_X    | 12       | TBUFFER_STORE_D16_FORMAT_X    |
+| 5        | TBUFFER_STORE_FORMAT_XY   | 13       | TBUFFER_STORE_D16_FORMAT_XY   |
 | 6        | TBUFFER_STORE_FORMAT_XYZ  | 14       | TBUFFER_STORE_D16_FORMAT_XYZ  |
 | 7        | TBUFFER_STORE_FORMAT_XYZW | 15       | TBUFFER_STORE_D16_FORMAT_XYZW |
 
@@ -7370,48 +7192,45 @@ Table 103. MUBUF Fields
 
 Table 104. MUBUF Opcodes
 
-| Opcode # | Name                        | Opcode # | Name                         |
-|----------|-----------------------------|----------|------------------------------|
-| 0        | BUFFER_LOAD_FORMAT_X        | 37       | BUFFER_STORE_D16_HI_B16      |
-| 1        | BUFFER_LOAD_FORMAT_XY       | 38       | BUFFER_LOAD_D16_HI_FORMAT_X  |
-| 2        | BUFFER_LOAD_FORMAT_XYZ      | 39       | BUFFER_STORE_D16_HI_FORMAT_X |
-| 3        | BUFFER_LOAD_FORMAT_XYZW     | 43       | BUFFER_GL0_INV               |
-| 4        | BUFFER_STORE_FORMAT_X       | 44       | BUFFER_GL1_INV               |
-| 5        | BUFFER_STORE_FORMAT_XY      | 51       | BUFFER_ATOMIC_SWAP_B32       |
-| 6        | BUFFER_STORE_FORMAT_XYZ     | 52       | BUFFER_ATOMIC_CMPSWAP_B32    |
-| 7        | BUFFER_STORE_FORMAT_XYZW    | 53       | BUFFER_ATOMIC_ADD_U32        |
-| 8        | BUFFER_LOAD_D16_FORMAT_X    | 54       | BUFFER_ATOMIC_SUB_U32        |
-| 9        | BUFFER_LOAD_D16_FORMAT_XY   | 55       | BUFFER_ATOMIC_CSUB_U32       |
-| 10       | BUFFER_LOAD_D16_FORMAT_XYZ  | 56       | BUFFER_ATOMIC_MIN_I32        |
-| 11       | BUFFER_LOAD_D16_FORMAT_XYZW | 57       | BUFFER_ATOMIC_MIN_U32        |
-| 12       | BUFFER_STORE_D16_FORMAT_X   | 58       | BUFFER_ATOMIC_MAX_I32        |
-
-| Opcode # | Name                         | Opcode # | Name                      |
-|----------|------------------------------|----------|---------------------------|
-| 13       | BUFFER_STORE_D16_FORMAT_XY   | 59       | BUFFER_ATOMIC_MAX_U32     |
-| 14       | BUFFER_STORE_D16_FORMAT_XYZ  | 60       | BUFFER_ATOMIC_AND_B32     |
-| 15       | BUFFER_STORE_D16_FORMAT_XYZW | 61       | BUFFER_ATOMIC_OR_B32      |
-| 16       | BUFFER_LOAD_U8               | 62       | BUFFER_ATOMIC_XOR_B32     |
-| 17       | BUFFER_LOAD_I8               | 63       | BUFFER_ATOMIC_INC_U32     |
-| 18       | BUFFER_LOAD_U16              | 64       | BUFFER_ATOMIC_DEC_U32     |
-| 19       | BUFFER_LOAD_I16              | 65       | BUFFER_ATOMIC_SWAP_B64    |
-| 20       | BUFFER_LOAD_B32              | 66       | BUFFER_ATOMIC_CMPSWAP_B64 |
-| 21       | BUFFER_LOAD_B64              | 67       | BUFFER_ATOMIC_ADD_U64     |
-| 22       | BUFFER_LOAD_B96              | 68       | BUFFER_ATOMIC_SUB_U64     |
-| 23       | BUFFER_LOAD_B128             | 69       | BUFFER_ATOMIC_MIN_I64     |
-| 24       | BUFFER_STORE_B8              | 70       | BUFFER_ATOMIC_MIN_U64     |
-| 25       | BUFFER_STORE_B16             | 71       | BUFFER_ATOMIC_MAX_I64     |
-| 26       | BUFFER_STORE_B32             | 72       | BUFFER_ATOMIC_MAX_U64     |
-| 27       | BUFFER_STORE_B64             | 73       | BUFFER_ATOMIC_AND_B64     |
-| 28       | BUFFER_STORE_B96             | 74       | BUFFER_ATOMIC_OR_B64      |
-| 29       | BUFFER_STORE_B128            | 75       | BUFFER_ATOMIC_XOR_B64     |
-| 30       | BUFFER_LOAD_D16_U8           | 76       | BUFFER_ATOMIC_INC_U64     |
-| 31       | BUFFER_LOAD_D16_I8           | 77       | BUFFER_ATOMIC_DEC_U64     |
-| 32       | BUFFER_LOAD_D16_B16          | 80       | BUFFER_ATOMIC_CMPSWAP_F32 |
-| 33       | BUFFER_LOAD_D16_HI_U8        | 81       | BUFFER_ATOMIC_MIN_F32     |
-| 34       | BUFFER_LOAD_D16_HI_I8        | 82       | BUFFER_ATOMIC_MAX_F32     |
-| 35       | BUFFER_LOAD_D16_HI_B16       | 86       | BUFFER_ATOMIC_ADD_F32     |
-| 36       | BUFFER_STORE_D16_HI_B8       |          |                           |
+| Opcode # | Name                         | Opcode # | Name                         |
+|----------|------------------------------|----------|------------------------------|
+| 0        | BUFFER_LOAD_FORMAT_X         | 37       | BUFFER_STORE_D16_HI_B16      |
+| 1        | BUFFER_LOAD_FORMAT_XY        | 38       | BUFFER_LOAD_D16_HI_FORMAT_X  |
+| 2        | BUFFER_LOAD_FORMAT_XYZ       | 39       | BUFFER_STORE_D16_HI_FORMAT_X |
+| 3        | BUFFER_LOAD_FORMAT_XYZW      | 43       | BUFFER_GL0_INV               |
+| 4        | BUFFER_STORE_FORMAT_X        | 44       | BUFFER_GL1_INV               |
+| 5        | BUFFER_STORE_FORMAT_XY       | 51       | BUFFER_ATOMIC_SWAP_B32       |
+| 6        | BUFFER_STORE_FORMAT_XYZ      | 52       | BUFFER_ATOMIC_CMPSWAP_B32    |
+| 7        | BUFFER_STORE_FORMAT_XYZW     | 53       | BUFFER_ATOMIC_ADD_U32        |
+| 8        | BUFFER_LOAD_D16_FORMAT_X     | 54       | BUFFER_ATOMIC_SUB_U32        |
+| 9        | BUFFER_LOAD_D16_FORMAT_XY    | 55       | BUFFER_ATOMIC_CSUB_U32       |
+| 10       | BUFFER_LOAD_D16_FORMAT_XYZ   | 56       | BUFFER_ATOMIC_MIN_I32        |
+| 11       | BUFFER_LOAD_D16_FORMAT_XYZW  | 57       | BUFFER_ATOMIC_MIN_U32        |
+| 12       | BUFFER_STORE_D16_FORMAT_X    | 58       | BUFFER_ATOMIC_MAX_I32        |
+| 13       | BUFFER_STORE_D16_FORMAT_XY   | 59       | BUFFER_ATOMIC_MAX_U32        |
+| 14       | BUFFER_STORE_D16_FORMAT_XYZ  | 60       | BUFFER_ATOMIC_AND_B32        |
+| 15       | BUFFER_STORE_D16_FORMAT_XYZW | 61       | BUFFER_ATOMIC_OR_B32         |
+| 16       | BUFFER_LOAD_U8               | 62       | BUFFER_ATOMIC_XOR_B32        |
+| 17       | BUFFER_LOAD_I8               | 63       | BUFFER_ATOMIC_INC_U32        |
+| 18       | BUFFER_LOAD_U16              | 64       | BUFFER_ATOMIC_DEC_U32        |
+| 19       | BUFFER_LOAD_I16              | 65       | BUFFER_ATOMIC_SWAP_B64       |
+| 20       | BUFFER_LOAD_B32              | 66       | BUFFER_ATOMIC_CMPSWAP_B64    |
+| 21       | BUFFER_LOAD_B64              | 67       | BUFFER_ATOMIC_ADD_U64        |
+| 22       | BUFFER_LOAD_B96              | 68       | BUFFER_ATOMIC_SUB_U64        |
+| 23       | BUFFER_LOAD_B128             | 69       | BUFFER_ATOMIC_MIN_I64        |
+| 24       | BUFFER_STORE_B8              | 70       | BUFFER_ATOMIC_MIN_U64        |
+| 25       | BUFFER_STORE_B16             | 71       | BUFFER_ATOMIC_MAX_I64        |
+| 26       | BUFFER_STORE_B32             | 72       | BUFFER_ATOMIC_MAX_U64        |
+| 27       | BUFFER_STORE_B64             | 73       | BUFFER_ATOMIC_AND_B64        |
+| 28       | BUFFER_STORE_B96             | 74       | BUFFER_ATOMIC_OR_B64         |
+| 29       | BUFFER_STORE_B128            | 75       | BUFFER_ATOMIC_XOR_B64        |
+| 30       | BUFFER_LOAD_D16_U8           | 76       | BUFFER_ATOMIC_INC_U64        |
+| 31       | BUFFER_LOAD_D16_I8           | 77       | BUFFER_ATOMIC_DEC_U64        |
+| 32       | BUFFER_LOAD_D16_B16          | 80       | BUFFER_ATOMIC_CMPSWAP_F32    |
+| 33       | BUFFER_LOAD_D16_HI_U8        | 81       | BUFFER_ATOMIC_MIN_F32        |
+| 34       | BUFFER_LOAD_D16_HI_I8        | 82       | BUFFER_ATOMIC_MAX_F32        |
+| 35       | BUFFER_LOAD_D16_HI_B16       | 86       | BUFFER_ATOMIC_ADD_F32        |
+| 36       | BUFFER_STORE_D16_HI_B8       |          |                              |
 
 ## 15.8. Vector Memory Image Format
 
@@ -7444,67 +7263,60 @@ Table 105. MIMG Fields
 | D16        | [17]    | Data components are 16-bits (instead of the usual 32 bits).                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    |
 | OP         | [25:18] | Opcode. See table below.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       |
 | ENCODING   | [31:26] | 'b111100                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       |
-
-| Field Name | Bits    | Format or Description                                                                                                                    |
-|------------|---------|------------------------------------------------------------------------------------------------------------------------------------------|
-| VADDR      | [39:32] | Address of VGPR to supply first component of address.                                                                                    |
-| VDATA      | [47:40] | Address of VGPR to supply first component of write data or receive first component of read-data.                                         |
-| SRSRC      | [52:48] | SGPR to supply T# (resource constant) in 4 or 8 consecutive SGPRs. It is missing 2 LSB's of SGPR-address since it is aligned to 4 SGPRs. |
-| TFE        | [53]    | Partially resident texture, texture fault enable.                                                                                        |
-| LWE        | [54]    | LOD Warning Enable. When set to 1, a texture fetch may return "LOD_CLAMPED = 1".                                                         |
-| SSAMP      | [62:58] | SGPR to supply S# (sampler constant) in 4 or 8 consecutive SGPRs. It is missing 2 LSB's of SGPR-address since it is aligned to 4 SGPRs.  |
-| ADDR1      | [71:64] | Second Address register or group. Present only when NSA=1.                                                                               |
-| ADDR2      | [79:72] | Third Address register or group. Present only when NSA=1.                                                                                |
-
+| VADDR      | [39:32] | Address of VGPR to supply first component of address.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          |
+| VDATA      | [47:40] | Address of VGPR to supply first component of write data or receive first component of read-data.                                                                                                                                                                                                                                                                                                                                                                                                                                               |
+| SRSRC      | [52:48] | SGPR to supply T# (resource constant) in 4 or 8 consecutive SGPRs. It is missing 2 LSB's of SGPR-address since it is aligned to 4 SGPRs.                                                                                                                                                                                                                                                                                                                                                                                                       |
+| TFE        | [53]    | Partially resident texture, texture fault enable.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              |
+| LWE        | [54]    | LOD Warning Enable. When set to 1, a texture fetch may return "LOD_CLAMPED = 1".                                                                                                                                                                                                                                                                                                                                                                                                                                                               |
+| SSAMP      | [62:58] | SGPR to supply S# (sampler constant) in 4 or 8 consecutive SGPRs. It is missing 2 LSB's of SGPR-address since it is aligned to 4 SGPRs.                                                                                                                                                                                                                                                                                                                                                                                                        |
+| ADDR1      | [71:64] | Second Address register or group. Present only when NSA=1.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     |
+| ADDR2      | [79:72] | Third Address register or group. Present only when NSA=1.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      |
 Table 106. MIMG Opcodes
 
-| Opcode # | Name                      | Opcode # | Name                    |
-|----------|---------------------------|----------|-------------------------|
-| 0        | IMAGE_LOAD                | 42       | IMAGE_SAMPLE_C_O        |
-| 1        | IMAGE_LOAD_MIP            | 43       | IMAGE_SAMPLE_C_D_O      |
-| 2        | IMAGE_LOAD_PCK            | 44       | IMAGE_SAMPLE_C_L_O      |
-| 3        | IMAGE_LOAD_PCK_SGN        | 45       | IMAGE_SAMPLE_C_B_O      |
-| 4        | IMAGE_LOAD_MIP_PCK        | 46       | IMAGE_SAMPLE_C_LZ_O     |
-| 5        | IMAGE_LOAD_MIP_PCK_SGN    | 47       | IMAGE_GATHER4           |
-| 6        | IMAGE_STORE               | 48       | IMAGE_GATHER4_L         |
-| 7        | IMAGE_STORE_MIP           | 49       | IMAGE_GATHER4_B         |
-| 8        | IMAGE_STORE_PCK           | 50       | IMAGE_GATHER4_LZ        |
-| 9        | IMAGE_STORE_MIP_PCK       | 51       | IMAGE_GATHER4_C         |
-| 10       | IMAGE_ATOMIC_SWAP         | 52       | IMAGE_GATHER4_C_LZ      |
-| 11       | IMAGE_ATOMIC_CMPSWAP      | 53       | IMAGE_GATHER4_O         |
-| 12       | IMAGE_ATOMIC_ADD          | 54       | IMAGE_GATHER4_LZ_O      |
-| 13       | IMAGE_ATOMIC_SUB          | 55       | IMAGE_GATHER4_C_LZ_O    |
-| 14       | IMAGE_ATOMIC_SMIN         | 56       | IMAGE_GET_LOD           |
-| 15       | IMAGE_ATOMIC_UMIN         | 57       | IMAGE_SAMPLE_D_G16      |
-| 16       | IMAGE_ATOMIC_SMAX         | 58       | IMAGE_SAMPLE_C_D_G16    |
-| 17       | IMAGE_ATOMIC_UMAX         | 59       | IMAGE_SAMPLE_D_O_G16    |
-| 18       | IMAGE_ATOMIC_AND          | 60       | IMAGE_SAMPLE_C_D_O_G16  |
-| 19       | IMAGE_ATOMIC_OR           | 64       | IMAGE_SAMPLE_CL         |
-| 20       | IMAGE_ATOMIC_XOR          | 65       | IMAGE_SAMPLE_D_CL       |
-| 21       | IMAGE_ATOMIC_INC          | 66       | IMAGE_SAMPLE_B_CL       |
-| 22       | IMAGE_ATOMIC_DEC          | 67       | IMAGE_SAMPLE_C_CL       |
-| 23       | IMAGE_GET_RESINFO         | 68       | IMAGE_SAMPLE_C_D_CL     |
-| 24       | IMAGE_MSAA_LOAD           | 69       | IMAGE_SAMPLE_C_B_CL     |
-| 25       | IMAGE_BVH_INTERSECT Ray   | 70       | IMAGE_SAMPLE_CL_O       |
-| 26       | IMAGE_BVH64_INTERSECT Ray | 71       | IMAGE_SAMPLE_D_CL_O     |
-| 27       | IMAGE_SAMPLE              | 72       | IMAGE_SAMPLE_B_CL_O     |
-| 28       | IMAGE_SAMPLE_D            | 73       | IMAGE_SAMPLE_C_CL_O     |
-| 29       | IMAGE_SAMPLE_L            | 74       | IMAGE_SAMPLE_C_D_CL_O   |
-| 30       | IMAGE_SAMPLE_B            | 75       | IMAGE_SAMPLE_C_B_CL_O   |
-| 31       | IMAGE_SAMPLE_LZ           | 84       | IMAGE_SAMPLE_C_D_CL_G16 |
-| 32       | IMAGE_SAMPLE_C            | 85       | IMAGE_SAMPLE_D_CL_O_G16 |
-
-| <b>Opcode #</b> | <b>Name</b>       | <b>Opcode #</b> | <b>Name</b>               |
-|-----------------|-------------------|-----------------|---------------------------|
-| 33              | IMAGE_SAMPLE_C_D  | 86              | IMAGE_SAMPLE_C_D_CL_O_G16 |
-| 34              | IMAGE_SAMPLE_C_L  | 95              | IMAGE_SAMPLE_D_CL_G16     |
-| 35              | IMAGE_SAMPLE_C_B  | 96              | IMAGE_GATHER4_CL          |
-| 36              | IMAGE_SAMPLE_C_LZ | 97              | IMAGE_GATHER4_B_CL        |
-| 37              | IMAGE_SAMPLE_O    | 98              | IMAGE_GATHER4_C_CL        |
-| 38              | IMAGE_SAMPLE_D_O  | 99              | IMAGE_GATHER4_C_L         |
-| 39              | IMAGE_SAMPLE_L_O  | 100             | IMAGE_GATHER4_C_B         |
-| 40              | IMAGE_SAMPLE_B_O  | 101             | IMAGE_GATHER4_C_B_CL      |
-| 41              | IMAGE_SAMPLE_LZ_O | 144             | IMAGE_GATHER4H            |
+| Opcode # | Name                      | Opcode # | Name                      |
+|----------|---------------------------|----------|---------------------------|
+| 0        | IMAGE_LOAD                | 42       | IMAGE_SAMPLE_C_O          |
+| 1        | IMAGE_LOAD_MIP            | 43       | IMAGE_SAMPLE_C_D_O        |
+| 2        | IMAGE_LOAD_PCK            | 44       | IMAGE_SAMPLE_C_L_O        |
+| 3        | IMAGE_LOAD_PCK_SGN        | 45       | IMAGE_SAMPLE_C_B_O        |
+| 4        | IMAGE_LOAD_MIP_PCK        | 46       | IMAGE_SAMPLE_C_LZ_O       |
+| 5        | IMAGE_LOAD_MIP_PCK_SGN    | 47       | IMAGE_GATHER4             |
+| 6        | IMAGE_STORE               | 48       | IMAGE_GATHER4_L           |
+| 7        | IMAGE_STORE_MIP           | 49       | IMAGE_GATHER4_B           |
+| 8        | IMAGE_STORE_PCK           | 50       | IMAGE_GATHER4_LZ          |
+| 9        | IMAGE_STORE_MIP_PCK       | 51       | IMAGE_GATHER4_C           |
+| 10       | IMAGE_ATOMIC_SWAP         | 52       | IMAGE_GATHER4_C_LZ        |
+| 11       | IMAGE_ATOMIC_CMPSWAP      | 53       | IMAGE_GATHER4_O           |
+| 12       | IMAGE_ATOMIC_ADD          | 54       | IMAGE_GATHER4_LZ_O        |
+| 13       | IMAGE_ATOMIC_SUB          | 55       | IMAGE_GATHER4_C_LZ_O      |
+| 14       | IMAGE_ATOMIC_SMIN         | 56       | IMAGE_GET_LOD             |
+| 15       | IMAGE_ATOMIC_UMIN         | 57       | IMAGE_SAMPLE_D_G16        |
+| 16       | IMAGE_ATOMIC_SMAX         | 58       | IMAGE_SAMPLE_C_D_G16      |
+| 17       | IMAGE_ATOMIC_UMAX         | 59       | IMAGE_SAMPLE_D_O_G16      |
+| 18       | IMAGE_ATOMIC_AND          | 60       | IMAGE_SAMPLE_C_D_O_G16    |
+| 19       | IMAGE_ATOMIC_OR           | 64       | IMAGE_SAMPLE_CL           |
+| 20       | IMAGE_ATOMIC_XOR          | 65       | IMAGE_SAMPLE_D_CL         |
+| 21       | IMAGE_ATOMIC_INC          | 66       | IMAGE_SAMPLE_B_CL         |
+| 22       | IMAGE_ATOMIC_DEC          | 67       | IMAGE_SAMPLE_C_CL         |
+| 23       | IMAGE_GET_RESINFO         | 68       | IMAGE_SAMPLE_C_D_CL       |
+| 24       | IMAGE_MSAA_LOAD           | 69       | IMAGE_SAMPLE_C_B_CL       |
+| 25       | IMAGE_BVH_INTERSECT Ray   | 70       | IMAGE_SAMPLE_CL_O         |
+| 26       | IMAGE_BVH64_INTERSECT Ray | 71       | IMAGE_SAMPLE_D_CL_O       |
+| 27       | IMAGE_SAMPLE              | 72       | IMAGE_SAMPLE_B_CL_O       |
+| 28       | IMAGE_SAMPLE_D            | 73       | IMAGE_SAMPLE_C_CL_O       |
+| 29       | IMAGE_SAMPLE_L            | 74       | IMAGE_SAMPLE_C_D_CL_O     |
+| 30       | IMAGE_SAMPLE_B            | 75       | IMAGE_SAMPLE_C_B_CL_O     |
+| 31       | IMAGE_SAMPLE_LZ           | 84       | IMAGE_SAMPLE_C_D_CL_G16   |
+| 32       | IMAGE_SAMPLE_C            | 85       | IMAGE_SAMPLE_D_CL_O_G16   |
+| 33       | IMAGE_SAMPLE_C_D          | 86       | IMAGE_SAMPLE_C_D_CL_O_G16 |
+| 34       | IMAGE_SAMPLE_C_L          | 95       | IMAGE_SAMPLE_D_CL_G16     |
+| 35       | IMAGE_SAMPLE_C_B          | 96       | IMAGE_GATHER4_CL          |
+| 36       | IMAGE_SAMPLE_C_LZ         | 97       | IMAGE_GATHER4_B_CL        |
+| 37       | IMAGE_SAMPLE_O            | 98       | IMAGE_GATHER4_C_CL        |
+| 38       | IMAGE_SAMPLE_D_O          | 99       | IMAGE_GATHER4_C_L         |
+| 39       | IMAGE_SAMPLE_L_O          | 100      | IMAGE_GATHER4_C_B         |
+| 40       | IMAGE_SAMPLE_B_O          | 101      | IMAGE_GATHER4_C_B_CL      |
+| 41       | IMAGE_SAMPLE_LZ_O         | 144      | IMAGE_GATHER4H            |
 
 ## 15.9. Flat Formats
 
@@ -7530,18 +7342,18 @@ The microcode format is identical for each, and only the value of the SEG (segme
 
 FLAT instruction format diagram showing bit fields from 31 to 0:
 
-| Field  | Bits  | Description                                  |
-|--------|-------|----------------------------------------------|
-| VDST   | 31:27 | Destination vector register                  |
-| SVE    | 26    | Scalar Vector Enable                         |
-| OP     | 25:24 | Opcode                                       |
-| SEG    | 23:22 | Memory Segment (0=flat, 1=scratch, 2=global) |
-| SLC    | 21    | System Level Coherent                        |
-| GLC    | 20    | Globally Coherent                            |
-| DLC    | 19    | Device Coherent                              |
-| DATA   | 18:12 | Immediate data                               |
-| OFFSET | 11:0  | Address offset                               |
-| ADDR   | 39:32 | Address register                             |
+| Field      | Bits    | Description                                                                                                                                                                                                                                                                                                                                                        |
+|------------|---------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| VDST       | 31:27   | Destination vector register                                                                                                                                                                                                                                                                                                                                        |
+| SVE        | 26      | Scalar Vector Enable                                                                                                                                                                                                                                                                                                                                               |
+| OP         | 25:24   | Opcode                                                                                                                                                                                                                                                                                                                                                             |
+| SEG        | 23:22   | Memory Segment (0=flat, 1=scratch, 2=global)                                                                                                                                                                                                                                                                                                                       |
+| SLC        | 21      | System Level Coherent                                                                                                                                                                                                                                                                                                                                              |
+| GLC        | 20      | Globally Coherent                                                                                                                                                                                                                                                                                                                                                  |
+| DLC        | 19      | Device Coherent                                                                                                                                                                                                                                                                                                                                                    |
+| DATA       | 18:12   | Immediate data                                                                                                                                                                                                                                                                                                                                                     |
+| OFFSET     | 11:0    | Address offset                                                                                                                                                                                                                                                                                                                                                     |
+| ADDR       | 39:32   | Address register                                                                                                                                                                                                                                                                                                                                                   |
 
 Diagram of the FLAT instruction format showing bit fields from 31 to 0. The fields are: VDST (bits 31:27), SVE (bit 26), OP (bits 25:24), SEG (bits 23:22), SLC (bit 21), GLC (bit 20), DLC (bit 19), DATA (bits 18:12), OFFSET (bits 11:0), and ADDR (bits 39:32).
 
@@ -7561,11 +7373,8 @@ Table 107. FLAT Fields
 | ADDR       | [39:32] | VGPR that holds address or offset. For 64-bit addresses, ADDR has the LSBs and ADDR+1 has the MSBs. For offset a single VGPR has a 32 bit unsigned offset.<br>For FLAT_*: specifies an address.<br>For GLOBAL_* and SCRATCH_* when SADDR is NULL or 0x7f: specifies an address.<br>For GLOBAL_* and SCRATCH_* when SADDR is not NULL or 0x7f: specifies an offset. |
 | DATA       | [47:40] | VGPR that supplies data.                                                                                                                                                                                                                                                                                                                                           |
 | SADDR      | [54:48] | Scalar SGPR that provides an address of offset (unsigned). Set this field to NULL or 0x7f to disable use.<br>Meaning of this field is different for Scratch and Global:<br>FLAT: Unused<br>Scratch: use an SGPR for the address instead of a VGPR<br>Global: use the SGPR to provide a base address and the VGPR provides a 32-bit byte offset.                    |
-
-| Field Name | Bits    | Format or Description                                                                            |
-|------------|---------|--------------------------------------------------------------------------------------------------|
-| SVE        | [55]    | Scratch VGPR Enable. 1 = scratch address includes a VGPR to provide an offset; 0 = no VGPR used. |
-| VDST       | [63:56] | Destination VGPR for data returned from memory to VGPRs.                                         |
+| SVE        | [55]    | Scratch VGPR Enable. 1 = scratch address includes a VGPR to provide an offset; 0 = no VGPR used.                                                                                                                                                                                                                                                                   |
+| VDST       | [63:56] | Destination VGPR for data returned from memory to VGPRs.                                                                                                                                                                                                                                                                                                           |
 
 Table 108. FLAT Opcodes
 
@@ -7602,20 +7411,17 @@ Table 108. FLAT Opcodes
 
 Table 109. GLOBAL Opcodes
 
-| Opcode # | Name             | Opcode # | Name                   |
-|----------|------------------|----------|------------------------|
-| 16       | GLOBAL_LOAD_U8   | 55       | GLOBAL_ATOMIC_CSUB_U32 |
-| 17       | GLOBAL_LOAD_I8   | 56       | GLOBAL_ATOMIC_MIN_I32  |
-| 18       | GLOBAL_LOAD_U16  | 57       | GLOBAL_ATOMIC_MIN_U32  |
-| 19       | GLOBAL_LOAD_I16  | 58       | GLOBAL_ATOMIC_MAX_I32  |
-| 20       | GLOBAL_LOAD_B32  | 59       | GLOBAL_ATOMIC_MAX_U32  |
-| 21       | GLOBAL_LOAD_B64  | 60       | GLOBAL_ATOMIC_AND_B32  |
-| 22       | GLOBAL_LOAD_B96  | 61       | GLOBAL_ATOMIC_OR_B32   |
-| 23       | GLOBAL_LOAD_B128 | 62       | GLOBAL_ATOMIC_XOR_B32  |
-| 24       | GLOBAL_STORE_B8  | 63       | GLOBAL_ATOMIC_INC_U32  |
-
 | Opcode # | Name                      | Opcode # | Name                      |
 |----------|---------------------------|----------|---------------------------|
+| 16       | GLOBAL_LOAD_U8            | 55       | GLOBAL_ATOMIC_CSUB_U32    |
+| 17       | GLOBAL_LOAD_I8            | 56       | GLOBAL_ATOMIC_MIN_I32     |
+| 18       | GLOBAL_LOAD_U16           | 57       | GLOBAL_ATOMIC_MIN_U32     |
+| 19       | GLOBAL_LOAD_I16           | 58       | GLOBAL_ATOMIC_MAX_I32     |
+| 20       | GLOBAL_LOAD_B32           | 59       | GLOBAL_ATOMIC_MAX_U32     |
+| 21       | GLOBAL_LOAD_B64           | 60       | GLOBAL_ATOMIC_AND_B32     |
+| 22       | GLOBAL_LOAD_B96           | 61       | GLOBAL_ATOMIC_OR_B32      |
+| 23       | GLOBAL_LOAD_B128          | 62       | GLOBAL_ATOMIC_XOR_B32     |
+| 24       | GLOBAL_STORE_B8           | 63       | GLOBAL_ATOMIC_INC_U32     |
 | 25       | GLOBAL_STORE_B16          | 64       | GLOBAL_ATOMIC_DEC_U32     |
 | 26       | GLOBAL_STORE_B32          | 65       | GLOBAL_ATOMIC_SWAP_B64    |
 | 27       | GLOBAL_STORE_B64          | 66       | GLOBAL_ATOMIC_CMPSWAP_B64 |
@@ -12376,7 +12182,7 @@ D0.f16 = fma(S0.f16, SIMM32.f16, S1.f16)
 
 This opcode cannot use the VOP3 encoding and cannot use input/output modifiers.
 
-**V\_FMMAK\_F16**
+**V\_FMAAK\_F16**
 
 56
 
@@ -14209,9 +14015,6 @@ Table 113. Instructions with Sixteen Compare Operations
 | V_CMP_{COMPF}_F16  | 16-bit float compare. Writes VCC/SGPR. | 0x20 to 0x2F |
 | V_CMPX_{COMPF}_F16 | 16-bit float compare. Writes EXEC.     | 0x30 to 0x3F |
 | V_CMP_{COMPF}_F32  | 32-bit float compare. Writes VCC/SGPR. | 0x40 to 0x4F |
-
-| Instruction        | Description                            | Hex Range    |
-|--------------------|----------------------------------------|--------------|
 | V_CMPX_{COMPF}_F32 | 32-bit float compare. Writes EXEC.     | 0x50 to 0x5F |
 | V_CMP_{COMPF}_F64  | 64-bit float compare. Writes VCC/SGPR. | 0x60 to 0x6F |
 | V_CMPX_{COMPF}_F64 | 64-bit float compare. Writes EXEC.     | 0x70 to 0x7F |
@@ -21535,7 +21338,7 @@ OPSEL[2] controls which half of S2 is read and OPSEL[3] controls which half of D
 
 Given a single-precision float value to scale in the first input, a denominator in the second input and a numerator in the third input, scale the first input for division if required to avoid subnormal terms appearing during application of the Newton-Raphson correction method. Store the scaled result into a vector register and set the vector condition code iff post-scaling is required.
 
-This operation is designed for use in a high precision division macro. The first input should be the same value as either the second or third input; other scale values produce predictable results but may not be mathematically useful. The vector condition code is used by V\_DIV\_FMAD\_F32 to determine if the quotient requires post-scaling.
+This operation is designed for use in a high precision division macro. The first input should be the same value as either the second or third input; other scale values produce predictable results but may not be mathematically useful. The vector condition code is used by V\_DIV\_FMAS\_F32 to determine if the quotient requires post-scaling.
 
 ```
 VCC = 0x0LL;
@@ -21577,7 +21380,7 @@ elseif S2.f32 / S1.f32 == DENORM.f32 then
 
 ## Notes
 
-V\_DIV\_SCALE\_F32, V\_DIV\_FMAD\_F32 and V\_DIV\_FIXUP\_F32 are all designed for use in a high precision division macro that utilizes V\_RCP\_F32 and V\_MUL\_F32 to compute the approximate result and then applies two steps of the Newton-Raphson method to converge to the quotient. If subnormal terms appear during this calculation then a loss of precision occurs. This loss of precision can be avoided by scaling the inputs and then post-scaling the quotient after Newton-Raphson is applied.
+V\_DIV\_SCALE\_F32, V\_DIV\_FMAS\_F32 and V\_DIV\_FIXUP\_F32 are all designed for use in a high precision division macro that utilizes V\_RCP\_F32 and V\_MUL\_F32 to compute the approximate result and then applies two steps of the Newton-Raphson method to converge to the quotient. If subnormal terms appear during this calculation then a loss of precision occurs. This loss of precision can be avoided by scaling the inputs and then post-scaling the quotient after Newton-Raphson is applied.
 
 ## V\_DIV\_SCALE\_F64
 
@@ -21585,7 +21388,7 @@ V\_DIV\_SCALE\_F32, V\_DIV\_FMAD\_F32 and V\_DIV\_FIXUP\_F32 are all designed fo
 
 Given a double-precision float value to scale in the first input, a denominator in the second input and a numerator in the third input, scale the first input for division if required to avoid subnormal terms appearing during application of the Newton-Raphson correction method. Store the scaled result into a vector register and set the vector condition code iff post-scaling is required.
 
-This operation is designed for use in a high precision division macro. The first input should be the same value as either the second or third input; other scale values produce predictable results but may not be mathematically useful. The vector condition code is used by V\_DIV\_FMAD\_F64 to determine if the quotient requires post-scaling.
+This operation is designed for use in a high precision division macro. The first input should be the same value as either the second or third input; other scale values produce predictable results but may not be mathematically useful. The vector condition code is used by V\_DIV\_FMAS\_F64 to determine if the quotient requires post-scaling.
 
 ```
 
@@ -21629,7 +21432,7 @@ elseif S2.f64 / S1.f64 == DENORM.f64 then
 
 **Notes**
 
-V\_DIV\_SCALE\_F64, V\_DIV\_FMAD\_F64 and V\_DIV\_FIXUP\_F64 are all designed for use in a high precision division macro that utilizes V\_RCP\_F64 and V\_MUL\_F64 to compute the approximate result and then applies two steps of the Newton-Raphson method to converge to the quotient. If subnormal terms appear during this calculation then a loss of precision occurs. This loss of precision can be avoided by scaling the inputs and then post-scaling the quotient after Newton-Raphson is applied.
+V\_DIV\_SCALE\_F64, V\_DIV\_FMAS\_F64 and V\_DIV\_FIXUP\_F64 are all designed for use in a high precision division macro that utilizes V\_RCP\_F64 and V\_MUL\_F64 to compute the approximate result and then applies two steps of the Newton-Raphson method to converge to the quotient. If subnormal terms appear during this calculation then a loss of precision occurs. This loss of precision can be avoided by scaling the inputs and then post-scaling the quotient after Newton-Raphson is applied.
 
 **V\_MAD\_U64\_U32**
 
