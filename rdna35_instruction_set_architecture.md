@@ -411,7 +411,7 @@ The following terminology and conventions are used in this document:
 | S*.u   | Source which is an unsigned integer                                             |
 | S*.f   | Source which is a float                                                         |
 
-If an instruction has two suffixes (for example, \_I32\_F32), the first suffix indicates the destination type, the second the source type.
+If an instruction has two suffixes (for example, _I32_F32), the first suffix indicates the destination type, the second the source type.
 
 The following abbreviations are used in instruction definitions:
 
@@ -522,9 +522,9 @@ In addition to the EXEC mask being different between the low and high half, scal
 
 The differences in the second pass are:
 
-- Input increments: Carry-in, div-fmas and v\_cndmask all use the next SGPR (SSRC + 1, or VCC\_HI)
-- Output increments: Carry-out, div-scale and v\_cmp all write to the next SGPR (SDST + 1, or VCC\_HI)
-  - v\_cmppx writes to EXEC\_HI instead of EXEC\_LO
+- Input increments: Carry-in, div-fmas and v_cndmask all use the next SGPR (SSRC + 1, or VCC_HI)
+- Output increments: Carry-out, div-scale and v_cmp all write to the next SGPR (SDST + 1, or VCC_HI)
+  - v_cmppx writes to EXEC_HI instead of EXEC_LO
 
 The upper 32-bits of EXEC and VCC are ignored for wave32 waves. VCCZ and EXECZ reflect the status of the lowest 32-bits of VCC and EXEC respectively for wave32 waves.
 
@@ -576,7 +576,7 @@ The diagram illustrates the graphics pipeline evolution across different DirectX
 
 A work-group is a collection of waves which can share data through LDS and can synchronize at a barrier. Waves in a work-group are all issued to the same WGP but can run on any of the 4 SIMD32's and can share data through LDS. The WGP supports up to 32 work-groups with a maximum of 1024 work-items per work-group.
 
-Waves in a work-group may share up to 64kB of LDS space. Work-groups consisting of a single wave do not count against the limit of 32. *They do not allocate a barrier resource, and barrier ops are treated as S\_NOP.*
+Waves in a work-group may share up to 64kB of LDS space. Work-groups consisting of a single wave do not count against the limit of 32. *They do not allocate a barrier resource, and barrier ops are treated as S_NOP.*
 
 Each work-group or wave can operate in one of two modes, selectable per draw/dispatch at wave-create time:
 
@@ -638,9 +638,9 @@ Table 4. Readable and Writable Hardware States
 
 The Program Counter is a DWORD-aligned byte address that points to the next instruction to execute. When a wave is created the PC is initialized to the first instruction in the program.
 
-There are a few instructions to interact directly with the PC: S\_GETPC\_B64, S\_SETPC\_B64, S\_CALL\_B64, S\_RFE\_B64 and S\_SWAPPC\_B64. These transfer the PC to and from an even-aligned SGPR pair (sign-extended).
+There are a few instructions to interact directly with the PC: S_GETPC_B64, S_SETPC_B64, S_CALL_B64, S_RFE_B64 and S_SWAPPC_B64. These transfer the PC to and from an even-aligned SGPR pair (sign-extended).
 
-Branches jump to  $(PC\_of\_the\_instruction\_after\_the\_branch + offset \times 4)$ . *Branches, GET\_PC and SWAP\_PC are PC-relative to the **next** instruction, not the current one. S\_TRAP, on the other hand, saves the PC of the S\_TRAP instruction itself.*
+Branches jump to  $(PC_of_the_instruction_after_the_branch + offset \times 4)$ . *Branches, GET_PC and SWAP_PC are PC-relative to the **next** instruction, not the current one. S_TRAP, on the other hand, saves the PC of the S_TRAP instruction itself.*
 
 During wave debugging, the program counter may be read. The PC points to the next instruction to issue. All prior instructions have been issued but may or may not have completed execution.
 
@@ -659,16 +659,16 @@ The shader hardware may skip vector instructions when EXEC==0. Instructions whic
 - VALU - skip if EXEC == 0
   - Not skipped if the instruction writes SGPRs/VCC
   - Does not skip WMMA
-  - This skipping is opportunistic and may not occur depending on timing after a V\_CMPX.
+  - This skipping is opportunistic and may not occur depending on timing after a V_CMPX.
 - These are not skipped regardless of EXEC mask value, and are issued only once in wave64
-  - V\_NOP, V\_PIPEFLUSH, V\_READLANE, V\_READFIRSTLANE, V\_WRITELANE
-  - BUFFER\_GL1\_INV, BUFFER\_GL0\_INV
+  - V_NOP, V_PIPEFLUSH, V_READLANE, V_READFIRSTLANE, V_WRITELANE
+  - BUFFER_GL1_INV, BUFFER_GL0_INV
 - These are not skipped and are issued twice regardless of EXEC mask value in wave64 mode
-  - V\_CMP which writes SGPR or VCC (not V\_CMPX - may skip one pass but not both)
+  - V_CMP which writes SGPR or VCC (not V_CMPX - may skip one pass but not both)
   - Any VALU which writes an SGPR
 - Export Request - skip unless: Done==1 or if export target is POS0
-  - Skipped if the wave was created with SKIP\_EXPORT=1
-- LDS\_param\_load / LDS-direct: are skipped when EXEC==0 and EXP\_cnt==0
+  - Skipped if the wave was created with SKIP_EXPORT=1
+- LDS_param_load / LDS-direct: are skipped when EXEC==0 and EXP_cnt==0
 - LDS, Memory, GDS - do not skip
   - VMEM can be skipped only if: VMcnt/VScnt==0 and EXEC==0
     - otherwise for wave64 one pass can be skipped if EXEC==0 for that half, but not both halves.
@@ -684,12 +684,12 @@ The shader hardware may skip vector instructions when EXEC==0. Instructions whic
 Every wave is allocated a fixed number of SGPRs:
 
 - 106 normal SGPRs
-- VCC\_HI and VCC\_LO (stored in SGPRs 106 and 107)
+- VCC_HI and VCC_LO (stored in SGPRs 106 and 107)
 - 16 Trap-temporary SGPRs, meant for use by the trap handler
 
 #### 3.3.1.2. VCC
 
-The Vector Condition Code (VCC) can be written by V\_CMP and integer vector ADD/SUB instructions. VCC is implicitly read by V\_ADD\_CI, V\_SUB\_CI, V\_CNDMASK and V\_DIV\_FMAS. VCC is a named SGPR-pair and is subject to the same dependency checks as any other SGPR.
+The Vector Condition Code (VCC) can be written by V_CMP and integer vector ADD/SUB instructions. VCC is implicitly read by V_ADD_CI, V_SUB_CI, V_CNDMASK and V_DIV_FMAS. VCC is a named SGPR-pair and is subject to the same dependency checks as any other SGPR.
 
 #### 3.3.1.3. SGPR Alignment
 
@@ -710,13 +710,13 @@ As an example, VALU ops with carry-in or carry-out:
 - When used with wave32, these are 32 bit values and may have any arbitrary alignment
 - When used with wave64, these are 64 bit values and must be aligned to an even SGPR address
 
-Hardware enforces SGPR alignment by ignoring LSB's as necessary and treating them as zero. For \*MOVREL\*\_B64, the LSB of the index is also ignored and treated as zero.
+Hardware enforces SGPR alignment by ignoring LSB's as necessary and treating them as zero. For \*MOVREL\*_B64, the LSB of the index is also ignored and treated as zero.
 
 #### 3.3.1.4. SGPR Out of Range Behavior
 
 Scalar sources and dests use a 7-bit encoding:
 
-Scalar 0-105=SGPR; 106,107=VCC, 108-123=TTMP0-15, and 124-127={NULL, M0, EXEC\_LO, EXEC\_HI}.
+Scalar 0-105=SGPR; 106,107=VCC, 108-123=TTMP0-15, and 124-127={NULL, M0, EXEC_LO, EXEC_HI}.
 
 It is illegal to use GPR indexing or a multi-DWORD operand to cross SGPR regions. The regions are:
 
@@ -742,11 +742,11 @@ TTMP0-15 can only be written while in the trap handler (STATUS.PRIV=1) and canno
   - No data gets written to dest-SGPRs that are out-of-range
   - Addr and write-data are aligned and so cannot go out of range, except:
     - Referencing M0, NULL, or EXEC\* returns zero, and SMEM loads cannot load into these registers.
-- S\_MOVREL:
+- S_MOVREL:
   - Indexing is allowed only within SGPRs and TTMPs, and must not cross between the two. Indexing must stay within the "base" range (the operand type where index==0).
-The ranges are: [ SGPRs 0-105 and VCC\_LO, VCC\_HI ], [ Trap Temps 0-15 ], [ all other values ]
+The ranges are: [ SGPRs 0-105 and VCC_LO, VCC_HI ], [ Trap Temps 0-15 ], [ all other values ]
   - Indexing must not reach M0, exec or inline constants, the rule is:
-    - Base is SGPR: addr > VCC\_HI (or if 64-bit operand, addr > VCC\_LO)
+    - Base is SGPR: addr > VCC_HI (or if 64-bit operand, addr > VCC_LO)
     - Base is TTMP: addr > TTMP15 (or if B64 if addr > tmp14)
   - If the source is out of range, S0 is used.
 If the dest is out of range, nothing is written.
@@ -757,7 +757,7 @@ If the dest is out of range, nothing is written.
 
 VGPRs are allocated in blocks of 16 for wave32 or 8 for wave64, and a shader may have up to 256 VGPRs. *In other words, VGPRs are allocated in units of (16\*32 or 8\*64 = 512 DWORDs). A wave may not be created with zero VGPRs.* Devices which have 1536 VGPRs per SIMD allocate in blocks of 24 for wave32 and 12 for wave64.
 
-A wave may voluntarily deallocate all of its VGPRs via S\_SENDMSG. Once this is done, the wave may not reallocate them and the only valid action is to terminate the wave. This can be useful if a wave has issued stores to memory and is waiting for the write-confirms before terminating. Releasing the VGPRs while waiting may allow a new wave to allocate them and start earlier.
+A wave may voluntarily deallocate all of its VGPRs via S_SENDMSG. Once this is done, the wave may not reallocate them and the only valid action is to terminate the wave. This can be useful if a wave has issued stores to memory and is waiting for the write-confirms before terminating. Releasing the VGPRs while waiting may allow a new wave to allocate them and start earlier.
 
 #### 3.3.2.2. VGPR Out of Range Behavior
 
@@ -771,15 +771,15 @@ For a 32-bit operand, Vs==Ve; for a 64-bit operand Ve=Vs+1, etc.
 
 Operand is out of range if:
 
-- Vs < 0 || Vs >= VGPR\_SIZE
-- Ve < 0 || Ve >= VGPR\_SIZE
+- Vs < 0 || Vs >= VGPR_SIZE
+- Ve < 0 || Ve >= VGPR_SIZE
 
-V\_MOVREL indexed operand out of range if either:
+V_MOVREL indexed operand out of range if either:
 
 - Index > 255
 
-- $(Vs + M0) \ge VGPR\_SIZE$
-- $(Ve + M0) \ge VGPR\_SIZE$
+- $(Vs + M0) \ge VGPR_SIZE$
+- $(Ve + M0) \ge VGPR_SIZE$
 
 Out of range consequences:
 
@@ -837,11 +837,11 @@ Pixel parameters are loaded into the same CU side as the wave resides and do not
 
 #### 3.3.4.1. LDS/GDS Alignment and Out-of-Range
 
-Any DS\_LOAD or DS\_STORE of any size can be byte aligned if the alignment mode is set to "unaligned". For all other alignment modes, LDS forces alignment by zeroing out address least significant bits.
+Any DS_LOAD or DS_STORE of any size can be byte aligned if the alignment mode is set to "unaligned". For all other alignment modes, LDS forces alignment by zeroing out address least significant bits.
 
 - 32-bit Atomics must be aligned to a 4-byte address; 64-bit atomics to an 8-byte address, otherwise returns MEMVIOL.
 - LDS operations report MEMVIOL if the LDS-address is out of range and `LDS_CONFIG.ADDR_OUT_OF_RANGE_REPORTING==1`
-- MEMVIOL is reported for misaligned LDS accesses when the alignment mode is set to STRICT or DWORD\_STRICT.
+- MEMVIOL is reported for misaligned LDS accesses when the alignment mode is set to STRICT or DWORD_STRICT.
 
 ##### Out Of Range
 
@@ -875,7 +875,7 @@ LDSaddr = (addr + offset) & align
 
 ## 3.4. Wave State Registers
 
-The following registers are accessed infrequently, and are only readable/writable via S\_GETREG and S\_SETREG instructions. Some of these registers are read-only, some are writable and others are writable only when in the trap handler ("PRIV").
+The following registers are accessed infrequently, and are only readable/writable via S_GETREG and S_SETREG instructions. Some of these registers are read-only, some are writable and others are writable only when in the trap handler ("PRIV").
 
 | Code | Register        |                                                                                                                                                                    |
 |------|-----------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------|
@@ -987,7 +987,7 @@ The SCC can be used as the carry-in for extended-precision integer arithmetic, a
 
 ### 3.4.6. Vector Compares: VCC and VCCZ
 
-Vector ALU comparison instructions (V\_CMP) compare two values and return a bit-mask of the result, where each bit represents one lane (work-item) where: 1= pass, 0 = fail. This result mask is the Vector Condition Code (VCC). VCC is also set for selected integer ALU operations (carry-out).
+Vector ALU comparison instructions (V_CMP) compare two values and return a bit-mask of the result, where each bit represents one lane (work-item) where: 1= pass, 0 = fail. This result mask is the Vector Condition Code (VCC). VCC is also set for selected integer ALU operations (carry-out).
 
 These instructions write this mask either to VCC, an SGPR or to EXEC, but do not write to both EXEC and SGPRs. Wave32 writes only the low 32 bits of VCC, EXEC or a single SGPR; Wave64 writes 64-bits of VCC, EXEC or an aligned pair of SGPRs.
 
@@ -1003,13 +1003,13 @@ updated)
 
 VCC physically resides in the SGPR register file in a specific pair of SGPRs, so when an instruction sources VCC, that counts against the limit on the total number of SGPRs that can be sourced for a given instruction.
 
-Wave32 waves may use any SGPR for mask/carry/borrow operations, but may not use VCC\_HI or EXEC\_HI.
+Wave32 waves may use any SGPR for mask/carry/borrow operations, but may not use VCC_HI or EXEC_HI.
 
-### 3.4.7. FLAT\_SCRATCH
+### 3.4.7. FLAT_SCRATCH
 
-FLAT\_SCRATCH is a 64-bit register that holds a pointer to the base of scratch memory for this wave. For waves that have scratch space allocated, wave-launch hardware initializes the FLAT\_SCRATCH register with the scratch base address unique to this wave. This register is read-only, except while in the trap handler where it is writable. The value is a byte address and must be 256byte aligned. If the wave has no scratch space allocated, then reading FLAT\_SCRATCH returns zero.
+FLAT_SCRATCH is a 64-bit register that holds a pointer to the base of scratch memory for this wave. For waves that have scratch space allocated, wave-launch hardware initializes the FLAT_SCRATCH register with the scratch base address unique to this wave. This register is read-only, except while in the trap handler where it is writable. The value is a byte address and must be 256byte aligned. If the wave has no scratch space allocated, then reading FLAT_SCRATCH returns zero.
 
-The value for FLAT\_SCRATCH is computed in hardware and initialized for any wave that has scratch space allocated:
+The value for FLAT_SCRATCH is computed in hardware and initialized for any wave that has scratch space allocated:
 
 ```
 scratch_base = scratch_base[63:0] + spi_scratch_offset[31:0]
@@ -1024,7 +1024,7 @@ FLAT_SCRATCH_HI = scratch_base [63:32]
 
 These registers are read-only and can be accessed by the `S_GETREG` instruction. They return information about hardware allocation and status. `HW_ID` and the various `*_BASE` values are not predictable and may change over the lifetime of a wave if context-switching can occur.
 
-#### HW\_ID1
+#### HW_ID1
 
 | Field   | Bits  | Description                                                                                                                                                                                                     |
 |---------|-------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
@@ -1035,7 +1035,7 @@ These registers are read-only and can be accessed by the `S_GETREG` instruction.
 | SE_ID   | 20:18 | Shader Engine ID                                                                                                                                                                                                |
 | DP_RATE | 31:29 | Number of double-precision float units per SIMD. $1 + \log_2(\#DP\text{-}alu's)$ . 0=none, 1=1/32 rate (1 dp lane/clk), 2=1/16 rate (2 dp lanes/clk), 3=1/8, 4=1/4, 5=1/2, 6=full rate (32 dp lanes per clock). |
 
-#### HW\_ID2
+#### HW_ID2
 
 | Field    | Bits  | Description                                       |
 |----------|-------|---------------------------------------------------|
@@ -1073,15 +1073,15 @@ When a trap is taken (either user initiated, exception or host initiated), the s
 {TTMP1, TTMP0} = {7'h0, HT[0], trapID[7:0], PC[47:0]}.
 ```
 
-HT is set to one for host initiated traps, and zero for user traps (`s_trap`) or exceptions. TRAP\_ID is zero for exceptions, or the user/host trapID for those traps.
+HT is set to one for host initiated traps, and zero for user traps (`s_trap`) or exceptions. TRAP_ID is zero for exceptions, or the user/host trapID for those traps.
 
-#### **STATUS . TRAP\_EN**
+#### **STATUS . TRAP_EN**
 
 This bit tells the shader whether or not a trap handler is present. When one is not present, traps are not taken no matter whether they're floating point, user or host-initiated traps. When the trap handler is present, the wave uses an extra 16 SGPRs for trap processing.
 
-*If trap\_en == 0, all traps and exceptions are ignored, and s\_trap is converted by hardware to NOP.*
+*If trap_en == 0, all traps and exceptions are ignored, and s_trap is converted by hardware to NOP.*
 
-#### **MODE . EXCP\_EN[8:0]**
+#### **MODE . EXCP_EN[8:0]**
 
 Exception enable mask. Defines which of the sources of exception cause the shader to jump to the trap handler when the exception occurs. 1 = enable traps; 0 = disable traps.
 
@@ -1122,7 +1122,7 @@ There are two methods for measuring time in the shader:
 - "TIME" - measure cycles in graphics core clocks (20 bit counter)
 - "REALTIME" - measure time based on a fixed frequency, constantly running clock (typically 100MHz), providing a 64bit value.
 
-Shader programs have access to a free-running clock counter in order to measure the duration of portions of a wave's execution. This cycle counter can be read via: **S\_GETREG S0, SHADER\_CYCLES** and returns a 20-bit cycle counter value. This counter is not synchronized across different SIMDs and should only be used to measure time-delta within one wave. Reading the counter is handled through the SALU which has a typical latency of around 8 cycles.
+Shader programs have access to a free-running clock counter in order to measure the duration of portions of a wave's execution. This cycle counter can be read via: **S_GETREG S0, SHADER_CYCLES** and returns a 20-bit cycle counter value. This counter is not synchronized across different SIMDs and should only be used to measure time-delta within one wave. Reading the counter is handled through the SALU which has a typical latency of around 8 cycles.
 
 For measuring time between different waves or SIMDs, or to reference a clock that does not stop counting when the chip is idle, use "REALTIME". Real-time is a clock counter that comes from the clock-generator and runs at a constant speed, regardless of the shader or memory clock speeds. This counter can be read by:
 
@@ -1145,13 +1145,13 @@ State initialization is controlled by state registers which are defined in other
 
 Normally, EXEC is initialized with the mask of which threads are active in a wave. There are, however, cases where the EXEC mask is initialized to zero indicating that this wave should do no work and exit immediately. These are referred to as "Null waves" (EXEC==0) and exit immediately after starting execution.
 
-### 3.5.2. FLAT\_SCRATCH Initialization
+### 3.5.2. FLAT_SCRATCH Initialization
 
-Waves that have scratch memory space allocated to them are initialized with their FLAT\_SCRATCH register having a pointer to the address in global memory. Waves without scratch have this initialized to zero.
+Waves that have scratch memory space allocated to them are initialized with their FLAT_SCRATCH register having a pointer to the address in global memory. Waves without scratch have this initialized to zero.
 
 ### 3.5.3. SGPR Initialization
 
-SGPRs are initialized based on various SPI\_PGM\_RSRC\* or COMPUTE\_PGM\_\* register settings. Note that only the enabled values are loaded, and they are packed into consecutive SGPRs, skipping over disabled values regardless of the number of user-constants loaded. No SGPRs are skipped for alignment.
+SGPRs are initialized based on various SPI_PGM_RSRC\* or COMPUTE_PGM_\* register settings. Note that only the enabled values are loaded, and they are packed into consecutive SGPRs, skipping over disabled values regardless of the number of user-constants loaded. No SGPRs are skipped for alignment.
 
 The tables below show how to control which values are initialized prior to shader launch.
 
@@ -1166,9 +1166,9 @@ Table 8. PS SGPR Load
 | then           | {ps_wave_id[9:0], ps_wave_index[5:0]}                              | SPI_SHADER_PGM_RSRC2_PS.wave_cnt_en             |
 | then           | Provoking Vtx Info:<br>{prim15[1:0], prim14[1:0], ..., prim0[1:0]} | SPI_SHADER_PGM_RSRC1_PS .<br>LOAD_PROVOKING_VTX |
 
-**PS\_wave\_index** is  $(se\_id[1:0] * GPU\_GC\_NUM\_PACKER\_PER\_SE + packer\_id)$ .
+**PS_wave_index** is  $(se_id[1:0] * GPU_GC_NUM_PACKER_PER_SE + packer_id)$ .
 
-**PS\_wave\_id** is an index value which is incremented for every wave. There is a separate counter per packer, so the combination of  $\{ ps\_wave\_id, ps\_wave\_index \}$  forms a unique ID for any wave on the chip. The wave-id counter wraps at `SPI_PS_MAX_WAVE_ID`.
+**PS_wave_id** is an index value which is incremented for every wave. There is a separate counter per packer, so the combination of  $\{ ps_wave_id, ps_wave_index \}$  forms a unique ID for any wave on the chip. The wave-id counter wraps at `SPI_PS_MAX_WAVE_ID`.
 
 #### 3.5.3.2. Geometry Shader (GS)
 
@@ -1250,7 +1250,7 @@ Other TTMPs are not initialized.
 
 ### 3.5.4. Which VGPRs Get Initialized
 
-The table shows the VGPRs which may be initialized prior to wave launch. COMPUTE\_PGM\_RSRC\* or SPI\_SHADER\_PGM\_RSRC\* control registers can select a reduced set per shader stage.
+The table shows the VGPRs which may be initialized prior to wave launch. COMPUTE_PGM_RSRC\* or SPI_SHADER_PGM_RSRC\* control registers can select a reduced set per shader stage.
 
 | Stage                                  | VGPR8           | VGPR7            | VGPR6           | VGPR5                 | VGPR4                    | VGPR3                                     | VGPR2                                            | VGPR1                                                        | VGPR0                                                          |
 |----------------------------------------|-----------------|------------------|-----------------|-----------------------|--------------------------|-------------------------------------------|--------------------------------------------------|--------------------------------------------------------------|----------------------------------------------------------------|
@@ -1278,7 +1278,7 @@ The table shows the VGPRs which may be initialized prior to wave launch. COMPUTE
 | J/W              |                   | Sample mask              |
 | 1/W              |                   | X/Y fixed                |
 
-Two registers (SPI\_PS\_INPUT\_ENA and SPI\_PS\_INPUT\_ADDR) control the enabling of IJ calculations and
+Two registers (SPI_PS_INPUT_ENA and SPI_PS_INPUT_ADDR) control the enabling of IJ calculations and
 
 specifying of VGPR initialization for PS waves. `SPI_PS_INPUT_ENA` is used to determine what gradients are enabled for setup, whether per-pixel Z is enabled, what terms are calculated and/or passed through the barycentric logic, and what is loaded into VGPR for PS. `SPI_PS_INPUT_ADDR` can be used to manipulate the VGPR destination of terms that are enabled by `INPUT_ENA`, typically providing a way to maintain consistent VGPR addressing when terms are removed from `INPUT_ENA`. It is valid to set a bit in `ADDR` when the corresponding bit in `ENA` is not set, but if the `ENA` bit is set then the corresponding bit in `ADDR` must also be set.
 
@@ -1476,7 +1476,7 @@ Typically loads use GLC=0 (except for load-acquire). GLC=1 forces a miss in the 
 | 2 or 3            | 1       | 1       | 0       | 1                  | STREAM      | HIT_EVICT   | HIT_LRU         | CU     | yes        | yes       | yes       | no            |
 | 2 or 3            | 1       | 1       | 1       | 1                  | STREAM      | MISS_EVICT  | MISS_EVICT      | DEVICE | yes        | yes       | _NA_      | _NA_          |
 
-- For S\_BUFFER\_LOAD instructions, LLC\_NOALLOC comes from V#.LLC\_noalloc. For S\_LOAD, LLC\_NOALLOC is zero.
+- For S_BUFFER_LOAD instructions, LLC_NOALLOC comes from V#.LLC_noalloc. For S_LOAD, LLC_NOALLOC is zero.
 - SMEM operations have SLC set to zero.
 
 #### Shader STORE / ATOMIC ops (all are device scope)
@@ -1558,7 +1558,7 @@ Table 14. Control Instructions
 
 An **instruction clause** is a group of instructions of the same type that are to be executed in an uninterrupted sequence. Normally hardware may interleave instructions from different waves, but a clause can be used to override that behavior and force the hardware to service only one wave for a given instruction type for the duration of the clause, even if that leaves the execution hardware idle.
 
-Clauses are defined and started using the S\_CLAUSE instruction, and must contain only a single type of instruction. The clause-type is implicitly defined by the type of instruction immediately following the clause.
+Clauses are defined and started using the S_CLAUSE instruction, and must contain only a single type of instruction. The clause-type is implicitly defined by the type of instruction immediately following the clause.
 
 ### Clause Types are:
 
@@ -1572,29 +1572,29 @@ Clauses are defined and started using the S\_CLAUSE instruction, and must contai
 - Flat load
 - Flat store
 - Flat atomic
-- LDS load / store / atomic / bvh\_stack
-- IMAGE\_BVH
+- LDS load / store / atomic / bvh_stack
+- IMAGE_BVH
 
 - SMEM
 - VALU
 
 May also be in a clause ("clause internal instructions"):
 
-- S\_DELAY\_ALU is legal inside a clause (internal) but is pointless.
-  - S\_DELAY\_ALU must not occur within a VALU clause.
-- S\_NOP and S\_SLEEP may be used inside a clause, but the first instruction of the clause must be the clause-type instruction (ALU, memory).
+- S_DELAY_ALU is legal inside a clause (internal) but is pointless.
+  - S_DELAY_ALU must not occur within a VALU clause.
+- S_NOP and S_SLEEP may be used inside a clause, but the first instruction of the clause must be the clause-type instruction (ALU, memory).
 
 Cannot be in a clause:
 
 - Instructions of a different type those of the clause type are illegal
-- S\_CLAUSE
-- S\_ENDPGM
-- SALU, Export, branch, message, GDS, lds\_param\_load, lds\_direct\_load
-- S\_WAITCNT, S\_WAIT\_IDLE, S\_WAIT\_DEPCTR
+- S_CLAUSE
+- S_ENDPGM
+- SALU, Export, branch, message, GDS, lds_param_load, lds_direct_load
+- S_WAITCNT, S_WAIT_IDLE, S_WAIT_DEPCTR
 
 If the first instruction in a VALU clause has EXEC==0, then the clause is ignored and instructions are issued as if there were no clause. If the VALU clause starts with EXEC!=0 but EXEC becomes zero in the middle of the clause, the clause continues until the last instruction of the specified clause.
 
-**If an S\_DELAY\_ALU is needed before starting a clause, the order must be:**
+**If an S_DELAY_ALU is needed before starting a clause, the order must be:**
 
 ```
 S_DELAY_ALU // must not come immediately after S_CLAUSE - that inst declares clause type
@@ -1602,7 +1602,7 @@ S_CLAUSE
 <first instruction in clause>
 ```
 
-If the first instruction after S\_CLAUSE is skipped (e.g. due to EXEC==0, or VMEM-load skipped due to EXEC==0 and VMcnt==0) then then a clause is not started. Subsequent instructions within what would have been the clause that are not skipped and are still executed but individually, not as part of a clause.
+If the first instruction after S_CLAUSE is skipped (e.g. due to EXEC==0, or VMEM-load skipped due to EXEC==0 and VMcnt==0) then then a clause is not started. Subsequent instructions within what would have been the clause that are not skipped and are still executed but individually, not as part of a clause.
 
 ### 5.2.1. Clause Breaks
 
@@ -1618,19 +1618,19 @@ A wave entering HALT (including for host-initiated single-step) may break clause
 
 ## 5.3. Send Message Types
 
-S\_SENDMSG is used to send messages to fixed function hardware, the host, or to request that a value be returned to the wave. S\_SENDMSG encodes the message type in the SIMM16 field and the message payload in
+S_SENDMSG is used to send messages to fixed function hardware, the host, or to request that a value be returned to the wave. S_SENDMSG encodes the message type in the SIMM16 field and the message payload in
 
-M0. S\_SENDMSG\_RTN encodes the message type in the SSRC0 field (does not read an SGPR), the payload (if any) in M0, and the destination SGPR in SDST.
+M0. S_SENDMSG_RTN encodes the message type in the SSRC0 field (does not read an SGPR), the payload (if any) in M0, and the destination SGPR in SDST.
 
 Completion is tracked with LGKMcnt.
 
-The table below lists the messages that can be generated using the S\_SENDMSG command.
+The table below lists the messages that can be generated using the S_SENDMSG command.
 
-S\_SENDMSG\_RTN\_B\* instructions return data to the shader: increment LGKMcnt by 2, and then decrement by 1 when the message goes out, and by another 1 when the data returns. This allows the user to simply use "s\_waitcnt LGKMcnt==0" to wait for the data to be returned.
+S_SENDMSG_RTN_B\* instructions return data to the shader: increment LGKMcnt by 2, and then decrement by 1 when the message goes out, and by another 1 when the data returns. This allows the user to simply use "s_waitcnt LGKMcnt==0" to wait for the data to be returned.
 
 All message codes not listed are reserved (illegal).
 
-*Table 15. S\_SENDMSG Messages*
+*Table 15. S_SENDMSG Messages*
 
 | Message       | SIMM16<br>[7:0] | Payload                                                                                                                                                                                                                                                                                               |
 |---------------|-----------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
@@ -1640,9 +1640,9 @@ All message codes not listed are reserved (illegal).
 | Dealloc VGPRs | 0x03            | Deallocate all VGPRs for this wave, allowing another wave to allocate these VGPRs before this wave ends. Use only when next instruction is S_ENDPGM. Typically used when a shader is waiting memory-write-acknowledgments before ending.                                                              |
 | GS alloc req  | 0x09            | Request GS space in parameter cache. M0[9:0] = number of vertices, M0[22:12] = number of primitives. <i>Response: a GS-alloc response to non-zero requests (broadcast to work-group).</i>                                                                                                             |
 
-S\_SENDMSG\_RTN is used to send messages that return a value to the wave. The instruction specifies which SGPR receives the data in SDST field. The message is encoded in SSRC0 (in the instruction field, not in an SGPR).
+S_SENDMSG_RTN is used to send messages that return a value to the wave. The instruction specifies which SGPR receives the data in SDST field. The message is encoded in SSRC0 (in the instruction field, not in an SGPR).
 
-*Table 16. S\_SENDMSG\_RTN Messages*
+*Table 16. S_SENDMSG_RTN Messages*
 
 | Message         | SSRC0 | Payload                                                                                                                                                                          |
 |-----------------|-------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
@@ -1677,11 +1677,11 @@ For conditional branches, the branch condition can be determined by either scala
 
 ## 5.5. Work-groups and Barriers
 
-Work-groups are collections of waves running on the same work-group processor that can synchronize and share data. Up to 1024 work-items (16 wave64's or 32 wave32's) can be combined into a work-group. When multiple waves are in a work-group, the S\_BARRIER instruction can be used to force each wave to wait until all other waves reach the same instruction; then, all waves continue. Work-groups of a single wave treat all barrier instructions as S\_NOP.
+Work-groups are collections of waves running on the same work-group processor that can synchronize and share data. Up to 1024 work-items (16 wave64's or 32 wave32's) can be combined into a work-group. When multiple waves are in a work-group, the S_BARRIER instruction can be used to force each wave to wait until all other waves reach the same instruction; then, all waves continue. Work-groups of a single wave treat all barrier instructions as S_NOP.
 
-If a wave executes an S\_BARRIER before all of the waves of the work-group have been created, the wave waits until the work-group is complete.
+If a wave executes an S_BARRIER before all of the waves of the work-group have been created, the wave waits until the work-group is complete.
 
-Any wave may terminate early using S\_ENDPGM, and the barrier is considered satisfied when the remaining live waves reach their barrier instruction.
+Any wave may terminate early using S_ENDPGM, and the barrier is considered satisfied when the remaining live waves reach their barrier instruction.
 
 ## 5.6. Data Dependency Resolution
 
@@ -1722,7 +1722,7 @@ These are the memory instruction groups - each returns out of order with respect
 
 It is possible for data to be written to VGPRs out-of-order, but the counter-decrement still reflects in-order completion. Stores from a wave are not kept in order with stores from that same wave when they write to different addresses.
 
-### Simple S\_WAITCNT Example
+### Simple S_WAITCNT Example
 
 ```
 global_load_b32 V0, V[4:5], 0x0    // load memory[ {V5, V4} ] into V0
@@ -1735,17 +1735,17 @@ v_mov_b32 V9, V0                  // move V0 into V9
 
 The shader program may include instructions to delay ALU instructions from being issued in order to attempt to avoid pipeline stalls caused by issuing dependent instructions too closely together.
 
-This is accomplished with the: S\_DELAY\_ALU instruction: "insert delay with respect to a previous VALU instruction". The compiler may insert **S\_DELAY\_ALU** instructions to indicate data dependencies that might benefit from having extra idle cycles inserted between them.
+This is accomplished with the: S_DELAY_ALU instruction: "insert delay with respect to a previous VALU instruction". The compiler may insert **S_DELAY_ALU** instructions to indicate data dependencies that might benefit from having extra idle cycles inserted between them.
 
 This instruction is inserted before the instruction which the user wants to delay, and it specifies which previous instructions this one is dependent on. The hardware then determines the number of cycles of delay to add.
 
 This instruction is optional - it is not necessary for correct operation. It should be inserted only when necessary to avoid dependency stalls. If enough independent instructions are between dependent ones then no delay is necessary. For wave64, the user may not know the status of the EXEC mask and hence not know if instructions take 1 or 2 passes to issue.
 
-The S\_DELAY\_ALU instruction says: wait for the VALU-Inst N ago to have completed. To reduce instruction stream overhead, the S\_DELAY\_ALU instructions packs two delay values into one instruction, with a "skip" indicator so the two delayed instructions don't need to be back-to-back.
+The S_DELAY_ALU instruction says: wait for the VALU-Inst N ago to have completed. To reduce instruction stream overhead, the S_DELAY_ALU instructions packs two delay values into one instruction, with a "skip" indicator so the two delayed instructions don't need to be back-to-back.
 
-S\_DELAY\_ALU may be executed in zero cycles - it may be executed in parallel with the instruction before it. This avoids extra delay if no delay is needed.
+S_DELAY_ALU may be executed in zero cycles - it may be executed in parallel with the instruction before it. This avoids extra delay if no delay is needed.
 
-**S\_DELAY\_ALU InstID1[4], Skip[3], InstID0[4] // packed into SIMM16**
+**S_DELAY_ALU InstID1[4], Skip[3], InstID0[4] // packed into SIMM16**
 
 
 ```
@@ -1778,13 +1778,13 @@ Cycle
 
 **SKIP** counts the number of instructions skipped before the instruction which has the second dependency. Every instruction is counted for skipping - all types.
 
-If another S\_DELAY\_ALU is encountered before the info from the previous one is consumed, the current S\_DELAY\_ALU replaces any previous dependency info. This means if an instruction is dependent on two separate previous instructions, both of those dependencies can be expressed in a single S\_DELAY\_ALU op, but not in two separate S\_DELAY\_ALU ops.
+If another S_DELAY_ALU is encountered before the info from the previous one is consumed, the current S_DELAY_ALU replaces any previous dependency info. This means if an instruction is dependent on two separate previous instructions, both of those dependencies can be expressed in a single S_DELAY_ALU op, but not in two separate S_DELAY_ALU ops.
 
-S\_DELAY\_ALU is applied to any type of opcode, even non-alu (but serves no purpose).
+S_DELAY_ALU is applied to any type of opcode, even non-alu (but serves no purpose).
 
-S\_DELAY\_ALU should not be used within VALU clauses.
+S_DELAY_ALU should not be used within VALU clauses.
 
-Table 19. S\_DELAY\_ALU Instruction Codes
+Table 19. S_DELAY_ALU Instruction Codes
 
 | DEP Code | Dep Code Meaning                              | SKIP Code | SKIP Code Meaning                                                                                             |
 |----------|-----------------------------------------------|-----------|---------------------------------------------------------------------------------------------------------------|
@@ -1834,7 +1834,7 @@ Each of these instruction formats uses some of these fields:
 | SSRC1  | Second source operand.                    |
 | SIMM16 | Signed immediate 16-bit integer constant. |
 
-The lists of similar instructions sometimes use a condensed form using curly braces {} to express a list of possible names. For example, S\_AND\_{B32, B64} defines two legal instructions: S\_AND\_B32 and S\_AND\_B64.
+The lists of similar instructions sometimes use a condensed form using curly braces {} to express a list of possible names. For example, S_AND_{B32, B64} defines two legal instructions: S_AND_B32 and S_AND_B64.
 
 ## 6.2. Scalar ALU Operands
 
@@ -1896,7 +1896,7 @@ In the table below, 0-127 can be used as scalar sources or destinations; 128-255
 
 SALU destinations are in the range 0-127.
 
-SALU instructions can use a 32-bit literal constant. This constant is part of the instruction stream and is available to all SALU microcode formats except SOPP and SOPK (except literal is allowed in S\_SETREG\_IMM32\_B32). Literal constants are used by setting the source instruction field to "literal" (255), and then the following instruction DWORD is used as the source value.
+SALU instructions can use a 32-bit literal constant. This constant is part of the instruction stream and is available to all SALU microcode formats except SOPP and SOPK (except literal is allowed in S_SETREG_IMM32_B32). Literal constants are used by setting the source instruction field to "literal" (255), and then the following instruction DWORD is used as the source value.
 
 If the destination SGPR is out-of-range, no SGPR is written with the result and SCC is not updated.
 
@@ -2039,7 +2039,7 @@ The SALU supports a set of floating point operations to offload uniform value ca
 | S_TRUNC_F16                        |                                 |                                      |
 | S_RNDNE_F16                        |                                 |                                      |
 
-Note: S\_CVT\_HI\_F32\_F16 does not have an associated VALU counterpart instruction - it is a variant of S\_CVT\_F32\_F16 to convert the upper 16 bits of the SGPR source from F16 to F32.
+Note: S_CVT_HI_F32_F16 does not have an associated VALU counterpart instruction - it is a variant of S_CVT_F32_F16 to convert the upper 16 bits of the SGPR source from F16 to F32.
 
 These scalar floating point arithmetic instructions can trigger IEEE float exceptions. These exceptions are handled in the same manner as exceptions occurring in the VALU pipe.
 
@@ -2068,14 +2068,14 @@ For hardware register index values, see [Hardware Registers](#).
 
 Shaders can query the memory aperture base and size for shared and private space through scalar operands:
 
-- PRIVATE\_BASE
-- PRIVATE\_LIMIT
-- SHARED\_BASE
-- SHARED\_LIMIT
+- PRIVATE_BASE
+- PRIVATE_LIMIT
+- SHARED_BASE
+- SHARED_LIMIT
 
-These values originate from the SH\_MEM\_BASES register ("SMB"), and are used primarily with FLAT memory instructions. Setting Shared Base or Private Base to zero disables that aperture.
+These values originate from the SH_MEM_BASES register ("SMB"), and are used primarily with FLAT memory instructions. Setting Shared Base or Private Base to zero disables that aperture.
 
-"PTR32" is short for "Address mode is 32bit", and "SMB" is short for "SH\_MEM\_BASES". These constants can be used by SALU and VALU ops, and are 64-bit unsigned integers:
+"PTR32" is short for "Address mode is 32bit", and "SMB" is short for "SH_MEM_BASES". These constants can be used by SALU and VALU ops, and are 64-bit unsigned integers:
 
 ```
 SHARED_BASE = ptr32 ? {32'h0, SMB.shared_base[15:0], 16'h0000} : {SMB.shared_base[15:0], 48'h000000000000}
@@ -2134,7 +2134,7 @@ Advantages of using VOP3 include:
 The following VOP1 and VOP2 instructions may not be promoted to VOP3:
 
 - swap and swaprel
-- fmamk, fmaak, pk\_fmac
+- fmamk, fmaak, pk_fmac
 
 The VOP3 encoding has two variants:
 
@@ -2166,7 +2166,7 @@ Any of the VALU microcode formats may use a 32-bit literal constant, as well VOP
 
 ## 7.2. Operands
 
-Most VALU instructions take at least one input operand. The data-size of the operands is explicitly defined in the name of the instruction. For example, V\_FMA\_F32 operates on 32-bit floating point data.
+Most VALU instructions take at least one input operand. The data-size of the operands is explicitly defined in the name of the instruction. For example, V_FMA_F32 operates on 32-bit floating point data.
 
 VGPR Alignment: there is no alignment restriction for single or double-float operations.
 
@@ -2230,7 +2230,7 @@ A few instructions use the operand fields in non-standard ways:
 
 The readlane lane-select is limited to the valid range of lanes (0-31 for wave32, 0-63 for wave64) by ignoring upper bits of the lane number.
 
-#### Inline constants with DOT2\_F16\_F16 and DOT2\_BF16\_BF16
+#### Inline constants with DOT2_F16_F16 and DOT2_BF16_BF16
 
 For these 2 instructions, the inline constant for sources 0 and 1 replicate the inline constant value into bits[31:16]. For source2, the OPSEL bit is used to control replication or not (gets zero if not replicating low bits).
 
@@ -2247,7 +2247,7 @@ VALU instructions can use any of the following sources for input, subject to res
 
 #### 7.2.2.1. Input Operand Modifiers
 
-The **input modifiers** ABS and NEG apply to floating point inputs and are undefined for any other type of input. In addition, input modifiers are supported for: V\_MOV\_B32, V\_MOV\_B16, V\_MOVREL\*\_B32 and V\_CNDMASK. ABS returns the absolute value, and NEG negates the input.
+The **input modifiers** ABS and NEG apply to floating point inputs and are undefined for any other type of input. In addition, input modifiers are supported for: V_MOV_B32, V_MOV_B16, V_MOVREL\*_B32 and V_CNDMASK. ABS returns the absolute value, and NEG negates the input.
 
 ##### Input modifiers are not supported for:
 
@@ -2314,7 +2314,7 @@ Table 27. *Opcodes usable with OPSEL*
 
 VALU instructions typically write their results to VGPRs specified in the VDST field of the microcode word. A thread only writes a result if the associated bit in the EXEC mask is set to 1.
 
-V\_CMPX instructions write the result of their comparison (one bit per thread) to the EXEC mask.
+V_CMPX instructions write the result of their comparison (one bit per thread) to the EXEC mask.
 
 Instructions producing a carry-out (integer add and subtract) write their result to VCC when used in the VOP2 form, and to an arbitrary SGPR-pair when used in the VOP3 form.
 
@@ -2326,18 +2326,18 @@ When the VOP3 form is used, instructions with a floating-point result may apply 
 
 **Output Modifiers are not supported for:**
 
-- V\_PERMLANE
-- DOT2\_F16\_F16
-- DOT2\_BF16\_BF16
+- V_PERMLANE
+- DOT2_F16_F16
+- DOT2_BF16_BF16
 
-The **clamp** bit has multiple uses. For V\_CMP instructions, setting the clamp bit to 1 indicates that the compare signals if a floating point exception occurs. For integer operations, it clamps the result to the largest and smallest representable value. For floating point operations, it clamps the result to the range: [0.0, 1.0].
+The **clamp** bit has multiple uses. For V_CMP instructions, setting the clamp bit to 1 indicates that the compare signals if a floating point exception occurs. For integer operations, it clamps the result to the largest and smallest representable value. For floating point operations, it clamps the result to the range: [0.0, 1.0].
 
 **Output Clamping:** The clamp instruction bit applies to the following operations and data types:
 
 - Float clamp to [0.0, 1.0]
-- Signed Int [-max\_int, +max\_int]
-- Unsigned int [0, +max\_int]
-- Bool (V\_CMP) enables signaling compare
+- Signed Int [-max_int, +max_int]
+- Unsigned int [0, +max_int]
+- Bool (V_CMP) enables signaling compare
 
 The clamp bit is not supported for (ignored):
 
@@ -2355,9 +2355,9 @@ When a VALU instruction is issued from a wave64, it may issue twice as two wave3
 
 ### 7.2.4. Denormalized and Rounding Modes
 
-The shader program has explicit control over the rounding mode applied and the handling of denormalized inputs and results. The MODE register is set using the S\_SETREG instruction; it has separate bits for controlling the behavior of single and double-precision floating-point numbers.
+The shader program has explicit control over the rounding mode applied and the handling of denormalized inputs and results. The MODE register is set using the S_SETREG instruction; it has separate bits for controlling the behavior of single and double-precision floating-point numbers.
 
-Round and denormal modes can also be set using S\_ROUND\_MODE and S\_DENORM\_MODE which is the preferred method over using S\_SETREG.
+Round and denormal modes can also be set using S_ROUND_MODE and S_DENORM_MODE which is the preferred method over using S_SETREG.
 
 16-bit floats support denormals, infinity and NaN.
 
@@ -2370,7 +2370,7 @@ Table 28. Round and Denormal Modes
 
 These mode bits do not affect rounding and denormal handling of F32 global memory atomics.
 
-DOT2\_F16\_F16 and DOT2\_BF16\_BF16 support round-to-nearest-even rounding. DOT2\_F16\_F16 supports denorms, and DOT2\_BF16\_BF16 disables all denorms.
+DOT2_F16_F16 and DOT2_BF16_BF16 support round-to-nearest-even rounding. DOT2_F16_F16 supports denorms, and DOT2_BF16_BF16 disables all denorms.
 
 ### 7.2.5. Instructions using SGPRs as Mask or Carry
 
@@ -2391,9 +2391,9 @@ Every VALU instruction can use SGPRs as a constant, but the following can read o
 |                       | V_READLANE                        |                                      |                            |
 |                       | V_READFIRSTLANE                   |                                      |                            |
 
-"VCC" in the above table refers to VCC in a VOP2 or VOPC encoding, or any SGPR specified in the SRC2 or SDST field for VOP3 encoding, except for DIV\_FMAS that implicitly reads VCC (no choice).
+"VCC" in the above table refers to VCC in a VOP2 or VOPC encoding, or any SGPR specified in the SRC2 or SDST field for VOP3 encoding, except for DIV_FMAS that implicitly reads VCC (no choice).
 
-V\_CMPX is the only VALU instruction that writes EXEC.
+V_CMPX is the only VALU instruction that writes EXEC.
 
 ### 7.2.6. Wave64 use of SGPRs
 
@@ -2409,7 +2409,7 @@ See [VGPR Out Of Range Behavior](#) for more information.
 
 ### 7.2.8. PERMLANE Specific Rules
 
-V\_PERMLANE may not occur immediately after a V\_CMPX. To prevent this, any other VALU opcode may be inserted (e.g. V\_NOP).
+V_PERMLANE may not occur immediately after a V_CMPX. To prevent this, any other VALU opcode may be inserted (e.g. V_NOP).
 
 ## 7.3. Instructions
 
@@ -2578,7 +2578,7 @@ Table 29. Packed Math Opcodes:
 | V_WMMA_I32_16X16X16_IU8   |                 | V_DOT8_I32_IU4  |                  |
 | V_WMMA_I32_16X16X16_IU4   |                 | V_DOT8_U32_U4   |                  |
 
-V\_FMA\_MIX\_\* and WMMA instructions are not packed math, but perform a single MAD operation on a mixture of 16- and 32-bit inputs. They are listed here because they use the VOP3P encoding.
+V_FMA_MIX_\* and WMMA instructions are not packed math, but perform a single MAD operation on a mixture of 16- and 32-bit inputs. They are listed here because they use the VOP3P encoding.
 
 ### VOP3P Instruction Fields
 
@@ -2587,7 +2587,7 @@ V\_FMA\_MIX\_\* and WMMA instructions are not packed math, but perform a single 
 | VOP3P DW0 | 1        | 110011       | OP           | CM           | OPSLH2       | OPSEL        | NEG_HI      | CLMP    | VDST       |
 | VOP3P DW1 |          | NEG [63]     | OPSLH [62]   | SRC2 [61:53] | SRC1 [52:44] | SRC0 [43:35] |             |         |            |
 
-Diagram of VOP3P instruction encoding. The 32-bit instruction is divided into fields: NEG (3 bits), OPSLH (2 bits), SRC2g (9 bits), OP (7 bits), CM (1 bit), OPSLH (1 bit), OPSEL (3 bits), NEG\_HI3 (3 bits), and VDST8 (8 bits). The VDST8 field is further divided into SRC0g (9 bits) and SRC1g (9 bits). Bit 31 is at the top left, and bit 0 is at the bottom right.
+Diagram of VOP3P instruction encoding. The 32-bit instruction is divided into fields: NEG (3 bits), OPSLH (2 bits), SRC2g (9 bits), OP (7 bits), CM (1 bit), OPSLH (1 bit), OPSEL (3 bits), NEG_HI3 (3 bits), and VDST8 (8 bits). The VDST8 field is further divided into SRC0g (9 bits) and SRC1g (9 bits). Bit 31 is at the top left, and bit 0 is at the bottom right.
 
 | Field                      | Size | Description                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       |
 |----------------------------|------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
@@ -2604,10 +2604,10 @@ Diagram of VOP3P instruction encoding. The 32-bit instruction is divided into fi
 
 ### OPSEL for MIX instructions
 
-MIX, MIXLO and MIXHI interpret OPSEL and OPSEL\_HI as three 2-bit fields, one per source operand:
-{ OPSEL\_HI[0], OPSEL[0] } controls source0;
-{ OPSEL\_HI[1], OPSEL[1] } controls source1;
-{ OPSEL\_HI[2], OPSEL[2] } controls source2.
+MIX, MIXLO and MIXHI interpret OPSEL and OPSEL_HI as three 2-bit fields, one per source operand:
+{ OPSEL_HI[0], OPSEL[0] } controls source0;
+{ OPSEL_HI[1], OPSEL[1] } controls source1;
+{ OPSEL_HI[2], OPSEL[2] } controls source2.
 
 These 2-bit fields control source-selection for each of the 3 source operands:
 
@@ -2616,9 +2616,9 @@ These 2-bit fields control source-selection for each of the 3 source operands:
 2'b10: Src[15:0] as FP16
 2'b11: Src[31:16] as FP16
 
-### V\_WMMA...IU... and V\_DOT4...IU... with NEG::
+### V_WMMA...IU... and V_DOT4...IU... with NEG::
 
-These instructions use the NEG[1:0] bits to indicate signed (0=unsigned, 1=signed) per input source instead of meaning "negate". NEG[2] should be set to zero (behavior is undefined). NEG\_HI must be zero.
+These instructions use the NEG[1:0] bits to indicate signed (0=unsigned, 1=signed) per input source instead of meaning "negate". NEG[2] should be set to zero (behavior is undefined). NEG_HI must be zero.
 
 ### 7.5.1. Inline Constants with Packed Math
 
@@ -2626,7 +2626,7 @@ Inline constants may be used with packed math, but they require the use of OPSEL
 
 BF16 uses 32-bit float constants and then the BF16 operand selects the upper 16 bits of the FP32 constant (matches the definition of BF16).
 
-For the WMMA\_F16\_F16\_16x16x16 or VOPD DOT2\_F32\_F16, hardware automatically selects the low 16 bits of the constant.
+For the WMMA_F16_F16_16x16x16 or VOPD DOT2_F32_F16, hardware automatically selects the low 16 bits of the constant.
 
 Any packed math instructions that use data sizes less than 16 bits do not work with inline constants, other than the DOT instructions below:
 
@@ -2666,7 +2666,7 @@ The two instructions in the VOPD are executed at the same time, so there are no 
   - SRCX0 and SRCY0 must use different VGPR banks;
   - VSRCX1 and VSRCY1 must use different banks.
     - FMAMK is an exception :  $V = S0 + K * S1$  ("S1" uses the SRC2 read port)
-  - If both operations use the SRC2 input, then one SRC2 input must be even and the other SRC2 input must be odd. The following operations use SRC2: FMAMK\_F32 (second input operand); DOT2ACC\_F32\_F16, DOT2ACC\_F32\_BF16, FMAC\_F32 (destination operand).
+  - If both operations use the SRC2 input, then one SRC2 input must be even and the other SRC2 input must be odd. The following operations use SRC2: FMAMK_F32 (second input operand); DOT2ACC_F32_F16, DOT2ACC_F32_BF16, FMAC_F32 (destination operand).
   - These are hard rules - the instruction does not function if these rules are broken
 - The pair of instructions combined have the following restrictions:
   - At most one literal constant, or they may share the same literal
@@ -2695,7 +2695,7 @@ The two instructions in the VOPD are executed at the same time, so there are no 
 
 See [VOPD](#) for a list of opcodes usable in the X and Y opcode fields.
 
-V\_CNDMASK\_B32 is the "VOP2" form that uses VCC as the select. VCC counts as one SGPR read.
+V_CNDMASK_B32 is the "VOP2" form that uses VCC as the select. VCC counts as one SGPR read.
 
 VOPD instruction pairs generate only a single exception if either or both raise an exception.
 
@@ -2740,7 +2740,7 @@ Table 30. Which instructions support DPP
 |          |                                                      |           |                    | All 64bit opcodes | NO DPP    |
 |          |                                                      |           |                    | The others        | Allow DPP |
 
-V\_CMP and V\_CMPX write the full mask, not a partial mask. When using DPP with V\_CMP or V\_CMPX and setting bound\_ctrl=0, lanes that have their EXEC mask bit set to zero instead of not writing the bit, a zero bit is written. "FI" (Fetch Inactive) with DPP16 causes a lane to act as if it is active when supplying data, but the compare result for that lane is still zero for V\_CMPX (V\_CMPX with FI=1 does not turn on a lane that was off).
+V_CMP and V_CMPX write the full mask, not a partial mask. When using DPP with V_CMP or V_CMPX and setting bound_ctrl=0, lanes that have their EXEC mask bit set to zero instead of not writing the bit, a zero bit is written. "FI" (Fetch Inactive) with DPP16 causes a lane to act as if it is active when supplying data, but the compare result for that lane is still zero for V_CMPX (V_CMPX with FI=1 does not turn on a lane that was off).
 
 ### 7.7.1. DPP16
 
@@ -2749,7 +2749,7 @@ DPP16 allows selection of data within groups of 16 lanes with a fixed set of pos
 Both VOP3/VOP3P and DPP16 have ABS and NEG fields:
 
 - VOP3's ABS & NEG fields are used, and DPP16's are ignored
-- VOP3P's NEG/NEG\_HI fields are used and DPP16's ABS & NEG are ignored.
+- VOP3P's NEG/NEG_HI fields are used and DPP16's ABS & NEG are ignored.
 
 #### DPP16 Instruction Fields
 
@@ -2816,13 +2816,13 @@ Wave Matrix Multiply-Accumulate (WMMA) instructions provide acceleration for com
 
 These perform:  $A * B + C \Rightarrow D$ , where A, B, C and D are matrices.
 
-Additional information can be found on the GPUOpen blog: [https://gpuopen.com/learn/wmma\\_on\\_rdna3/](https://gpuopen.com/learn/wmma_on_rdna3/)
+Additional information can be found on the GPUOpen blog: https://gpuopen.com/learn/wmma_on_rdna3/
 
-The AMD Matrix Instruction Calculator ([https://github.com/RadeonOpenCompute/amd\\_matrix\\_instruction\\_calculator](https://github.com/RadeonOpenCompute/amd_matrix_instruction_calculator)) contains a helper tool that allows developers to view detailed information about the WMMA instructions in the RDNA architecture. It allows users to query instruction-level information such as computational throughput and register usage. It also allows users to generate mappings between matrix element and hardware registers for each matrix instruction and their modifiers.
+The AMD Matrix Instruction Calculator https://github.com/RadeonOpenCompute/amd_matrix_instruction_calculator contains a helper tool that allows developers to view detailed information about the WMMA instructions in the RDNA architecture. It allows users to query instruction-level information such as computational throughput and register usage. It also allows users to generate mappings between matrix element and hardware registers for each matrix instruction and their modifiers.
 
 WMMA does not generate any ALU exceptions.
 
-These are all encoded using VOP3P. The NEG[1:0] field is repurposed for the "IU" integer types to indicate whether the inputs are signed or not (0=unsigned, 1=signed). For WMMA\_\*UI8/UI4, NEG[1:0] indicates whether SRC0 and 1 are signed or unsigned, and NEG[2] and NEG\_HI[2:0] must be zero. For WMMA\*\_F16/BF16, NEG[1:0] is applied on SRC1 and SRC0's low 16bit. NEG\_HI[1:0] is applied on SRC1 and SRC0's high 16bit. {NEG\_HI[2], NEG[2]} is applied on SRC2, act as {ABS, NEG}. The destination is signed for the integer types. Neg[0] applies to the A-matrix, and Neg[1] to the B-matrix. Neg[2] must be set to zero.
+These are all encoded using VOP3P. The NEG[1:0] field is repurposed for the "IU" integer types to indicate whether the inputs are signed or not (0=unsigned, 1=signed). For WMMA_\*UI8/UI4, NEG[1:0] indicates whether SRC0 and 1 are signed or unsigned, and NEG[2] and NEG_HI[2:0] must be zero. For WMMA\*_F16/BF16, NEG[1:0] is applied on SRC1 and SRC0's low 16bit. NEG_HI[1:0] is applied on SRC1 and SRC0's high 16bit. {NEG_HI[2], NEG[2]} is applied on SRC2, act as {ABS, NEG}. The destination is signed for the integer types. Neg[0] applies to the A-matrix, and Neg[1] to the B-matrix. Neg[2] must be set to zero.
 
 Table 33. WMMA Instructions
 
@@ -2890,7 +2890,7 @@ C & D Matrix: Matrix View
 |   | C14_0 | C14_1 | C14_2 | C14_3 | C14_4 | C14_5 | C14_6 | C14_7 | C14_8 | C14_9 | C14_10 | C14_11 | C14_12 | C14_13 | C14_14 | C14_15 |
 |   | C15_0 | C15_1 | C15_2 | C15_3 | C15_4 | C15_5 | C15_6 | C15_7 | C15_8 | C15_9 | C15_10 | C15_11 | C15_12 | C15_13 | C15_14 | C15_15 |
 
-Matrix entry naming: "A2\_4" = A-Matrix, Row 2, Column 4
+Matrix entry naming: "A2_4" = A-Matrix, Row 2, Column 4
 
 This diagram below shows how the matrices are laid out in VGPRs when  $M = N = K = 16$ . Note that the A matrix is column-major while the others are in row-major order.
 
@@ -2933,7 +2933,7 @@ This diagram below shows how the matrices are laid out in VGPRs when  $M = N = K
 
 ### 7.9.1. WMMA Scheduling
 
-Back-to-back dependent WMMA instructions require one V\_NOP (or independent VALU op) between them if the first instruction's matrix D is the same or overlaps with the second instruction's matrices A or B. Matrix A/B can overlap C as long as C is distinct from D. The typical case is that C and D are the same.
+Back-to-back dependent WMMA instructions require one V_NOP (or independent VALU op) between them if the first instruction's matrix D is the same or overlaps with the second instruction's matrices A or B. Matrix A/B can overlap C as long as C is distinct from D. The typical case is that C and D are the same.
 
 In the table below "WMMA" is either WMMA or SWMMAC.
 
@@ -2992,25 +2992,25 @@ These instructions load 1-16 DWORDs from memory. The data in SGPRs is specified 
 
 ### 8.1.1. Scalar Memory Addressing
 
-Non-buffer S\_LOAD instructions use the following formula to calculate the memory address:
+Non-buffer S_LOAD instructions use the following formula to calculate the memory address:
 
 ```
 ADDR = SGPR[base] + inst_offset + { M0 or SGPR[offset] or zero }
 ```
 
-All components of the address (base, offset, inst\_offset, M0) are in bytes, but the two LSBs are ignored and treated as if they were zero.
+All components of the address (base, offset, inst_offset, M0) are in bytes, but the two LSBs are ignored and treated as if they were zero.
 
-It is illegal and undefined for the inst\_offset to be negative if the resulting (inst\_offset + (M0, SGPR[offset], or zero)) is negative.
+It is illegal and undefined for the inst_offset to be negative if the resulting (inst_offset + (M0, SGPR[offset], or zero)) is negative.
 
 ### 8.1.2. Loads using Buffer Constant
 
-S\_BUFFER\_LOAD instructions use a similar formula, but the base address comes from the buffer constant's base\_address field.
+S_BUFFER_LOAD instructions use a similar formula, but the base address comes from the buffer constant's base_address field.
 
-Buffer constant fields used: base\_address, stride, num\_records. Other fields are ignored.
+Buffer constant fields used: base_address, stride, num_records. Other fields are ignored.
 
 Scalar memory load does not support "swizzled" buffers. **Stride** is used only for memory address bounds checking, not for computing the address to access.
 
-The SMEM supplies only a SBASE address (byte) and an offset (byte or DWORD). Any "index \* stride" must be calculated manually in shader code and added to the offset prior to the SMEM. Inst\_offset must be non-negative - a negative value of inst\_offset results in a MEMVIOL.
+The SMEM supplies only a SBASE address (byte) and an offset (byte or DWORD). Any "index \* stride" must be calculated manually in shader code and added to the offset prior to the SMEM. Inst_offset must be non-negative - a negative value of inst_offset results in a MEMVIOL.
 
 The two LSBs of V#.base and of the final address are ignored to force DWORD alignment.
 
@@ -3027,11 +3027,11 @@ The two LSBs of V#.base and of the final address are ignored to force DWORD alig
 
 If more than 1 DWORD is being loaded, it is returned to SDST+1, SDST+2, etc, and the offset is incremented by 4 bytes per DWORD.
 
-### 8.1.3. S\_DCACHE\_INV and S\_GL1\_INV
+### 8.1.3. S_DCACHE_INV and S_GL1_INV
 
 This instruction invalidates the entire scalar cache or L1 cache. It does not return anything to SDST.
 
-S\_GL1\_INV and S\_DCACHE\_INV do not have any address or data arguments.
+S_GL1_INV and S_DCACHE_INV do not have any address or data arguments.
 
 ## 8.2. Dependency Checking
 
@@ -3041,13 +3041,13 @@ Scalar memory loads can return data out-of-order from how they were issued; they
 - LGKMcnt is incremented by 2 for every fetch of two or more DWORDs.
 - LGKMcnt is decremented by an equal amount when each instruction completes.
 
-Because the instructions can return out-of-order, the only sensible way to use this counter is to implement "S\_WAITCNT LGKMcnt 0"; this imposes a wait for all data to return from previous SMEMs before continuing.
+Because the instructions can return out-of-order, the only sensible way to use this counter is to implement "S_WAITCNT LGKMcnt 0"; this imposes a wait for all data to return from previous SMEMs before continuing.
 
 Cache invalidate instructions are not known to have completed until the shader waits for LGKMcnt==0.
 
 ## 8.3. Scalar Memory Clauses and Groups
 
-A **clause** is a sequence of instructions starting with S\_CLAUSE and continuing for 2-63 instructions. Clauses lock the instruction arbiter onto this wave until the clause completes.
+A **clause** is a sequence of instructions starting with S_CLAUSE and continuing for 2-63 instructions. Clauses lock the instruction arbiter onto this wave until the clause completes.
 
 A **group** is a set of the same type of instruction that happen to occur in the code but are not necessarily executed as a clause. A group ends when a non-SMEM instruction is encountered. Scalar memory instructions are issued in groups. The hardware does not enforce that a single wave executes an entire group before issuing instructions from another wave.
 
@@ -3063,7 +3063,7 @@ The value of SDST must be even for fetches of two DWORDs, or a multiple of four 
 
 ### SBASE
 
-The value of SBASE must be even for S\_BUFFER\_LOAD (specifying the address of an SGPR which is a multiple of four). If SBASE is out-of-range, the value from SGPR0 is used.
+The value of SBASE must be even for S_BUFFER_LOAD (specifying the address of an SGPR which is a multiple of four). If SBASE is out-of-range, the value from SGPR0 is used.
 
 ### OFFSET
 
@@ -3107,14 +3107,14 @@ Memory operations of different types (loads, stores) can complete out of order w
 
 The equation below shows how the memory address is calculated for a buffer access:
 
-$$\text{ADDR} = \text{Base} + \text{baseOffset} + \text{Inst\_offset} + \text{Voffset} + \text{Stride} * (\text{Vindex} + \text{TID})$$
+$$\text{ADDR} = \text{Base} + \text{baseOffset} + \text{Inst_offset} + \text{Voffset} + \text{Stride} * (\text{Vindex} + \text{TID})$$
                       V#            SGPR                Instr                 VGPR             V#               VGPR            0..63
 
 Voffset is ignored when instruction bit "OFFEN" == 0
 
 Vindex is ignored when instruction bit "IDXEN" == 0
 
-TID is a constant value (0..63) unique to each thread in the wave. It is ignored when resource bit ADD\_TID\_ENABLE == 0
+TID is a constant value (0..63) unique to each thread in the wave. It is ignored when resource bit ADD_TID_ENABLE == 0
 
 Memory instructions return MEMVIOL for any misaligned access when the alignment mode does not allow it.
 
@@ -3179,7 +3179,7 @@ Table 38. MTBUF Instructions
 | TBUFFER_STORE_D16_FORMAT_XYZ  | store XYZ components w/ format convert, 16bit                |
 | TBUFFER_STORE_D16_FORMAT_XYZW | store XYZW components w/ format convert, 16bit               |
 
-- TBUFFER\*\_FORMAT instructions include a data-format conversion specified in the instruction.
+- TBUFFER\*_FORMAT instructions include a data-format conversion specified in the instruction.
 
 Table 39. MUBUF Instructions
 
@@ -3259,10 +3259,10 @@ Table 39. MUBUF Instructions
 | BUFFER_GL0_INV               | invalidate the shader L0 cache (texture cache) associated with this wave.                                   |
 | BUFFER_GL1_INV               | invalidate the GL1 (L1) cache associated with this wave, for this wave's VMID                               |
 
-- BUFFER\*\_FORMAT instructions include a data-format conversion specified in the resource constant (V#).
+- BUFFER\*_FORMAT instructions include a data-format conversion specified in the resource constant (V#).
 - In the table above, "D16" means the data in the VGPR is 16-bits, not the usual 32 bits.
 
-"D16\_HI" means that the upper 16-bits of the VGPR is used instead of "D16" that uses the lower 16 bits.
+"D16_HI" means that the upper 16-bits of the VGPR is used instead of "D16" that uses the lower 16 bits.
 
 ## 9.2. VGPR Usage
 
@@ -3334,11 +3334,11 @@ Where "V0" is the VDATA VGPR; V1 is the VDATA+1 VGPR, etc.
 
 ## 9.3. Buffer Data
 
-The amount and type of data that is loaded or stored is controlled by the following: the resource format field, destination-component-selects (dst\_sel), and the opcode.
+The amount and type of data that is loaded or stored is controlled by the following: the resource format field, destination-component-selects (dst_sel), and the opcode.
 
 Data-format can come from the resource, instruction fields, or the opcode itself. MTBUF derives data-format from the instruction, MUBUF-"format" instructions use format from the resource, and other MUBUF opcode derive data-format from the instruction itself.
 
-DST\_SEL comes from the resource, but is ignored for many operations.
+DST_SEL comes from the resource, but is ignored for many operations.
 
 Table 42. Buffer Instructions
 
@@ -3354,11 +3354,11 @@ Table 42. Buffer Instructions
 
 **Instruction** : The instruction's format field is used instead of the resource's fields.
 
-**Data format derived** : The data format is derived from the opcode and ignores the resource definition. For example, BUFFER\_LOAD\_U8 sets the data-format to uint-8.
+**Data format derived** : The data format is derived from the opcode and ignores the resource definition. For example, BUFFER_LOAD_U8 sets the data-format to uint-8.
 
 The resource's data format must not be INVALID; that format has specific meaning (unbound resource), and for that case the data format is not replaced by the instruction's implied data format.
 
-**DST\_SEL identity** : Depending on the number of components in the data-format, this is: X000, XY00, XYZ0, or XYZW.
+**DST_SEL identity** : Depending on the number of components in the data-format, this is: X000, XY00, XYZ0, or XYZW.
 
 ### 9.3.1. D16 Instructions
 
@@ -3367,16 +3367,16 @@ Load-format and store-format instructions also come in a "D16" variant. The D16 
 There are two variants of these instructions:
 
 - D16 loads data into or stores data from the lower 16 bits of a VGPR.
-- D16\_HI loads data into or stores data from the upper 16 bits of a VGPR.
+- D16_HI loads data into or stores data from the upper 16 bits of a VGPR.
 
 For example, `BUFFER_LOAD_D16_U8` loads a byte per work-item from memory, converts it to a 16-bit integer, then loads it into the lower 16 bits of the data VGPR.
 
-### 9.3.2. LOAD/STORE\_FORMAT and DATA-FORMAT mismatches
+### 9.3.2. LOAD/STORE_FORMAT and DATA-FORMAT mismatches
 
 The "format" instructions specify a number of elements (x, xy, xyz or xyzw) and this could mismatch with the number of elements in the data format specified in the instruction's or resource's data-format field. When that happens.
 
-- `buffer_load_format_x` and `dfmt` is "32\_32\_32\_32" : load 4 DWORDs from memory, but only load first into the shader
-- `buffer_store_format_x` and `dfmt` is "32\_32\_32\_32" : stores 4 DWORDs to memory based on `dst_sel`
+- `buffer_load_format_x` and `dfmt` is "32_32_32_32" : load 4 DWORDs from memory, but only load first into the shader
+- `buffer_store_format_x` and `dfmt` is "32_32_32_32" : stores 4 DWORDs to memory based on `dst_sel`
 - `buffer_load_format_xyzw` and `dfmt` is "32" : load 1 DWORD from memory, return 4 to shader (`dst_sel`)
 - `buffer_store_format_xyzw` and `dfmt` is "32" : store 1 DWORD (X) to memory, ignore YZW.
 
@@ -3392,7 +3392,7 @@ Table 43. *BUFFER Instruction Fields for Addressing*
 | <code>inst_idxen</code>  | 1    | Boolean: get per-lane index from VGPR when true, or no index when false.                                                                         |
 | <code>inst_offen</code>  | 1    | Boolean: get per-lane offset from VGPR when true, or no offset when false. Note that <code>inst_offset</code> is present regardless of this bit. |
 
-The "element size" for a buffer instruction is the amount of data the instruction transfers in bytes. It is determined by the FORMAT field for MTBUF instructions, or from the opcode for MUBUF instructions, and is: 1, 2, 4, 8, 12 or 16 bytes. For example, format "16\_16" has an element size of 4-bytes.
+The "element size" for a buffer instruction is the amount of data the instruction transfers in bytes. It is determined by the FORMAT field for MTBUF instructions, or from the opcode for MUBUF instructions, and is: 1, 2, 4, 8, 12 or 16 bytes. For example, format "16_16" has an element size of 4-bytes.
 
 Table 44. Buffer Resource Constant Fields for Addressing
 
@@ -3423,20 +3423,20 @@ The final buffer memory address is composed of three parts:
 
 Address Calculation for a Linear Buffer
 
-**ADDRESS = const\_base + sgpr\_offset + buffer\_offset**
+**ADDRESS = const_base + sgpr_offset + buffer_offset**
 
 
 Full equations:
 
-**Index** = (inst\_idxen ? vgpr\_index : 0) + (const\_add\_tid\_enable ? workitem\_id[5:0] : 0)
+**Index** = (inst_idxen ? vgpr_index : 0) + (const_add_tid_enable ? workitem_id[5:0] : 0)
 
-**Offset** = (inst\_offseten ? vgpr\_offset : 0) + inst\_offset
+**Offset** = (inst_offseten ? vgpr_offset : 0) + inst_offset
 
 ### 9.4.1. Range Checking
 
-Buffer addresses are checked against the size of the memory buffer. Loads that are out of range return zero, and stores and atomics are dropped. Range checking is per-component for non-formatted loads and stores that are larger than one DWORD. Note that load/store\_B64, B96 and B128 are considered "2-DWORD/3-DWORD/4-DWORD load/store", and each DWORD is bounds checked separately. The method of clamping is controlled by
+Buffer addresses are checked against the size of the memory buffer. Loads that are out of range return zero, and stores and atomics are dropped. Range checking is per-component for non-formatted loads and stores that are larger than one DWORD. Note that load/store_B64, B96 and B128 are considered "2-DWORD/3-DWORD/4-DWORD load/store", and each DWORD is bounds checked separately. The method of clamping is controlled by
 
-a 2-bit field in the buffer resource: OOB\_SELECT (Out of Bounds select).
+a 2-bit field in the buffer resource: OOB_SELECT (Out of Bounds select).
 
 Table 46. Buffer Out Of Bounds Selection
 
@@ -3561,7 +3561,7 @@ Buffer_offset = (index/8 * const_stride + (offset/4)*4) * 8 + index%8 * 4 + offs
 Note that because we are dealing with dwords, offset%4 is always == 0.
 ```
 
-Index\_stride span #0      Index\_stride span #1      Index\_stride span #2
+Index_stride span #0      Index_stride span #1      Index_stride span #2
 
 Diagram of the Swizzled Buffer showing the same 32 elements rearranged into 8 groups of 4 elements each. The first group is X0, X7, Y0, Y7. The second group is V0, V7, X8, X15. The third group is Y8, Y15, V8, V15. The fourth group is X16, X23, Y16, Y23. The fifth group is U8, U15, V8, V15. The sixth group is W8, W15, U8, U15. The seventh group is U8, U15, V8, V15. The eighth group is X9, X16, Y9, Y16. The stride is 8 and the element size is 4.
 
@@ -3569,7 +3569,7 @@ Diagram of the Swizzled Buffer showing the same 32 elements rearranged into 8 gr
 
 Original Buffer      Swizzled Buffer (elem size = 4)
 
-Diagram comparing the Original Buffer and the Swizzled Buffer. The Original Buffer is a 32x4 grid of elements. The Swizzled Buffer is a 32x4 grid where the elements are rearranged into 8 groups of 4 elements each, corresponding to the index\_stride spans.
+Diagram comparing the Original Buffer and the Swizzled Buffer. The Original Buffer is a 32x4 grid of elements. The Swizzled Buffer is a 32x4 grid where the elements are rearranged into 8 groups of 4 elements each, corresponding to the index_stride spans.
 
 ## **9.5. Alignment**
 
@@ -3586,12 +3586,12 @@ Memory alignment enforcement for non-formatted ops is controlled by a configurat
 Options are:
 
 0. : DWORD - hardware automatically aligns request to the smaller of: element-size or DWORD.
-For DWORD or larger loads or stores of non-formatted ops (such as BUFFER\_LOAD\_DWORD), the two LSBs of the byte-address are ignored, thus forcing DWORD alignment.
-1. : DWORD\_STRICT - must be aligned to the smaller of: element-size or DWORD.
+For DWORD or larger loads or stores of non-formatted ops (such as BUFFER_LOAD_DWORD), the two LSBs of the byte-address are ignored, thus forcing DWORD alignment.
+1. : DWORD_STRICT - must be aligned to the smaller of: element-size or DWORD.
 2. : STRICT - access must be aligned to data size
 3. : UNALIGNED - any alignment is allowed
 
-Options 1 and 2 report MEMVIOL if a request is made with incorrect address alignment. In options 1 and 2, loads that are misaligned return zero, and stores that are misaligned are discarded. Note that in this context "element-size" refers to the size of the data transfer indicated by the instruction, not const\_element\_size.
+Options 1 and 2 report MEMVIOL if a request is made with incorrect address alignment. In options 1 and 2, loads that are misaligned return zero, and stores that are misaligned are discarded. Note that in this context "element-size" refers to the size of the data transfer indicated by the instruction, not const_element_size.
 
 ## 9.6. Buffer Resource
 
@@ -3620,7 +3620,7 @@ Table 47. Buffer Resource Descriptor
 
 ### Unbound Resources
 
-Setting the resource constant to all zeros has the effect of forcing any loads to return zero, and stores to be ignored. This is keyed off the "data-format" being set to zero (INVALID), and for MUBUF the "add\_tid\_en = false".
+Setting the resource constant to all zeros has the effect of forcing any loads to return zero, and stores to be ignored. This is keyed off the "data-format" being set to zero (INVALID), and for MUBUF the "add_tid_en = false".
 
 ### Resource - Instruction mismatch
 
@@ -3733,7 +3733,7 @@ For Ray Tracing, the VGPRs are divided up into 5 groups of VGPRs. The VGPRs with
 ## 10.2. Image OpCodes with No Sampler
 
 For image opcodes with no sampler, all VGPR address values are taken as uint.
-For cubemaps, face\_id = slice \* 6 + face.
+For cubemaps, face_id = slice \* 6 + face.
 
 MSAA surfaces support only load, store and atomics; not load-mip or store-mip.
 
@@ -3789,11 +3789,11 @@ The table below shows the contents of address VGPRs for the various image opcode
 |                  | 1D Array        | 2               | slice, s | -, mipid                 |                            |                            |                            |
 |                  | 2D Array        | 3               | t, s     | mipid, slice             |                            |                            |                            |
 
-- Image\_Load : image\_load, image\_load\_mip, image\_load\_{pck, pck\_sgn, mip\_pck, mip\_pck\_sgn}
+- Image_Load : image_load, image_load_mip, image_load_{pck, pck_sgn, mip_pck, mip_pck_sgn}
 
-- Image\_Store: image\_store, image\_store\_mip
+- Image_Store: image_store, image_store_mip
 
-- Image\_Atomic\_\*: swap, cmpswap, add, sub, {u,s},{min,max}, and, or, xor, inc, dec.
+- Image_Atomic_\*: swap, cmpswap, add, sub, {u,s},{min,max}, and, or, xor, inc, dec.
 
 "ACNT" is the Address Count: the number of VGPRs that supply the "body" of the address, derived from the
 
@@ -3888,10 +3888,10 @@ Table 49. Sample Instruction Suffix Key
 These are all packed into consecutive VGPRs, (may be non-consecutive if "NSA" is used), and can consist of up to 12 values.
 
 - **Offset:** SAMPLE\*O\*, GATHER\*O\*
-    1 DWORD of 'offset\_xyz'. The offsets are 6-bit signed integers: X=[5:0], Y=[13:8], Z=[21:16]
+    1 DWORD of 'offset_xyz'. The offsets are 6-bit signed integers: X=[5:0], Y=[13:8], Z=[21:16]
 - **Bias:** SAMPLE\*B\*, GATHER\*B\*. 1 DWORD float.
 - **Z-compare:** SAMPLE\*C\*, GATHER\*C\*. 1 DWORD.
-- **Derivatives** (SAMPLE\_D): 2,4 or 6 DWORDS - these packed 1 DWORD per derivative as shown below (F32).
+- **Derivatives** (SAMPLE_D): 2,4 or 6 DWORDS - these packed 1 DWORD per derivative as shown below (F32).
 - **Body:** One to four DWORDs, as defined by the table: [Image Opcodes with a Sampler](#)
     Address components are X,Y,Z,W with X in VGPR[M], Y in VGPR[M]+1, etc.
 
@@ -3925,11 +3925,11 @@ data is stored from or returned to 1-4 consecutive VGPRs. The amount of data loa
 
 ### Loads
 
-DMASK specifies which elements of the resource are returned to consecutive VGPRs. The texture system loads data from memory and based on the data format expands it to a canonical RGBA form, filling in values for missing components based on T#.dst\_sel. Then DMASK is applied and only those components selected are returned to the shader.
+DMASK specifies which elements of the resource are returned to consecutive VGPRs. The texture system loads data from memory and based on the data format expands it to a canonical RGBA form, filling in values for missing components based on T#.dst_sel. Then DMASK is applied and only those components selected are returned to the shader.
 
 ### Stores
 
-When writing an image object, it is only possible to write an entire element (all components) - not only individual components. The components come from consecutive VGPRs and the texture system fill in the value zero for any missing components of the image's data format, and ignore any values that are not part of the stored data format. *For example if the DMASK=1001, the shader sends Red from VGPR\_N and Alpha from VGPR\_N+1 to the texture unit. If the image object is RGB, the texel is overwritten with Red from the VGPR\_N, Green and Blue set to zero, and Alpha from the shader ignored.* For D16=1, the DMASK has 1 bit set per 16-bits of data to be written from VGPRs to memory. The position of the bits in DMASK is irrelevant, only the number of bits set to 1.
+When writing an image object, it is only possible to write an entire element (all components) - not only individual components. The components come from consecutive VGPRs and the texture system fill in the value zero for any missing components of the image's data format, and ignore any values that are not part of the stored data format. *For example if the DMASK=1001, the shader sends Red from VGPR_N and Alpha from VGPR_N+1 to the texture unit. If the image object is RGB, the texel is overwritten with Red from the VGPR_N, Green and Blue set to zero, and Alpha from the shader ignored.* For D16=1, the DMASK has 1 bit set per 16-bits of data to be written from VGPRs to memory. The position of the bits in DMASK is irrelevant, only the number of bits set to 1.
 
 ### "D16" instructions
 
@@ -4139,11 +4139,11 @@ Table 53. Ray Tracing VGPR Contents
 | 10     | ray_inv_dir.z (f32) | unused                                                    | ray_inv_dir.y (f32)        | unused                                                    |
 | 11     | unused              | unused                                                    | ray_inv_dir.z (f32)        | unused                                                    |
 
-**Vgpr\_d[4]** are the destination VGPRs of the results of intersection testing. The values returned here are different depending on the type of BVH node that was fetched. For box nodes the results contain the 4 pointers of the children boxes in intersection time sorted order. For triangle BVH nodes the results contain the intersection time and triangle ID of the triangle tested.
+**Vgpr_d[4]** are the destination VGPRs of the results of intersection testing. The values returned here are different depending on the type of BVH node that was fetched. For box nodes the results contain the 4 pointers of the children boxes in intersection time sorted order. For triangle BVH nodes the results contain the intersection time and triangle ID of the triangle tested.
 
-**Sgpr\_r[4]** is the texture descriptor for the operation. The instruction is encoded with use\_128bit\_resource=1.
+**Sgpr_r[4]** is the texture descriptor for the operation. The instruction is encoded with use_128bit_resource=1.
 
-#### Restrictions on image\_bvh instructions
+#### Restrictions on image_bvh instructions
 
 - DMASK must be set to 0xf (instruction returns all four DWORDs)
 - D16 must be set to 0 (16 bit return data is not supported)
@@ -4168,8 +4168,8 @@ When using the BVH instruction with Non-Sequential Address, the BVH components f
 
 NSA and A16:
 
-- A16=0, MIMG-NSA specifies 5 groups of consecutive VGPRs: node\_pointer, ray\_extent, ray\_origin, ray\_dir and ray\_inv\_dir.
-- A16=1, MIMG-NSA specifies 4 groups. In the above set, ray\_dir and ray\_inv\_dir are packed into 3 VGPRs.
+- A16=0, MIMG-NSA specifies 5 groups of consecutive VGPRs: node_pointer, ray_extent, ray_origin, ray_dir and ray_inv_dir.
+- A16=1, MIMG-NSA specifies 4 groups. In the above set, ray_dir and ray_inv_dir are packed into 3 VGPRs.
 
 When using A16=1 mode, ray-dir and ray-inv-dir share the same vgprs and ADDR4 is unused.
 
@@ -4195,7 +4195,7 @@ Table 54. BVH Resource Definition
 
 #### Barycentrics
 
-The ray-tracing hardware is designed to support computation of barycentric coordinates directly in hardware. This uses the "triangle\_return\_mode" in the table in the previous section (T# descriptor).
+The ray-tracing hardware is designed to support computation of barycentric coordinates directly in hardware. This uses the "triangle_return_mode" in the table in the previous section (T# descriptor).
 
 Table 55. Ray Tracing Return Mode
 
@@ -4211,7 +4211,7 @@ Table 55. Ray Tracing Return Mode
 
 "Partially Resident Textures" provides support for texture maps in which not all levels of detail are resident in memory. The shader compiler declares the texture map as being P.R.T. in the resource, but the shader program must also be aware of this because if a texture fetch accesses a MIP level that is not present, the texture unit returns an extra DWORD of status into VGPRs indicating the fetch failure. If any of the texels are not present in memory, the texture cache returns NACK that causes a non-zero value to be written into `DST_VGPR+1` for each failing thread. *The value may represent the LOD requested.* The shader program must allocate this extra VGPR for all PRT texture fetches and check that it is zero after the fetch. This PRT VGPR must have previously been initialized to zero by the shader.
 
-PRT is enabled when the texture resource `MIN_LOD_WARN` value is non-zero. Normal textures cannot NACK, so only PRT's can get a NACK, and a NACK causes a write to `DST_VGPR+Num_VGPRS`. *E.g. if a `SAMPLE` loads 4 values into 4 VGPRs: 4,5,6,7 then PRT may return NACK status into VGPR\_8.*
+PRT is enabled when the texture resource `MIN_LOD_WARN` value is non-zero. Normal textures cannot NACK, so only PRT's can get a NACK, and a NACK causes a write to `DST_VGPR+Num_VGPRS`. *E.g. if a `SAMPLE` loads 4 values into 4 VGPRs: 4,5,6,7 then PRT may return NACK status into VGPR_8.*
 
 # Chapter 11. Global, Scratch and Flat Address Space
 
@@ -4229,7 +4229,7 @@ Flat Address Space ("flat") instructions allow load/store/atomic access to a gen
 
 **GLOBAL** is used when all of the address fall into global memory, not LDS or Scratch. This should be used when possible (instead of "Flat") as Global does not tie up LDS resources. **SCRATCH** is similar, but is used to access scratch (private) memory space.
 
-**Scratch** (thread-private memory) is an area of memory defined by the aperture registers. When an address falls in scratch space, additional address computation is automatically performed by the hardware. For waves that are allocated scratch memory space, the 64-bit FLAT\_SCRATCH register is initialized with a pointer to that wave's private scratch memory. Waves that have no scratch memory have FLAT\_SCRATCH initialized to zero. FLAT\_SCRATCH is a 64-bit byte address that is implicitly used by Flat and Scratch memory instructions, and can be manually read via S\_GETREG.
+**Scratch** (thread-private memory) is an area of memory defined by the aperture registers. When an address falls in scratch space, additional address computation is automatically performed by the hardware. For waves that are allocated scratch memory space, the 64-bit FLAT_SCRATCH register is initialized with a pointer to that wave's private scratch memory. Waves that have no scratch memory have FLAT_SCRATCH initialized to zero. FLAT_SCRATCH is a 64-bit byte address that is implicitly used by Flat and Scratch memory instructions, and can be manually read via S_GETREG.
 
 The instruction specifies which VGPR supplies the address (per work-item), and that address for each work-item may be in any one of those address spaces.
 
@@ -4320,7 +4320,7 @@ Table 56. Instructions
 
 The Flat instruction set is nearly identical to the BUFFER instruction set, minus the FORMAT loads & stores.
 
-Flat instructions do not use a resource constant (V#) or sampler (S#), but they do use a specific SGPR-pair (FLAT\_SCRATCH) to hold scratch-space information in case any threads' address resolves to scratch space. See "Scratch" section below.
+Flat instructions do not use a resource constant (V#) or sampler (S#), but they do use a specific SGPR-pair (FLAT_SCRATCH) to hold scratch-space information in case any threads' address resolves to scratch space. See "Scratch" section below.
 
 Since Flat instruction are executed as both an LDS and a Global instruction, Flat instructions increment both VMcnt (or VScnt) and LGKMcnt and are not considered done until both have been decremented. There is no way a priori to determine whether a Flat instruction uses only LDS or Global memory space.
 
@@ -4328,9 +4328,9 @@ When the address from a Flat instruction falls into scratch (private) space, a d
 
 used. The address from the VGPR points to the memory space for a specific DWORD of scratch data owned by this thread. The hardware maps this address to the actual memory address that holds data for all of the threads in the wave. Flat atomics which map into scratch: 4-byte atomics are supported, and 8-byte atomics return MEMVIOL.
 
-The wave supplies the offset (for space allocated to this wave) with every Flat request. This is stored in a dedicated per-wave register: FLAT\_SCRATCH, that holds a 64-bit byte address.
+The wave supplies the offset (for space allocated to this wave) with every Flat request. This is stored in a dedicated per-wave register: FLAT_SCRATCH, that holds a 64-bit byte address.
 
-The aperture check occurs when VGPRs are read, with invalid addresses being routed to the texture unit. The "aperture check" is performed **before** "inst\_offset" is added into the address, so it is undefined what occurs if the addition of inst\_offset pushes the address into a different memory aperture.
+The aperture check occurs when VGPRs are read, with invalid addresses being routed to the texture unit. The "aperture check" is performed **before** "inst_offset" is added into the address, so it is undefined what occurs if the addition of inst_offset pushes the address into a different memory aperture.
 
 | (Hole) Addr[48] | Addr[47] | Addr[46] | Aperture                    |
 |-----------------|----------|----------|-----------------------------|
@@ -4341,7 +4341,7 @@ The aperture check occurs when VGPRs are read, with invalid addresses being rout
 
 #### Ordering
 
-Flat instructions may complete out of order with each other. If one Flat instruction finds all of its data in Texture cache, and the next finds all of its data in LDS, the second instruction might complete first. If the two fetches return data to the same VGPR, the result is unknown (order is not deterministic). Flat instructions decrement VMcnt in order for the threads that went to global memory and those are in order with other scratch, global, texture and buffer instructions. Separately each Flat instruction increments and decrements LGKMcnt. This is out-of-order with the VMcnt path but is in-order with other DS (LDS) instructions. Since the data for a Flat load can come from either LDS or the texture cache, and because these units have different latencies, there is a potential race condition with respect to the VMcnt/VScnt and LGKMcnt counters. Because of this, the only sensible S\_WAITCNT value to use after Flat instructions is zero.
+Flat instructions may complete out of order with each other. If one Flat instruction finds all of its data in Texture cache, and the next finds all of its data in LDS, the second instruction might complete first. If the two fetches return data to the same VGPR, the result is unknown (order is not deterministic). Flat instructions decrement VMcnt in order for the threads that went to global memory and those are in order with other scratch, global, texture and buffer instructions. Separately each Flat instruction increments and decrements LGKMcnt. This is out-of-order with the VMcnt path but is in-order with other DS (LDS) instructions. Since the data for a Flat load can come from either LDS or the texture cache, and because these units have different latencies, there is a potential race condition with respect to the VMcnt/VScnt and LGKMcnt counters. Because of this, the only sensible S_WAITCNT value to use after Flat instructions is zero.
 
 ### 11.1.2. Global
 
@@ -4349,10 +4349,10 @@ Global operations transfer data between VGPR and global memory. Global instructi
 
 Since these instructions do not access LDS, only VMcnt (or VScnt) is used, not LGKMcnt. If a global instruction does attempt to access LDS, the instruction returns MEMVIOL.
 
-Global includes two instructions which do not use any VGPRs for addressing, just SGPRs and INST\_OFFSET:
+Global includes two instructions which do not use any VGPRs for addressing, just SGPRs and INST_OFFSET:
 
-- GLOBAL\_LOAD\_ADDTID\_B32
-- GLOBAL\_STORE\_ADDTID\_B32
+- GLOBAL_LOAD_ADDTID_B32
+- GLOBAL_STORE_ADDTID_B32
 
 ### 11.1.3. Scratch
 
@@ -4373,7 +4373,6 @@ There are 4 distinct shader instructions:
 
 ### Global Addressing
 
-|            |                                                                                          |
 |------------|------------------------------------------------------------------------------------------|
 | <b>GV</b>  | $\text{mem\_addr} = \text{VGPR}_{U64} + \text{INST\_OFFSET}_{I13}$                       |
 | <b>GVS</b> | $\text{mem\_addr} = \text{SGPR}_{U64} + \text{VGPR}_{U32} + \text{INST\_OFFSET}_{I13}$   |
@@ -4381,13 +4380,11 @@ There are 4 distinct shader instructions:
 
 ### LDS Addressing (DS ops)
 
-|            |                                                                                                                                                     |
 |------------|-----------------------------------------------------------------------------------------------------------------------------------------------------|
 | <b>LDS</b> | $\text{LDS\_ADDR} = \text{VGPR\_addr}_{U32} + \text{INST\_OFFSET}_{U16}$<br><i>LDS address is relative to the LDS space allocated to this wave.</i> |
 
 ### Scratch Addressing
 
-|            |                                                                                                                                                                                       |
 |------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | <b>SV</b>  | $\text{mem\_addr} = \text{SCRATCH\_BASE}_{U64} + \text{SWIZZLE}(\text{VGPR\_offset}_{U32} + \text{INST\_OFFSET}_{I13}, \text{ThreadID})$                                              |
 | <b>SS</b>  | $\text{mem\_addr} = \text{SCRATCH\_BASE}_{U64} + \text{SWIZZLE}(\text{SGPR\_offset}_{U32} + \text{INST\_OFFSET}_{I13}, \text{ThreadID})$                                              |
@@ -4400,7 +4397,6 @@ The value from an SGPR and VGPR are **unsigned** 32-bit byte offsets.
 
 ### Flat Addressing
 
-|                     |                                                                                                                                                                                                       |
 |---------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 |                     | Aperture test on the address-VGPR value determines: Global/LDS/Scratch per thread (ignores INST_OFFSET).                                                                                              |
 |                     | Use one of the 3 address equations per lane depending on which memory it maps to:                                                                                                                     |
@@ -4414,18 +4410,18 @@ Scratch Addressing Equation
 
 #### "SWIZZLE(offset,TID)" is hard coded based on wave size (32 or 64)
 
-Swizzle for **Scratch** is hard-coded to: elem\_size=4bytes, const\_index\_stride=32 (wave32) or 64 (wave64).
+Swizzle for **Scratch** is hard-coded to: elem_size=4bytes, const_index_stride=32 (wave32) or 64 (wave64).
 
-Addr = SCRATCH\_BASE + (offset / 4) \* 4 \* const\_index\_stride + (offset % 4) + TID\*4
- where "offset" = either "INST\_OFFSET + SGPR\_offset" or "INST\_OFFSET + VGPR\_offset".
+Addr = SCRATCH_BASE + (offset / 4) \* 4 \* const_index_stride + (offset % 4) + TID\*4
+ where "offset" = either "INST_OFFSET + SGPR_offset" or "INST_OFFSET + VGPR_offset".
 
 #### Restrictions:
 
-- Inst\_offset :
+- Inst_offset :
   - Flat and Scratch-ST mode: must not be negative
   - Global and Scratch-SS and -SV modes: can be negative
-  - In Scratch SS mode, the inst\_offset must be aligned to the payload size: 4 byte aligned for 1-DWORD, 16-byte aligned for 4-DWORD.
-    - Also (SADDR + INST\_OFFSET) must be at least DWORD-aligned
+  - In Scratch SS mode, the inst_offset must be aligned to the payload size: 4 byte aligned for 1-DWORD, 16-byte aligned for 4-DWORD.
+    - Also (SADDR + INST_OFFSET) must be at least DWORD-aligned
 
 | SADDR  | SVE | MODE |
 |--------|-----|------|
@@ -4454,7 +4450,7 @@ Addr = SCRATCH\_BASE + (offset / 4) \* 4 \* const\_index\_stride + (offset % 4) 
 
 - Scratch: Voff and Soff are 32 bits, unsigned bytes.
 - Global: Addresses are 64 bits, offset is 32bits.
-- FLAT\_SCRATCH is an SGPR-pair 64-bit address.
+- FLAT_SCRATCH is an SGPR-pair 64-bit address.
 - "Ioff" is the offset from the instruction field.
 - "x" = don't care (either value works)
 
@@ -4467,7 +4463,7 @@ Both Texture and LDS can report that an error occurred due to a bad address. Thi
 
 - Misaligned data (scratch accesses may be misaligned)
 - Out-of-range address:
-  - LDS access with an address outside the range: [ 0, LDS\_SIZE-1 ]
+  - LDS access with an address outside the range: [ 0, LDS_SIZE-1 ]
 
 The policy for threads with bad addresses is: stores outside this range do not write a value, and reads return zero. The aperture check for invalid address occurs before adding any address offsets - it is based only on the base address; the other checks are performed after adding the offsets.
 
@@ -4477,7 +4473,7 @@ Addressing errors from either LDS or TA are returned on their respective "instru
 
 FLAT instructions can use from zero to four consecutive DWORDs of data in VGPRs and/or memory. The DATA field determines which VGPR(s) supply source data (if any) and the VDST VGPRs hold return data (if any). There is no data-format conversion performed.
 
-"D16" instructions use only 16-bit of the VGPR instead of the full 32bits. "D16\_HI" instructions read or write only the high 16-bits, while "D16" use the low 16-bits.
+"D16" instructions use only 16-bit of the VGPR instead of the full 32bits. "D16_HI" instructions read or write only the high 16-bits, while "D16" use the low 16-bits.
 
 # Chapter 12. Data Share Operations
 
@@ -4547,7 +4543,7 @@ For pixel waves, vertex attribute data is preloaded into LDS and barycentrics (I
 
 LDS-Parameter loads are used to read vertex parameter data and store them in VGPRs to be used for parameter interpolation. These instructions operate like memory instructions except they use `EXPCnt` to track outstanding reads and decrement `EXPCnt` when they arrive in VGPRs.
 
-Pixel shaders can be launched before their parameter data has been written into LDS. Once the data is available in LDS, the wave's STATUS register "LDS\_READY" bit is set to 1. Pixel shader waves stall if an `LDS_DIRECT_LOAD` or `LDS_PARAM_LOAD` is to be issued before `LDS_READY` is set.
+Pixel shaders can be launched before their parameter data has been written into LDS. Once the data is available in LDS, the wave's STATUS register "LDS_READY" bit is set to 1. Pixel shader waves stall if an `LDS_DIRECT_LOAD` or `LDS_PARAM_LOAD` is to be issued before `LDS_READY` is set.
 
 The most common form of interpolation involves weighting vertex parameters by the barycentric coordinates "I" and "J". A common calculation is:
 
@@ -4592,33 +4588,33 @@ Table 57. LDSDIR Instruction Fields
 
 M0 is implicitly read for this instruction and must be initialized before these instructions.
 
-#### new\_prim\_mask
+#### new_prim_mask
 
 a mask that has a bit per quad indicating that this quad begins a new primitive; zero indicates same primitive as previous quad. There is an implied "one" for the first quad in the wave (every wave begins a new primitive) and so bit[0] is omitted.
 
-#### lds\_param\_offset
+#### lds_param_offset
 
-The parameter offset indicates the starting address of the parameters in LDS. Space before that can be used as temporary wave storage space. lds\_param\_offset bits [6:0] must be set to zero.
+The parameter offset indicates the starting address of the parameters in LDS. Space before that can be used as temporary wave storage space. lds_param_offset bits [6:0] must be set to zero.
 
-#### Example LDS\_PARAM\_LOAD (new\_prim\_mask[3:0] = 0110)
+#### Example LDS_PARAM_LOAD (new_prim_mask[3:0] = 0110)
 
 Parameter Data in LDS
 
-The diagram illustrates the layout of Parameter Data in LDS. It shows a grid of 32-bit words. The top part shows 'Attr0 - Prim2' through 'Attr0 - Prim5'. The bottom part shows 'Attr0 - Prim0' through 'Attr0 - Prim2'. Below this is a 'VGPR-0' row showing data for 'Lane: 0' through 'Quad 3'. The diagram illustrates how the new\_prim\_mask[3:0] = 0110 determines which quads are new primitives.
+The diagram illustrates the layout of Parameter Data in LDS. It shows a grid of 32-bit words. The top part shows 'Attr0 - Prim2' through 'Attr0 - Prim5'. The bottom part shows 'Attr0 - Prim0' through 'Attr0 - Prim2'. Below this is a 'VGPR-0' row showing data for 'Lane: 0' through 'Quad 3'. The diagram illustrates how the new_prim_mask[3:0] = 0110 determines which quads are new primitives.
 
-**LDS\_ADDR = lds\_base + param\_offset + attr#\*numPrimsInVector\*12DWORDs + prim#\*12 + attr\_offset**
+**LDS_ADDR = lds_base + param_offset + attr#\*numPrimsInVector\*12DWORDs + prim#\*12 + attr_offset**
 
-(attr\_offset = 0..11 : 0 = P0.x, 1 = P0.Y, ... 11 = P2.W)
+(attr_offset = 0..11 : 0 = P0.x, 1 = P0.Y, ... 11 = P2.W)
 
 From NewPrimMask h/w derives NumPrimInVec and Prim# (0..15)
 
 If the dest-VGPR is out of range, the load is still performed but EXEC is forced to zero.
 
-LDS\_PARAM\_LOAD and LDS\_DIRECT\_LOAD use **EXEC per quad** (if any pixel is enabled in the quad, data is written to all 4 pixels/threads in the quad).
+LDS_PARAM_LOAD and LDS_DIRECT_LOAD use **EXEC per quad** (if any pixel is enabled in the quad, data is written to all 4 pixels/threads in the quad).
 
 #### 12.2.1.1. 16-bit Parameter Data
 
-16-bit parameters are packed in LDS as pairs of attributes in DWORDS: ATTR0.X and ATTR1.X share a DWORD. There is an alternate packing mode where the parameters are not packed (one 16-bit param in low half of DWORD). These attributes can be read with the same LDS\_PARAM\_LOAD instruction, and returns the packed DWORD with 2 attributes (when they are packed). Interpolation can then be done using specific mixed-precision FMA opcodes, along with DPP (to select P0, P10 or P20) and OPSEL (to select upper or lower 16-bits).
+16-bit parameters are packed in LDS as pairs of attributes in DWORDS: ATTR0.X and ATTR1.X share a DWORD. There is an alternate packing mode where the parameters are not packed (one 16-bit param in low half of DWORD). These attributes can be read with the same LDS_PARAM_LOAD instruction, and returns the packed DWORD with 2 attributes (when they are packed). Interpolation can then be done using specific mixed-precision FMA opcodes, along with DPP (to select P0, P10 or P20) and OPSEL (to select upper or lower 16-bits).
 
 Barycentrics are 32-bits, not 16 bit.
 
@@ -4626,24 +4622,24 @@ Barycentrics are 32-bits, not 16 bit.
 
 These data dependency rules apply to both parameter and direct loads.
 
-LDS\_DIRECT\_LOAD and LDS\_PARAM\_LOAD read data from LDS and write it into VGPRs, and they use EXPcnt to track when the instruction has completed and written the VGPRs.
+LDS_DIRECT_LOAD and LDS_PARAM_LOAD read data from LDS and write it into VGPRs, and they use EXPcnt to track when the instruction has completed and written the VGPRs.
 
 It is up to the shader program to ensure that data hazards are avoided. These instructions are issued along a different path from VALU instructions so it is possible that previous VALU instructions may still be reading from the VGPR that these LDS instructions are going to write and this could lead to a hazard.
 
-EXPcnt is used to track read-after-write hazards where LDS\_PARAM\_LOAD writes a value to a VGPR and another instruction reads it. The shader program uses "s\_waitcnt EXPcnt" to wait for results from a LDS\_DIRECT\_LOAD or LDS\_PARAM\_LOAD to be available in VGPRs before consuming it in a subsequent instruction. The VINTERP instructions have a "wait\_EXPcnt" field to assist in avoid this hazard.
+EXPcnt is used to track read-after-write hazards where LDS_PARAM_LOAD writes a value to a VGPR and another instruction reads it. The shader program uses "s_waitcnt EXPcnt" to wait for results from a LDS_DIRECT_LOAD or LDS_PARAM_LOAD to be available in VGPRs before consuming it in a subsequent instruction. The VINTERP instructions have a "wait_EXPcnt" field to assist in avoid this hazard.
 
 These are **skipped when EXEC==0** and EXPcnt==0 (like memory ops).
 
-Mixed exports & LDS-direct/param instructions from the same wave might not complete in order (both use EXPcnt), requiring "s\_waitcnt 0" if they are overlapped.
+Mixed exports & LDS-direct/param instructions from the same wave might not complete in order (both use EXPcnt), requiring "s_waitcnt 0" if they are overlapped.
 
 ```
 LDS_PARAM_LOAD V2
 S_WAITCNT EXPcnt 0
 ```
 
-A potential Write-After-Read hazard exists if a VALU instruction reads a VGPR and then LDS\_PARAM\_LOAD writes that VGPR: It is possible the LDS\_PARAM\_LOAD overwrites the VALU's source VGPR before it was read. The user must prevent this by using the "wait\_Vdst" field of the LDS\_PARAM\_LOAD instruction. This field indicates the maximum number of uncompleted VALU instructions that may be outstanding when this LDS\_PARAM\_LOAD is issued. Use this to ensure any dependent VALU instructions have completed.
+A potential Write-After-Read hazard exists if a VALU instruction reads a VGPR and then LDS_PARAM_LOAD writes that VGPR: It is possible the LDS_PARAM_LOAD overwrites the VALU's source VGPR before it was read. The user must prevent this by using the "wait_Vdst" field of the LDS_PARAM_LOAD instruction. This field indicates the maximum number of uncompleted VALU instructions that may be outstanding when this LDS_PARAM_LOAD is issued. Use this to ensure any dependent VALU instructions have completed.
 
-Another potential data hazard involves LDS\_PARAM\_LOAD overwriting a VGPR that has not yet been read as a source by a previous VMEM (LDS, Texture, Buffer, Flat) instruction. To avoid this hazard, the user must ensure that the VMEM instruction has read its source VGPRs. This can be achieved by issuing any VALU or export instruction before the LDS\_PARAM\_LOAD.
+Another potential data hazard involves LDS_PARAM_LOAD overwriting a VGPR that has not yet been read as a source by a previous VMEM (LDS, Texture, Buffer, Flat) instruction. To avoid this hazard, the user must ensure that the VMEM instruction has read its source VGPRs. This can be achieved by issuing any VALU or export instruction before the LDS_PARAM_LOAD.
 
 ## 12.3. VALU Parameter Interpolation
 
@@ -4681,23 +4677,23 @@ Table 58. Parameter Interpolation Instruction Fields
 | OPSEL   | 4    | Operation select for 16-bit math: 1=select high half, 0=select low half<br>[0]=src0, [1]=src1, [2]=src2, [3]=dest<br>For dest=0, dest_vgpr[31:0] = {prev_dst_vgpr[31:16], result[15:0]}<br>For dest=1, dest_vgpr[31:0] = {result[15:0], prev_dst_vgpr[15:0]}<br>OPSEL may only be used for 16-bit operands, and must be zero for any other operands/results.                                                                                         |
 | CLMP    | 1    | Clamp result to [0, 1.0]                                                                                                                                                                                                                                                                                                                                                                                                                             |
 
-The VINTERP instructions include a builtin "s\_waitcnt EXPcnt" to easily allow data hazard resolution for data produced by LDS\_PARAM\_LOAD.
+The VINTERP instructions include a builtin "s_waitcnt EXPcnt" to easily allow data hazard resolution for data produced by LDS_PARAM_LOAD.
 
 ### Instructions Restrictions and Limitations:
 
-- V\_INTERP instructions do not detect or report exceptions
-- V\_INTERP instructions do not support data forwarding into inputs that would normally come from LDS data (sources A and C for V\_INTERP\_P10\_\* and source A for V\_INTERP\_P2\_\*).
+- V_INTERP instructions do not detect or report exceptions
+- V_INTERP instructions do not support data forwarding into inputs that would normally come from LDS data (sources A and C for V_INTERP_P10_\* and source A for V_INTERP_P2_\*).
 
 VGPRs are preloaded with some or all of:
 
-- I\_persp\_sample, J\_persp\_sample, I\_persp\_center, J\_persp\_center,
-- I\_persp\_centroid, J\_persp\_centroid,
+- I_persp_sample, J_persp_sample, I_persp_center, J_persp_center,
+- I_persp_centroid, J_persp_centroid,
 - I/W, J/W, 1.0/W,
-- I\_linear\_sample, J\_linear\_sample,
-- I\_linear\_center, J\_linear\_center,
-- I\_linear\_centroid, J\_linear\_centroid
+- I_linear_sample, J_linear_sample,
+- I_linear_center, J_linear_center,
+- I_linear_centroid, J_linear_centroid
 
-These instructions consume data that was supplied by LDS\_PARAM\_LOAD. These instructions contain a built-in "s\_waitcnt EXPcnt <= N" capability to allow for efficient software pipelining.
+These instructions consume data that was supplied by LDS_PARAM_LOAD. These instructions contain a built-in "s_waitcnt EXPcnt <= N" capability to allow for efficient software pipelining.
 
 ```
 lds_param_load V0,   attr0
@@ -4720,11 +4716,11 @@ v_interp_p2    V32,  V30[2], Vj, V31
 
 There are variants of the 16-bit interpolation instructions that override the round mode to "round toward zero".
 
-$V_{\text{INTERP\_P10\_F16\_F32}} \text{ dst.f32} = \text{vgpr\_hi/lo.f16} * \text{vgpr.f32} + \text{vgpr\_hi/lo.f16} // \text{tmp} = P10 * I + P0$
+$V_{\text{INTERP_P10_F16_F32}} \text{ dst.f32} = \text{vgpr_hi/lo.f16} * \text{vgpr.f32} + \text{vgpr_hi/lo.f16} // \text{tmp} = P10 * I + P0$
 
 - allows OPSEL; Src0 uses DPP8=1,1,1,1,5,5,5,5; Src2 uses DPP8=0,0,0,0,4,4,4,4
 
-$V_{\text{INTERP\_P2\_F16\_F32}} \text{ dst.f16} = \text{vgpr\_hi/lo.f16} * \text{vgpr.f32} + \text{vgpr.f32} // \text{dst} = P2 * J + \text{tmp}$
+$V_{\text{INTERP_P2_F16_F32}} \text{ dst.f16} = \text{vgpr_hi/lo.f16} * \text{vgpr.f32} + \text{vgpr.f32} // \text{dst} = P2 * J + \text{tmp}$
 
 - allows OPSEL; Src0 uses DPP8=2,2,2,2,6,6,6,6
 
@@ -4732,7 +4728,7 @@ $V_{\text{INTERP\_P2\_F16\_F32}} \text{ dst.f16} = \text{vgpr\_hi/lo.f16} * \tex
 
 Direct loads are only available in LDS, not in GDS. Direct access is allowed only in CU mode, not WGP mode.
 
-The LDS\_DIRECT\_LOAD instruction reads a single DWORD from LDS and returns it to a VGPR, broadcasting it
+The LDS_DIRECT_LOAD instruction reads a single DWORD from LDS and returns it to a VGPR, broadcasting it
 
 to all active lanes in the wave. M0 provides the address and data type. `LDS_DIRECT_LOAD` uses `EXEC per quad`, not per pixel: if any pixel in a quad is enabled then the data is written to all 4 pixels in the quad. `LDS_DIRECT_LOAD` uses `EXPcnt` to track completion.
 
@@ -4828,7 +4824,7 @@ Where ADJ = 4 for 8, 16 and 32-bit data types; and ADJ = 8 for 64-bit.
 
 The double address instructions are: `LOAD_2ADDR*`, `STORE_2ADDR*`, and `STOREXCHG_2ADDR_*`. The address comes from VGPR, and both `VGPR[ADDR]` and `InstOffset` are byte addresses. At the time of wave creation, `LDS_BASE` is assigned to the physical LDS region owned by this wave or work-group.
 
-### DS\_{LOAD,STORE}\_ADDTID Addressing
+### DS_{LOAD,STORE}_ADDTID Addressing
 
 ```
 LDS_Addr = LDS_BASE + {InstOffset1, InstOffset0} + TID(0..63)*4 + M0
@@ -4905,7 +4901,7 @@ Instruction Fields: op, gds, offset0, offset1, vdst, addr, data0, data1
 
 ### 12.5.2. LDS Lane-permute Ops
 
-DS\_PERMUTE instructions allow data to be swizzled arbitrarily across 32 lanes. Two versions of the instruction are provided: forward (scatter) and backward (gather). These exist in LDS only, not GDS.
+DS_PERMUTE instructions allow data to be swizzled arbitrarily across 32 lanes. Two versions of the instruction are provided: forward (scatter) and backward (gather). These exist in LDS only, not GDS.
 
 Note that in wave64 mode the permute operates only across 32 lanes at a time on each half of a wave64. In other words, it executes as if were two independent wave32's. Each half-wave can use indices in the range 0-31 to reference lanes in that same half-wave.
 
@@ -4979,7 +4975,7 @@ M0 is used for:
 
 ### 12.6.1. GS NGG Streamout Instructions
 
-The DS\_ADD\_GS\_REG\_RTN and DS\_SUB\_GS\_REG\_RTN instructions are used only by the GS stage, and are used for streamout. These instructions perform atomic add or sub operations to data in dedicated registers, not in GDS memory, and return the pre-op value. The source register is 32 bits and is an unsigned int. These 2 instructions increment the wave's LGKMcnt, and decrement LGKMcnt when the instruction completes.
+The DS_ADD_GS_REG_RTN and DS_SUB_GS_REG_RTN instructions are used only by the GS stage, and are used for streamout. These instructions perform atomic add or sub operations to data in dedicated registers, not in GDS memory, and return the pre-op value. The source register is 32 bits and is an unsigned int. These 2 instructions increment the wave's LGKMcnt, and decrement LGKMcnt when the instruction completes.
 
 Table 61. GDS Streamout Register Targets
 
@@ -4994,7 +4990,7 @@ Table 61. GDS Streamout Register Targets
 | 6           | GDS_GS_2                                              | 14          | GDS_STRMOUT_PRIMS_NEEDED_3                            |
 | 7           | GDS_GS_3                                              | 15          | GDS_STRMOUT_PRIMS_WRITTEN_3                           |
 
-Table 62. DS\_ADD\_GS\_REG\_RTN\* and DS\_SUB\_GS\_REG\_RTN:
+Table 62. DS_ADD_GS_REG_RTN\* and DS_SUB_GS_REG_RTN:
 
 | Field   | Size | Description                                                                             |
 |---------|------|-----------------------------------------------------------------------------------------|
@@ -5042,7 +5038,7 @@ LDS and Memory atomics have the rounding mode for float-atomic-add fixed at "rou
 
 When these operate on floating point data, there is the possibility of the data containing denormal numbers, or the operation producing a denormal. The floating point atomic instructions have the option of passing denormal values through, or flushing them to zero.
 
-LDS instructions allow denormals to be passed through or flushed to zero based on the MODE.denormal wave-state register. As with VALU ops, "denorm\_single" affects F32 ops and "denorm\_double" affects F64. LDS instructions use both FP\_DENORM bits (allow\_input\_denormal, allow\_output\_denormal) to control flushing of inputs and outputs separately.
+LDS instructions allow denormals to be passed through or flushed to zero based on the MODE.denormal wave-state register. As with VALU ops, "denorm_single" affects F32 ops and "denorm_double" affects F64. LDS instructions use both FP_DENORM bits (allow_input_denormal, allow_output_denormal) to control flushing of inputs and outputs separately.
 
 - Float 32 bit adder uses both input and output denorm flush controls from MODE
 - Float CMP, MIN and MAX use only the "input denormal" flushing control
@@ -5062,15 +5058,15 @@ LDS instructions allow denormals to be passed through or flushed to zero based o
 
 - "Flush" = flush all input denorm
 - "No Flush" = don't flush input denorm
-- "Mode" = denormal flush controlled by bit from shader's "MODE.fp\_denorm" register
+- "Mode" = denormal flush controlled by bit from shader's "MODE.fp_denorm" register
 
 Note that MIN and MAX when flushing denormals only do it for the comparison, but the result is an unmodified copy of one of the sources. CompareStore ("compare swap") flushes the result when input denormal flushing occurs.
 
 ### Memory Atomics:
 
-The floating point atomic instructions (ds\_{min,max,cmpst}\_f32) have the option of passing denormal values through, or flushing them to zero. This is controlled with the MODE.fp\_denorm bits that also control VALU denormal behavior. There is no separate input and output denormal control: only bit 0 of sp\_denorm or bit 0 of dp\_denorm is considered. The rest of the denormal rules are identical to LDS.
+The floating point atomic instructions (ds_{min,max,cmpst}_f32) have the option of passing denormal values through, or flushing them to zero. This is controlled with the MODE.fp_denorm bits that also control VALU denormal behavior. There is no separate input and output denormal control: only bit 0 of sp_denorm or bit 0 of dp_denorm is considered. The rest of the denormal rules are identical to LDS.
 
-Float atomic add is hardwired to flush input denormals - it does not use the MODE.fp\_denorm bits.
+Float atomic add is hardwired to flush input denormals - it does not use the MODE.fp_denorm bits.
 
 ## 13.3. NaN Handling
 
@@ -5083,9 +5079,9 @@ There two types of NaN: quiet and signaling
 
 The LDS does not produce any exception or "signal" due to a signaling NaN.
 
-DS\_ADD\_F32 can create a quiet NaN, or propagate NaN from its inputs: if either input is a NaN, the output is that same NaN, and if both inputs are NaN, the NaN from the first input is selected as the output. Signaling NaN is converted to Quiet NaN.
+DS_ADD_F32 can create a quiet NaN, or propagate NaN from its inputs: if either input is a NaN, the output is that same NaN, and if both inputs are NaN, the NaN from the first input is selected as the output. Signaling NaN is converted to Quiet NaN.
 
-Floating point atomics (CMPSWAP, MIN, MAX) flush input denormals only when MODE (allow\_input\_denorm)=0, otherwise values are passed through without modification. When flushing, denorms are flushed before the operation (i.e. before the comparison).
+Floating point atomics (CMPSWAP, MIN, MAX) flush input denormals only when MODE (allow_input_denorm)=0, otherwise values are passed through without modification. When flushing, denorms are flushed before the operation (i.e. before the comparison).
 
 ### FP Max Selection Rules:
 
@@ -5160,7 +5156,7 @@ Ordered Alloc generates a pointer to a ring buffer of finite size which is retur
 
 The GDS unit supports an instruction that operates on dedicated append/consume counters:
 
-- **DS\_ORDERED\_COUNT** Takes one value from the first valid lane and sends to GDS.
+- **DS_ORDERED_COUNT** Takes one value from the first valid lane and sends to GDS.
 
 For shaders that use this function, this instruction must be issued once and only once per wave. The GDS receives these in arbitrary order from different waves across the chip, but processes them in the order the waves were created. The GDS contains a large fifo to hold these pending requests.
 
@@ -5197,10 +5193,10 @@ Append and Consume count bits in EXEC and add or subtract the count from the GDS
 
 "Global Wave Sync" allows the waves running in different thread-groups, including across different CU's and SE's to synchronize through barriers and semaphores.
 
-The Global Wave Sync (GWS) unit contains 64 sync resources that are allocated by the Command Processor to applications (VM\_ID's). These sync resources can be configured to act as counting semaphores or barriers.
+The Global Wave Sync (GWS) unit contains 64 sync resources that are allocated by the Command Processor to applications (VM_ID's). These sync resources can be configured to act as counting semaphores or barriers.
 
 - GWS registers must be configured before use via GRBM reg writes: `gds_gws_resource_cntl`, `gds_gws_resource`
-- `GDS_GWS_RESOURCE`: Flag, Counter (number of waves at resource), type, head\_{queue, valid, flag}
+- `GDS_GWS_RESOURCE`: Flag, Counter (number of waves at resource), type, head_{queue, valid, flag}
 - `GDS_GWS_VMID`: Per-VMID register identifying the range of GWS resources owned by each VMID (base & size)
 
 The GWS contains **64 sync resources**, each of which contains the following state:
@@ -5212,7 +5208,7 @@ The GWS contains **64 sync resources**, each of which contains the following sta
 - Tail of Queue + flag (12 bits)
 - FIFO - holds full wave-id and a 1-bit flag
 
-When used by the shader, M0 supplies the "resource\_base[5:0]" which is used to virtualize the resources.
+When used by the shader, M0 supplies the "resource_base[5:0]" which is used to virtualize the resources.
 
 The resource offset comes from the GDS/GWS instruction's "offset0[5:0]" field and is added to M0 and also to a base-address per VMID to get the final resource ID. Resource ID's are clamped to the range owned by this VMID. If clamping occurs, the GWS returns a NACK which causes the wave to rewind the PC and halt.
 
@@ -6712,7 +6708,7 @@ Table 93. DPP16 Fields
 | BANK_MASK  | [59:56] | Bank Mask Applies to the VGPR destination write only, does not impact the thread mask when fetching source VGPR data.<br>27==0: lanes[12:15, 28:31, 44:47, 60:63] are disabled<br>26==0: lanes[8:11, 24:27, 40:43, 56:59] are disabled<br>25==0: lanes[4:7, 20:23, 36:39, 52:55] are disabled<br>24==0: lanes[0:3, 16:19, 32:35, 48:51] are disabled<br>Notice: the term "bank" here is not the same as was used for the VGPR bank. |
 | ROW_MASK   | [63:60] | Row Mask Applies to the VGPR destination write only, does not impact the thread mask when fetching source VGPR data.<br>31==0: lanes[63:48] are disabled (wave 64 only)<br>30==0: lanes[47:32] are disabled (wave 64 only)<br>29==0: lanes[31:16] are disabled<br>28==0: lanes[15:0] are disabled                                                                                                                                   |
 
-Table 94. DPP\_CTRL Enumeration
+Table 94. DPP_CTRL Enumeration
 
 | DPP_Cntl Enumeration  | Hex Value | Function                                                                                                                           | Description                                                                        |
 |-----------------------|-----------|------------------------------------------------------------------------------------------------------------------------------------|------------------------------------------------------------------------------------|
@@ -7412,7 +7408,7 @@ Note: Rounding and Denormal modes apply to all floating-point operations unless 
 
 Instructions in this format may use a 32-bit literal constant that occurs immediately after the instruction.
 
-#### S\_ADD\_U32
+#### S_ADD_U32
 **0**
 
 Add two unsigned 32-bit integer inputs, store the result into a scalar register and store the carry-out bit into SCC.
@@ -7424,7 +7420,7 @@ SCC = tmp >= 0x100000000ULL ? 1'1U : 1'0U;
 D0.u32 = tmp.u32
 ```
 
-#### S\_SUB\_U32
+#### S_SUB_U32
 **1**
 
 Subtract the second unsigned 32-bit integer input from the first input, store the result into a scalar register and store the carry-out bit into SCC.
@@ -7436,7 +7432,7 @@ SCC = S1.u32 > S0.u32 ? 1'1U : 1'0U;
 D0.u32 = tmp.u32
 ```
 
-#### S\_ADD\_I32
+#### S_ADD_I32
 **2**
 
 Add two signed 32-bit integer inputs, store the result into a scalar register and store the carry-out bit into SCC.
@@ -7450,9 +7446,9 @@ D0.i32 = tmp.i32
 
 **Notes**
 
-This opcode is not suitable for use with S\_ADDC\_U32 for implementing 64-bit operations.
+This opcode is not suitable for use with S_ADDC_U32 for implementing 64-bit operations.
 
-#### S\_SUB\_I32
+#### S_SUB_I32
 **3**
 
 Subtract the second signed 32-bit integer input from the first input, store the result into a scalar register and store the carry-out bit into SCC.
@@ -7466,9 +7462,9 @@ D0.i32 = tmp.i32
 
 **Notes**
 
-This opcode is not suitable for use with S\_SUBB\_U32 for implementing 64-bit operations.
+This opcode is not suitable for use with S_SUBB_U32 for implementing 64-bit operations.
 
-#### S\_ADDC\_U32
+#### S_ADDC_U32
 **4**
 
 Add two unsigned 32-bit integer inputs and a carry-in bit from SCC, store the result into a scalar register and store the carry-out bit into SCC.
@@ -7480,7 +7476,7 @@ SCC = tmp >= 0x100000000ULL ? 1'1U : 1'0U;
 D0.u32 = tmp.u32
 ```
 
-#### S\_SUBB\_U32
+#### S_SUBB_U32
 **5**
 
 Subtract the second unsigned 32-bit integer input from the first input, subtract the carry-in bit, store the result into a scalar register and store the carry-out bit into SCC.
@@ -7492,7 +7488,7 @@ SCC = 64'U(S1.u32) + SCC.u64 > 64'U(S0.u32) ? 1'1U : 1'0U;
 D0.u32 = tmp.u32
 ```
 
-#### S\_ABSDIFF\_I32
+#### S_ABSDIFF_I32
 **6**
 
 Calculate the absolute value of difference between two scalar inputs, store the result into a scalar register and set SCC iff the result is nonzero.
@@ -7518,7 +7514,7 @@ S_ABSDIFF_I32(0x80000000, 0xffffffff) => 0x7fffffff
 S_ABSDIFF_I32(0x80000000, 0xfffffff0) => 0x7fffffff
 ```
 
-#### S\_LSHL\_B32
+#### S_LSHL_B32
 **8**
 
 Given a shift count in the second scalar input, calculate the logical shift left of the first scalar input, store the result into a scalar register and set SCC iff the result is nonzero.
@@ -7528,7 +7524,7 @@ D0.u32 = (S0.u32 << S1[4 : 0].u32);
 SCC = D0.u32 != 0U
 ```
 
-#### S\_LSHL\_B64
+#### S_LSHL_B64
 **9**
 
 Given a shift count in the second scalar input, calculate the logical shift left of the first scalar input, store the result into a scalar register and set SCC iff the result is nonzero.
@@ -7538,7 +7534,7 @@ D0.u64 = (S0.u64 << S1[5 : 0].u32);
 SCC = D0.u64 != 0ULL
 ```
 
-#### S\_LSHR\_B32
+#### S_LSHR_B32
 **10**
 
 Given a shift count in the second scalar input, calculate the logical shift right of the first scalar input, store the result into a scalar register and set SCC iff the result is nonzero.
@@ -7548,7 +7544,7 @@ D0.u32 = (S0.u32 >> S1[4 : 0].u32);
 SCC = D0.u32 != 0U
 ```
 
-#### S\_LSHR\_B64
+#### S_LSHR_B64
 **11**
 
 Given a shift count in the second scalar input, calculate the logical shift right of the first scalar input, store the result into a scalar register and set SCC iff the result is nonzero.
@@ -7558,7 +7554,7 @@ D0.u64 = (S0.u64 >> S1[5 : 0].u32);
 SCC = D0.u64 != 0ULL
 ```
 
-#### S\_ASHR\_I32
+#### S_ASHR_I32
 **12**
 
 Given a shift count in the second scalar input, calculate the arithmetic shift right (preserving sign bit) of the first scalar input, store the result into a scalar register and set SCC iff the result is nonzero.
@@ -7568,7 +7564,7 @@ D0.i32 = 32'I(signext(S0.i32) >> S1[4 : 0].u32);
 SCC = D0.i32 != 0
 ```
 
-#### S\_ASHR\_I64
+#### S_ASHR_I64
 **13**
 
 Given a shift count in the second scalar input, calculate the arithmetic shift right (preserving sign bit) of the first scalar input, store the result into a scalar register and set SCC iff the result is nonzero.
@@ -7578,7 +7574,7 @@ D0.i64 = (signext(S0.i64) >> S1[5 : 0].u32);
 SCC = D0.i64 != 0LL
 ```
 
-#### S\_LSHL1\_ADD\_U32
+#### S_LSHL1_ADD_U32
 **14**
 
 Calculate the logical shift left of the first input by 1, then add the second input, store the result into a scalar register and set SCC iff the summation results in an unsigned overflow.
@@ -7590,7 +7586,7 @@ SCC = tmp >= 0x100000000ULL ? 1'1U : 1'0U;
 D0.u32 = tmp.u32
 ```
 
-#### S\_LSHL2\_ADD\_U32
+#### S_LSHL2_ADD_U32
 **15**
 
 Calculate the logical shift left of the first input by 2, then add the second input, store the result into a scalar register and set SCC iff the summation results in an unsigned overflow.
@@ -7602,7 +7598,7 @@ SCC = tmp >= 0x100000000ULL ? 1'1U : 1'0U;
 D0.u32 = tmp.u32
 ```
 
-#### S\_LSHL3\_ADD\_U32
+#### S_LSHL3_ADD_U32
 **16**
 
 Calculate the logical shift left of the first input by 3, then add the second input, store the result into a scalar register and set SCC iff the summation results in an unsigned overflow.
@@ -7614,7 +7610,7 @@ SCC = tmp >= 0x100000000ULL ? 1'1U : 1'0U;
 D0.u32 = tmp.u32
 ```
 
-#### S\_LSHL4\_ADD\_U32
+#### S_LSHL4_ADD_U32
 **17**
 
 Calculate the logical shift left of the first input by 4, then add the second input, store the result into a scalar register and set SCC iff the summation results in an unsigned overflow.
@@ -7626,7 +7622,7 @@ SCC = tmp >= 0x100000000ULL ? 1'1U : 1'0U;
 D0.u32 = tmp.u32
 ```
 
-#### S\_MIN\_I32
+#### S_MIN_I32
 **18**
 
 Select the minimum of two signed 32-bit integer inputs, store the selected value into a scalar register and set SCC iff the first value is selected.
@@ -7636,7 +7632,7 @@ SCC = S0.i32 < S1.i32;
 D0.i32 = SCC ? S0.i32 : S1.i32
 ```
 
-#### S\_MIN\_U32
+#### S_MIN_U32
 **19**
 
 Select the minimum of two unsigned 32-bit integer inputs, store the selected value into a scalar register and set SCC iff the first value is selected.
@@ -7646,7 +7642,7 @@ SCC = S0.u32 < S1.u32;
 D0.u32 = SCC ? S0.u32 : S1.u32
 ```
 
-#### S\_MAX\_I32
+#### S_MAX_I32
 **20**
 
 Select the maximum of two signed 32-bit integer inputs, store the selected value into a scalar register and set SCC iff the first value is selected.
@@ -7656,7 +7652,7 @@ SCC = S0.i32 >= S1.i32;
 D0.i32 = SCC ? S0.i32 : S1.i32
 ```
 
-#### S\_MAX\_U32
+#### S_MAX_U32
 **21**
 
 Select the maximum of two unsigned 32-bit integer inputs, store the selected value into a scalar register and set SCC iff the first value is selected.
@@ -7666,7 +7662,7 @@ SCC = S0.u32 >= S1.u32;
 D0.u32 = SCC ? S0.u32 : S1.u32
 ```
 
-#### S\_AND\_B32
+#### S_AND_B32
 **22**
 
 Calculate bitwise AND on two scalar inputs, store the result into a scalar register and set SCC iff the result is nonzero.
@@ -7676,7 +7672,7 @@ D0.u32 = (S0.u32 & S1.u32);
 SCC = D0.u32 != 0U
 ```
 
-#### S\_AND\_B64
+#### S_AND_B64
 **23**
 
 Calculate bitwise AND on two scalar inputs, store the result into a scalar register and set SCC iff the result is nonzero.
@@ -7686,7 +7682,7 @@ D0.u64 = (S0.u64 & S1.u64);
 SCC = D0.u64 != 0ULL
 ```
 
-#### S\_OR\_B32
+#### S_OR_B32
 **24**
 
 Calculate bitwise OR on two scalar inputs, store the result into a scalar register and set SCC iff the result is nonzero.
@@ -7696,7 +7692,7 @@ D0.u32 = (S0.u32 | S1.u32);
 SCC = D0.u32 != 0U
 ```
 
-#### S\_OR\_B64
+#### S_OR_B64
 **25**
 
 Calculate bitwise OR on two scalar inputs, store the result into a scalar register and set SCC iff the result is nonzero.
@@ -7706,7 +7702,7 @@ D0.u64 = (S0.u64 | S1.u64);
 SCC = D0.u64 != 0ULL
 ```
 
-#### S\_XOR\_B32
+#### S_XOR_B32
 **26**
 
 Calculate bitwise XOR on two scalar inputs, store the result into a scalar register and set SCC iff the result is nonzero.
@@ -7716,7 +7712,7 @@ D0.u32 = (S0.u32 ^ S1.u32);
 SCC = D0.u32 != 0U
 ```
 
-#### S\_XOR\_B64
+#### S_XOR_B64
 **27**
 
 Calculate bitwise XOR on two scalar inputs, store the result into a scalar register and set SCC iff the result is nonzero.
@@ -7726,7 +7722,7 @@ D0.u64 = (S0.u64 ^ S1.u64);
 SCC = D0.u64 != 0ULL
 ```
 
-#### S\_NAND\_B32
+#### S_NAND_B32
 **28**
 
 Calculate bitwise NAND on two scalar inputs, store the result into a scalar register and set SCC if the result is nonzero.
@@ -7736,7 +7732,7 @@ D0.u32 = ~(S0.u32 & S1.u32);
 SCC = D0.u32 != 0U
 ```
 
-#### S\_NAND\_B64
+#### S_NAND_B64
 **29**
 
 Calculate bitwise NAND on two scalar inputs, store the result into a scalar register and set SCC if the result is nonzero.
@@ -7746,7 +7742,7 @@ D0.u64 = ~(S0.u64 & S1.u64);
 SCC = D0.u64 != 0ULL
 ```
 
-#### S\_NOR\_B32
+#### S_NOR_B32
 **30**
 
 Calculate bitwise NOR on two scalar inputs, store the result into a scalar register and set SCC if the result is nonzero.
@@ -7756,7 +7752,7 @@ D0.u32 = ~(S0.u32 | S1.u32);
 SCC = D0.u32 != 0U
 ```
 
-#### S\_NOR\_B64
+#### S_NOR_B64
 **31**
 
 Calculate bitwise NOR on two scalar inputs, store the result into a scalar register and set SCC if the result is nonzero.
@@ -7766,7 +7762,7 @@ D0.u64 = ~(S0.u64 | S1.u64);
 SCC = D0.u64 != 0ULL
 ```
 
-#### S\_XNOR\_B32
+#### S_XNOR_B32
 **32**
 
 Calculate bitwise XNOR on two scalar inputs, store the result into a scalar register and set SCC if the result is nonzero.
@@ -7776,7 +7772,7 @@ D0.u32 = ~(S0.u32 ^ S1.u32);
 SCC = D0.u32 != 0U
 ```
 
-#### S\_XNOR\_B64
+#### S_XNOR_B64
 **33**
 
 Calculate bitwise XNOR on two scalar inputs, store the result into a scalar register and set SCC if the result is nonzero.
@@ -7786,7 +7782,7 @@ D0.u64 = ~(S0.u64 ^ S1.u64);
 SCC = D0.u64 != 0ULL
 ```
 
-#### S\_AND\_NOT1\_B32
+#### S_AND_NOT1_B32
 **34**
 
 Calculate bitwise AND with the first input and the negation of the second input, store the result into a scalar register and set SCC if the result is nonzero.
@@ -7796,7 +7792,7 @@ D0.u32 = (S0.u32 & ~S1.u32);
 SCC = D0.u32 != 0U
 ```
 
-#### S\_AND\_NOT1\_B64
+#### S_AND_NOT1_B64
 **35**
 
 Calculate bitwise AND with the first input and the negation of the second input, store the result into a scalar register and set SCC if the result is nonzero.
@@ -7806,7 +7802,7 @@ D0.u64 = (S0.u64 & ~S1.u64);
 SCC = D0.u64 != 0ULL
 ```
 
-#### S\_OR\_NOT1\_B32
+#### S_OR_NOT1_B32
 **36**
 
 Calculate bitwise OR with the first input and the negation of the second input, store the result into a scalar register and set SCC if the result is nonzero.
@@ -7816,7 +7812,7 @@ D0.u32 = (S0.u32 | ~S1.u32);
 SCC = D0.u32 != 0U
 ```
 
-#### S\_OR\_NOT1\_B64
+#### S_OR_NOT1_B64
 **37**
 
 Calculate bitwise OR with the first input and the negation of the second input, store the result into a scalar register and set SCC if the result is nonzero.
@@ -7826,7 +7822,7 @@ D0.u64 = (S0.u64 | ~S1.u64);
 SCC = D0.u64 != 0ULL
 ```
 
-#### S\_BFE\_U32
+#### S_BFE_U32
 **38**
 
 Extract an unsigned bitfield from the first input using field offset and size encoded in the second input, store the result into a scalar register and set SCC iff the result is nonzero.
@@ -7836,7 +7832,7 @@ D0.u32 = ((S0.u32 >> S1[4 : 0].u32) & ((1U << S1[22 : 16].u32) - 1U));
 SCC = D0.u32 != 0U
 ```
 
-#### S\_BFE\_I32
+#### S_BFE_I32
 **39**
 
 Extract a signed bitfield from the first input using field offset and size encoded in the second input, store the result into a scalar register and set SCC iff the result is nonzero.
@@ -7847,7 +7843,7 @@ D0.i32 = signext_from_bit(tmp.i32, S1[22 : 16].u32);
 SCC = D0.i32 != 0
 ```
 
-#### S\_BFE\_U64
+#### S_BFE_U64
 **40**
 
 Extract an unsigned bitfield from the first input using field offset and size encoded in the second input, store the result into a scalar register and set SCC iff the result is nonzero.
@@ -7857,7 +7853,7 @@ D0.u64 = ((S0.u64 >> S1[5 : 0].u32) & ((1ULL << S1[22 : 16].u32) - 1ULL));
 SCC = D0.u64 != 0ULL
 ```
 
-#### S\_BFE\_I64
+#### S_BFE_I64
 **41**
 
 Extract a signed bitfield from the first input using field offset and size encoded in the second input, store the result into a scalar register and set SCC iff the result is nonzero.
@@ -7868,7 +7864,7 @@ D0.i64 = signext_from_bit(tmp.i64, S1[22 : 16].u32);
 SCC = D0.i64 != 0LL
 ```
 
-#### S\_BFM\_B32
+#### S_BFM_B32
 **42**
 
 Calculate a bitfield mask given a field offset and size and store the result in a scalar register.
@@ -7877,7 +7873,7 @@ Calculate a bitfield mask given a field offset and size and store the result in 
 D0.u32 = (((1U << S0[4 : 0].u32) - 1U) << S1[4 : 0].u32)
 ```
 
-#### S\_BFM\_B64
+#### S_BFM_B64
 **43**
 
 Calculate a bitfield mask given a field offset and size and store the result in a scalar register.
@@ -7886,7 +7882,7 @@ Calculate a bitfield mask given a field offset and size and store the result in 
 D0.u64 = (((1ULL << S0[5 : 0].u32) - 1ULL) << S1[5 : 0].u32)
 ```
 
-#### S\_MUL\_I32
+#### S_MUL_I32
 **44**
 
 Multiply two signed 32-bit integer inputs and store the result into a scalar register.
@@ -7895,7 +7891,7 @@ Multiply two signed 32-bit integer inputs and store the result into a scalar reg
 D0.i32 = S0.i32 * S1.i32
 ```
 
-#### S\_MUL\_HI\_U32
+#### S_MUL_HI_U32
 **45**
 
 Multiply two unsigned integers and store the high 32 bits of the result into a scalar register.
@@ -7904,7 +7900,7 @@ Multiply two unsigned integers and store the high 32 bits of the result into a s
 D0.u32 = 32'U((64'U(S0.u32) * 64'U(S1.u32)) >> 32U)
 ```
 
-#### S\_MUL\_HI\_I32
+#### S_MUL_HI_I32
 **46**
 
 Multiply two signed integers and store the high 32 bits of the result into a scalar register.
@@ -7913,7 +7909,7 @@ Multiply two signed integers and store the high 32 bits of the result into a sca
 D0.i32 = 32'I((64'I(S0.i32) * 64'I(S1.i32)) >> 32U)
 ```
 
-#### S\_CSELECT\_B32
+#### S_CSELECT_B32
 **48**
 
 Select the first input if SCC is true otherwise select the second input, then store the selected input into a scalar register.
@@ -7922,7 +7918,7 @@ Select the first input if SCC is true otherwise select the second input, then st
 D0.u32 = SCC ? S0.u32 : S1.u32
 ```
 
-#### S\_CSELECT\_B64
+#### S_CSELECT_B64
 **49**
 
 Select the first input if SCC is true otherwise select the second input, then store the selected input into a scalar register.
@@ -7931,7 +7927,7 @@ Select the first input if SCC is true otherwise select the second input, then st
 D0.u64 = SCC ? S0.u64 : S1.u64
 ```
 
-#### S\_PACK\_LL\_B32\_B16
+#### S_PACK_LL_B32_B16
 **50**
 
 Pack two 16-bit scalar values into a scalar register.
@@ -7940,7 +7936,7 @@ Pack two 16-bit scalar values into a scalar register.
 D0 = { S1[15 : 0].u16, S0[15 : 0].u16 }
 ```
 
-#### S\_PACK\_LH\_B32\_B16
+#### S_PACK_LH_B32_B16
 **51**
 
 Pack two 16-bit scalar values into a scalar register.
@@ -7949,7 +7945,7 @@ Pack two 16-bit scalar values into a scalar register.
 D0 = { S1[31 : 16].u16, S0[15 : 0].u16 }
 ```
 
-#### S\_PACK\_HH\_B32\_B16
+#### S_PACK_HH_B32_B16
 **52**
 
 Pack two 16-bit scalar values into a scalar register.
@@ -7958,7 +7954,7 @@ Pack two 16-bit scalar values into a scalar register.
 D0 = { S1[31 : 16].u16, S0[31 : 16].u16 }
 ```
 
-#### S\_PACK\_HL\_B32\_B16
+#### S_PACK_HL_B32_B16
 **53**
 
 Pack two 16-bit scalar values into a scalar register.
@@ -7967,7 +7963,7 @@ Pack two 16-bit scalar values into a scalar register.
 D0 = { S1[15 : 0].u16, S0[31 : 16].u16 }
 ```
 
-#### S\_ADD\_F32
+#### S_ADD_F32
 **64**
 
 Add two floating point inputs and store the result into a scalar register.
@@ -7976,7 +7972,7 @@ Add two floating point inputs and store the result into a scalar register.
 D0.f32 = S0.f32 + S1.f32
 ```
 
-#### S\_SUB\_F32
+#### S_SUB_F32
 **65**
 
 Subtract the second floating point input from the first input and store the result in a scalar register.
@@ -7985,7 +7981,7 @@ Subtract the second floating point input from the first input and store the resu
 D0.f32 = S0.f32 - S1.f32
 ```
 
-#### S\_MIN\_F32
+#### S_MIN_F32
 **66**
 
 Select the minimum of two single-precision float inputs and store the result into a scalar register.
@@ -8025,7 +8021,7 @@ endif;
 // when both inputs are +0.
 ```
 
-#### S\_MAX\_F32
+#### S_MAX_F32
 **67**
 
 Select the maximum of two single-precision float inputs and store the result into a scalar register.
@@ -8065,7 +8061,7 @@ endif;
 // when both inputs are +-0.
 ```
 
-#### S\_MUL\_F32
+#### S_MUL_F32
 **68**
 
 Multiply two floating point inputs and store the result into a scalar register.
@@ -8074,7 +8070,7 @@ Multiply two floating point inputs and store the result into a scalar register.
 D0.f32 = S0.f32 * S1.f32
 ```
 
-#### S\_FMAAK\_F32
+#### S_FMAAK_F32
 **69**
 
 Multiply two floating point inputs and add a literal constant using fused multiply add, and store the result into a scalar register.
@@ -8083,7 +8079,7 @@ Multiply two floating point inputs and add a literal constant using fused multip
 D0.f32 = fma(S0.f32, S1.f32, SIMM32.f32)
 ```
 
-#### S\_FMAMK\_F32
+#### S_FMAMK_F32
 **70**
 
 Multiply a floating point input with a literal constant and add a second floating point input using fused multiply add, and store the result into a scalar register.
@@ -8092,7 +8088,7 @@ Multiply a floating point input with a literal constant and add a second floatin
 D0.f32 = fma(S0.f32, SIMM32.f32, S1.f32)
 ```
 
-#### S\_FMAC\_F32
+#### S_FMAC_F32
 **71**
 
 Compute the fused multiply add of floating point inputs and accumulate with the destination operand, and store the result into the destination.
@@ -8101,7 +8097,7 @@ Compute the fused multiply add of floating point inputs and accumulate with the 
 D0.f32 = fma(S0.f32, S1.f32, D0.f32)
 ```
 
-#### S\_CVT\_PK\_RTZ\_F16\_F32
+#### S_CVT_PK_RTZ_F16_F32
 **72**
 
 Convert two single-precision float inputs into a packed half-precision float result using round toward zero semantics (ignore the current rounding mode), and store the result into a scalar register.
@@ -8116,7 +8112,7 @@ ROUND_MODE = prev_mode;
 // Round-toward-zero regardless of current round mode setting in hardware.
 ```
 
-#### S\_ADD\_F16
+#### S_ADD_F16
 **73**
 
 Add two floating point inputs and store the result into a scalar register.
@@ -8125,7 +8121,7 @@ Add two floating point inputs and store the result into a scalar register.
 D0.f16 = S0.f16 + S1.f16
 ```
 
-#### S\_SUB\_F16
+#### S_SUB_F16
 **74**
 
 Subtract the second floating point input from the first input and store the result in a scalar register.
@@ -8134,7 +8130,7 @@ Subtract the second floating point input from the first input and store the resu
 D0.f16 = S0.f16 - S1.f16
 ```
 
-#### S\_MIN\_F16
+#### S_MIN_F16
 **75**
 
 Select the minimum of two half-precision float inputs and store the result into a scalar register.
@@ -8174,7 +8170,7 @@ endif;
 // when both inputs are +0.
 ```
 
-#### S\_MAX\_F16
+#### S_MAX_F16
 **76**
 
 Select the maximum of two half-precision float inputs and store the result into a scalar register.
@@ -8214,7 +8210,7 @@ endif;
 // when both inputs are +-0.
 ```
 
-#### S\_MUL\_F16
+#### S_MUL_F16
 **77**
 
 Multiply two floating point inputs and store the result into a scalar register.
@@ -8223,7 +8219,7 @@ Multiply two floating point inputs and store the result into a scalar register.
 D0.f16 = S0.f16 * S1.f16
 ```
 
-#### S\_FMAC\_F16
+#### S_FMAC_F16
 **78**
 
 Compute the fused multiply add of floating point inputs and accumulate with the destination operand, and store the result into the destination.
@@ -8243,7 +8239,7 @@ D0.f16 = fma(S0.f16, S1.f16, D0.f16)
 
 Instructions in this format may not use a 32-bit literal constant that occurs immediately after the instruction.
 
-#### S\_MOVK\_I32
+#### S_MOVK_I32
 **0**
 
 Sign extend a literal 16-bit constant and store the result into a scalar register.
@@ -8252,16 +8248,16 @@ Sign extend a literal 16-bit constant and store the result into a scalar registe
 D0.i32 = 32'I(signext(SIMM16.i16))
 ```
 
-#### S\_VERSION
+#### S_VERSION
 **1**
 
 Do nothing. This opcode is used to specify the microcode version for tools that interpret shader microcode.
 
-Argument is ignored by hardware. This opcode is not designed for inserting wait states as the next instruction may issue in the same cycle. Do not use this opcode to resolve wait state hazards, use S\_NOP instead.
+Argument is ignored by hardware. This opcode is not designed for inserting wait states as the next instruction may issue in the same cycle. Do not use this opcode to resolve wait state hazards, use S_NOP instead.
 
 This opcode may also be used to validate microcode is running with the correct compatibility settings in drivers and functional models that support multiple generations. We strongly encourage this opcode be included at the top of every shader block to simplify debug and catch configuration errors.
 
-This opcode must appear in the first 16 bytes of a block of shader code in order to be recognized by external tools and functional models. Avoid placing opcodes > 32 bits or encodings that are not available in all versions of the microcode before the S\_VERSION opcode. If this opcode is absent then tools are allowed to make an educated guess of the microcode version using cues from the environment; the guess may be incorrect and lead to an invalid decode. It is highly recommended that this be the *first* opcode of a shader block except for trap handlers, where it should be the *second* opcode (allowing the first opcode to be a 32-bit branch to accommodate context switch).
+This opcode must appear in the first 16 bytes of a block of shader code in order to be recognized by external tools and functional models. Avoid placing opcodes > 32 bits or encodings that are not available in all versions of the microcode before the S_VERSION opcode. If this opcode is absent then tools are allowed to make an educated guess of the microcode version using cues from the environment; the guess may be incorrect and lead to an invalid decode. It is highly recommended that this be the *first* opcode of a shader block except for trap handlers, where it should be the *second* opcode (allowing the first opcode to be a 32-bit branch to accommodate context switch).
 
 SIMM16[7:0] specifies the microcode version.
 SIMM16[15:8] must be set to zero.
@@ -8271,7 +8267,7 @@ nop();
 // Do nothing - for use by tools only
 ```
 
-#### S\_CMOVK\_I32
+#### S_CMOVK_I32
 **2**
 
 Move the sign extension of a literal 16-bit constant into a scalar register iff SCC is nonzero.
@@ -8282,7 +8278,7 @@ if SCC then
 endif
 ```
 
-#### S\_CMPK\_EQ\_I32
+#### S_CMPK_EQ_I32
 **3**
 
 Set SCC to 1 iff scalar input is equal to the sign extension of a literal 16-bit constant.
@@ -8291,7 +8287,7 @@ Set SCC to 1 iff scalar input is equal to the sign extension of a literal 16-bit
 SCC = 64'I(S0.i32) == signext(SIMM16.i16)
 ```
 
-#### S\_CMPK\_LG\_I32
+#### S_CMPK_LG_I32
 **4**
 
 Set SCC to 1 iff scalar input is less than or greater than the sign extension of a literal 16-bit constant.
@@ -8300,7 +8296,7 @@ Set SCC to 1 iff scalar input is less than or greater than the sign extension of
 SCC = 64'I(S0.i32) != signext(SIMM16.i16)
 ```
 
-#### S\_CMPK\_GT\_I32
+#### S_CMPK_GT_I32
 **5**
 
 Set SCC to 1 iff scalar input is greater than the sign extension of a literal 16-bit constant.
@@ -8309,7 +8305,7 @@ Set SCC to 1 iff scalar input is greater than the sign extension of a literal 16
 SCC = 64'I(S0.i32) > signext(SIMM16.i16)
 ```
 
-#### S\_CMPK\_GE\_I32
+#### S_CMPK_GE_I32
 **6**
 
 Set SCC to 1 iff scalar input is greater than or equal to the sign extension of a literal 16-bit constant.
@@ -8318,7 +8314,7 @@ Set SCC to 1 iff scalar input is greater than or equal to the sign extension of 
 SCC = 64'I(S0.i32) >= signext(SIMM16.i16)
 ```
 
-#### S\_CMPK\_LT\_I32
+#### S_CMPK_LT_I32
 **7**
 
 Set SCC to 1 iff scalar input is less than the sign extension of a literal 16-bit constant.
@@ -8327,7 +8323,7 @@ Set SCC to 1 iff scalar input is less than the sign extension of a literal 16-bi
 SCC = 64'I(S0.i32) < signext(SIMM16.i16)
 ```
 
-#### S\_CMPK\_LE\_I32
+#### S_CMPK_LE_I32
 **8**
 
 Set SCC to 1 iff scalar input is less than or equal to the sign extension of a literal 16-bit constant.
@@ -8336,7 +8332,7 @@ Set SCC to 1 iff scalar input is less than or equal to the sign extension of a l
 SCC = 64'I(S0.i32) <= signext(SIMM16.i16)
 ```
 
-#### S\_CMPK\_EQ\_U32
+#### S_CMPK_EQ_U32
 **9**
 
 Set SCC to 1 iff scalar input is equal to the zero extension of a literal 16-bit constant.
@@ -8345,7 +8341,7 @@ Set SCC to 1 iff scalar input is equal to the zero extension of a literal 16-bit
 SCC = S0.u32 == 32'U(SIMM16.u16)
 ```
 
-#### S\_CMPK\_LG\_U32
+#### S_CMPK_LG_U32
 **10**
 
 Set SCC to 1 iff scalar input is less than or greater than the zero extension of a literal 16-bit constant.
@@ -8354,7 +8350,7 @@ Set SCC to 1 iff scalar input is less than or greater than the zero extension of
 SCC = S0.u32 != 32'U(SIMM16.u16)
 ```
 
-#### S\_CMPK\_GT\_U32
+#### S_CMPK_GT_U32
 **11**
 
 Set SCC to 1 iff scalar input is greater than the zero extension of a literal 16-bit constant.
@@ -8363,7 +8359,7 @@ Set SCC to 1 iff scalar input is greater than the zero extension of a literal 16
 SCC = S0.u32 > 32'U(SIMM16.u16)
 ```
 
-#### S\_CMPK\_GE\_U32
+#### S_CMPK_GE_U32
 **12**
 
 Set SCC to 1 iff scalar input is greater than or equal to the zero extension of a literal 16-bit constant.
@@ -8372,7 +8368,7 @@ Set SCC to 1 iff scalar input is greater than or equal to the zero extension of 
 SCC = S0.u32 >= 32'U(SIMM16.u16)
 ```
 
-#### S\_CMPK\_LT\_U32
+#### S_CMPK_LT_U32
 **13**
 
 Set SCC to 1 iff scalar input is less than the zero extension of a literal 16-bit constant.
@@ -8381,7 +8377,7 @@ Set SCC to 1 iff scalar input is less than the zero extension of a literal 16-bi
 SCC = S0.u32 < 32'U(SIMM16.u16)
 ```
 
-#### S\_CMPK\_LE\_U32
+#### S_CMPK_LE_U32
 **14**
 
 Set SCC to 1 iff scalar input is less than or equal to the zero extension of a literal 16-bit constant.
@@ -8390,7 +8386,7 @@ Set SCC to 1 iff scalar input is less than or equal to the zero extension of a l
 SCC = S0.u32 <= 32'U(SIMM16.u16)
 ```
 
-#### S\_ADDK\_I32
+#### S_ADDK_I32
 **15**
 
 Add a scalar input and the sign extension of a literal 16-bit constant, store the result into a scalar register and store the carry-out bit into SCC.
@@ -8403,7 +8399,7 @@ SCC = ((tmp[31] == SIMM16.i16[15]) && (tmp[31] != D0.i32[31]));
 // signed overflow.
 ```
 
-#### S\_MULK\_I32
+#### S_MULK_I32
 **16**
 
 Multiply a scalar input with the sign extension of a literal 16-bit constant and store the result into a scalar register.
@@ -8412,7 +8408,7 @@ Multiply a scalar input with the sign extension of a literal 16-bit constant and
 D0.i32 = 32'I(64'I(D0.i32) * signext(SIMM16.i16))
 ```
 
-#### S\_GETREG\_B32
+#### S_GETREG_B32
 **17**
 
 Read some or all of a hardware register into the LSBs of destination.
@@ -8440,7 +8436,7 @@ value = HW_REGISTERS[hwRegId];
 D0.u32 = 32'U(32'I(value >> offset.u32) & ((1 << size) - 1))
 ```
 
-#### S\_SETREG\_B32
+#### S_SETREG_B32
 **18**
 
 Write some or all of the LSBs of source argument into a hardware register.
@@ -8473,7 +8469,7 @@ HW_REGISTERS[hwRegId] = value.b32;
 // Side-effects may trigger here if certain bits are modified
 ```
 
-#### S\_SETREG\_IMM32\_B32
+#### S_SETREG_IMM32_B32
 **19**
 
 Write some or all of the LSBs of a 32-bit literal constant into a hardware register; this instruction requires a 32-bit literal constant.
@@ -8506,7 +8502,7 @@ HW_REGISTERS[hwRegId] = value.b32;
 // Side-effects may trigger here if certain bits are modified
 ```
 
-#### S\_CALL\_B64
+#### S_CALL_B64
 **20**
 
 Store the address of the next instruction to a scalar register and then jump to a constant offset relative to the current PC.
@@ -8520,11 +8516,11 @@ PC = PC + signext(SIMM16.i16 * 16'4) + 4LL
 
 **Notes**
 
-This implements a short subroutine call where the return address (the next instruction after the S\_CALL\_B64) is saved to D. Long calls should consider S\_SWAPPC\_B64 instead.
+This implements a short subroutine call where the return address (the next instruction after the S_CALL_B64) is saved to D. Long calls should consider S_SWAPPC_B64 instead.
 
 This instruction must be 4 bytes.
 
-#### S\_WAITCNT\_VSCNT
+#### S_WAITCNT_VSCNT
 **24**
 
 Wait for the VSCNT counter to be at or below the specified level. The VSCNT counter tracks the number of outstanding vector memory stores and atomics that *do not* return data. This counter is not used in 'all-in-order' mode.
@@ -8543,9 +8539,9 @@ To wait on a literal constant only, write 'null' for the GPR argument.
 
 This opcode may only appear inside a clause if the SGPR operand is set to NULL.
 
-See also S\_WAITCNT.
+See also S_WAITCNT.
 
-#### S\_WAITCNT\_VMCNT
+#### S_WAITCNT_VMCNT
 **25**
 
 Wait for the VMCNT counter to be at or below the specified level. The VMCNT counter tracks the number of outstanding vector memory loads and atomics that *do* return data. When in 'all-in-order' mode, wait for all load and store vector memory events.
@@ -8557,13 +8553,13 @@ vmcnt <= S0.u[5:0] + S1.u[5:0].
 // Comparison is 6 bits, no clamping is applied for add overflow
 ```
 
-To wait on a literal constant only, write 'null' for the GPR argument or use S\_WAITCNT.
+To wait on a literal constant only, write 'null' for the GPR argument or use S_WAITCNT.
 
 This opcode may only appear inside a clause if the SGPR operand is set to NULL.
 
-See also S\_WAITCNT.
+See also S_WAITCNT.
 
-#### S\_WAITCNT\_EXPCNT
+#### S_WAITCNT_EXPCNT
 **26**
 
 Wait for the EXPCNT counter to be at or below the specified level. The EXPCNT counter tracks the number of outstanding export events.
@@ -8575,13 +8571,13 @@ expcnt <= S0.u[2:0] + S1.u[2:0].
 // Comparison is 3 bits, no clamping is applied for add overflow
 ```
 
-To wait on a literal constant only, write 'null' for the GPR argument or use S\_WAITCNT.
+To wait on a literal constant only, write 'null' for the GPR argument or use S_WAITCNT.
 
 This opcode may only appear inside a clause if the SGPR operand is set to NULL.
 
-See also S\_WAITCNT.
+See also S_WAITCNT.
 
-#### S\_WAITCNT\_LGKMCNT
+#### S_WAITCNT_LGKMCNT
 **27**
 
 Wait for the LGKMCNT counter to be at or below the specified level. The LGKMCNT counter tracks the number of outstanding local data share (L), global data share (G), scalar memory (K) and message (M) events.
@@ -8593,11 +8589,11 @@ lgkmcnt <= S0.u[5:0] + S1.u[5:0].
 // Comparison is 6 bits, no clamping is applied for add overflow
 ```
 
-To wait on a literal constant only, write 'null' for the GPR argument or use S\_WAITCNT.
+To wait on a literal constant only, write 'null' for the GPR argument or use S_WAITCNT.
 
 This opcode may only appear inside a clause if the SGPR operand is set to NULL.
 
-See also S\_WAITCNT.
+See also S_WAITCNT.
 
 ## 16.3. SOP1 Instructions
 
@@ -8610,7 +8606,7 @@ See also S\_WAITCNT.
 
 Instructions in this format may use a 32-bit literal constant that occurs immediately after the instruction.
 
-#### S\_MOV\_B32
+#### S_MOV_B32
 **0**
 
 Move scalar input into a scalar register.
@@ -8619,7 +8615,7 @@ Move scalar input into a scalar register.
 D0.b32 = S0.b32
 ```
 
-#### S\_MOV\_B64
+#### S_MOV_B64
 **1**
 
 Move scalar input into a scalar register.
@@ -8628,7 +8624,7 @@ Move scalar input into a scalar register.
 D0.b64 = S0.b64
 ```
 
-#### S\_CMOV\_B32
+#### S_CMOV_B32
 **2**
 
 Move scalar input into a scalar register iff SCC is nonzero.
@@ -8639,7 +8635,7 @@ if SCC then
 endif
 ```
 
-#### S\_CMOV\_B64
+#### S_CMOV_B64
 **3**
 
 Move scalar input into a scalar register iff SCC is nonzero.
@@ -8650,7 +8646,7 @@ if SCC then
 endif
 ```
 
-#### S\_BREV\_B32
+#### S_BREV_B32
 **4**
 
 Reverse the order of bits in a scalar input and store the result into a scalar register.
@@ -8659,7 +8655,7 @@ Reverse the order of bits in a scalar input and store the result into a scalar r
 D0.u32[31 : 0] = S0.u32[0 : 31]
 ```
 
-#### S\_BREV\_B64
+#### S_BREV_B64
 **5**
 
 Reverse the order of bits in a scalar input and store the result into a scalar register.
@@ -8668,7 +8664,7 @@ Reverse the order of bits in a scalar input and store the result into a scalar r
 D0.u64[63 : 0] = S0.u64[0 : 63]
 ```
 
-#### S\_CTZ\_I32\_B32
+#### S_CTZ_I32_B32
 **8**
 
 Count the number of trailing "0" bits before the first "1" in a scalar input and store the result into a scalar register. Store -1 if there are no "1" bits in the input.
@@ -8698,9 +8694,9 @@ S_CTZ_I32_B32(0xffffffff) => 0
 S_CTZ_I32_B32(0x00010000) => 16
 ```
 
-Compare with V\_CTZ\_I32\_B32, which performs the equivalent operation in the vector ALU.
+Compare with V_CTZ_I32_B32, which performs the equivalent operation in the vector ALU.
 
-#### S\_CTZ\_I32\_B64
+#### S_CTZ_I32_B64
 **9**
 
 Count the number of trailing "0" bits before the first "1" in a scalar input and store the result into a scalar register. Store -1 if there are no "1" bits in the input.
@@ -8718,7 +8714,7 @@ endfor;
 D0.i32 = tmp
 ```
 
-#### S\_CLZ\_I32\_U32
+#### S_CLZ_I32_U32
 **10**
 
 Count the number of leading "0" bits before the first "1" in a scalar input and store the result into a scalar register. Store -1 if there are no "1" bits.
@@ -8749,9 +8745,9 @@ S_CLZ_I32_U32(0x80000000) => 0
 S_CLZ_I32_U32(0xffffffff) => 0
 ```
 
-Compare with V\_CLZ\_I32\_U32, which performs the equivalent operation in the vector ALU.
+Compare with V_CLZ_I32_U32, which performs the equivalent operation in the vector ALU.
 
-#### S\_CLZ\_I32\_U64
+#### S_CLZ_I32_U64
 **11**
 
 Count the number of leading "0" bits before the first "1" in a scalar input and store the result into a scalar register. Store -1 if there are no "1" bits.
@@ -8769,7 +8765,7 @@ endfor;
 D0.i32 = tmp
 ```
 
-#### S\_CLS\_I32
+#### S_CLS_I32
 **12**
 
 Count the number of leading bits that are the same as the sign bit of a scalar input and store the result into a scalar register. Store -1 if all input bits are the same.
@@ -8800,9 +8796,9 @@ S_CLS_I32(0x80000000) => 1
 S_CLS_I32(0xffffffff) => 0xffffffff
 ```
 
-Compare with V\_CLS\_I32, which performs the equivalent operation in the vector ALU.
+Compare with V_CLS_I32, which performs the equivalent operation in the vector ALU.
 
-#### S\_CLS\_I32\_I64
+#### S_CLS_I32_I64
 **13**
 
 Count the number of leading bits that are the same as the sign bit of a scalar input and store the result into a scalar register. Store -1 if all input bits are the same.
@@ -8820,7 +8816,7 @@ endfor;
 D0.i32 = tmp
 ```
 
-#### S\_SEXT\_I32\_I8
+#### S_SEXT_I32_I8
 **14**
 
 Sign extend a signed 8 bit scalar input to 32 bits and store the result into a scalar register.
@@ -8829,7 +8825,7 @@ Sign extend a signed 8 bit scalar input to 32 bits and store the result into a s
 D0.i32 = 32'I(signext(S0.i8))
 ```
 
-#### S\_SEXT\_I32\_I16
+#### S_SEXT_I32_I16
 **15**
 
 Sign extend a signed 16 bit scalar input to 32 bits and store the result into a scalar register.
@@ -8838,7 +8834,7 @@ Sign extend a signed 16 bit scalar input to 32 bits and store the result into a 
 D0.i32 = 32'I(signext(S0.i16))
 ```
 
-#### S\_BITSET0\_B32
+#### S_BITSET0_B32
 **16**
 
 Given a bit offset in a scalar input, set the indicated bit in the destination scalar register to 0.
@@ -8847,7 +8843,7 @@ Given a bit offset in a scalar input, set the indicated bit in the destination s
 D0.u32[S0.u32[4 : 0]] = 1'0U
 ```
 
-#### S\_BITSET0\_B64
+#### S_BITSET0_B64
 **17**
 
 Given a bit offset in a scalar input, set the indicated bit in the destination scalar register to 0.
@@ -8856,7 +8852,7 @@ Given a bit offset in a scalar input, set the indicated bit in the destination s
 D0.u64[S0.u32[5 : 0]] = 1'0U
 ```
 
-#### S\_BITSET1\_B32
+#### S_BITSET1_B32
 **18**
 
 Given a bit offset in a scalar input, set the indicated bit in the destination scalar register to 1.
@@ -8865,7 +8861,7 @@ Given a bit offset in a scalar input, set the indicated bit in the destination s
 D0.u32[S0.u32[4 : 0]] = 1'1U
 ```
 
-#### S\_BITSET1\_B64
+#### S_BITSET1_B64
 **19**
 
 Given a bit offset in a scalar input, set the indicated bit in the destination scalar register to 1.
@@ -8874,7 +8870,7 @@ Given a bit offset in a scalar input, set the indicated bit in the destination s
 D0.u64[S0.u32[5 : 0]] = 1'1U
 ```
 
-#### S\_BITREPLICATE\_B64\_B32
+#### S_BITREPLICATE_B64_B32
 **20**
 
 Substitute each bit of a 32 bit scalar input with two instances of itself and store the result into a 64 bit scalar register.
@@ -8896,9 +8892,9 @@ s_bitreplicate_b64 s2, s0
 s_bitreplicate_b64 s2, s2
 ```
 
-To perform the inverse operation see S\_QUADMASK\_B64.
+To perform the inverse operation see S_QUADMASK_B64.
 
-#### S\_ABS\_I32
+#### S_ABS_I32
 **21**
 
 Compute the absolute value of a scalar input, store the result into a scalar register and set SCC iff the result is nonzero.
@@ -8921,7 +8917,7 @@ S_ABS_I32(0x80000002) => 0x7ffffffe
 S_ABS_I32(0xffffffff) => 0x00000001
 ```
 
-#### S\_BCNT0\_I32\_B32
+#### S_BCNT0_I32_B32
 **22**
 
 Count the number of "0" bits in a scalar input, store the result into a scalar register and set SCC iff the result is nonzero.
@@ -8945,7 +8941,7 @@ S_BCNT0_I32_B32(0xcccccccc) => 16
 S_BCNT0_I32_B32(0xffffffff) => 0
 ```
 
-#### S\_BCNT0\_I32\_B64
+#### S_BCNT0_I32_B64
 **23**
 
 Count the number of "0" bits in a scalar input, store the result into a scalar register and set SCC iff the result is nonzero.
@@ -8959,7 +8955,7 @@ D0.i32 = tmp;
 SCC = D0.u64 != 0ULL
 ```
 
-#### S\_BCNT1\_I32\_B32
+#### S_BCNT1_I32_B32
 **24**
 
 Count the number of "1" bits in a scalar input, store the result into a scalar register and set SCC iff the result is nonzero.
@@ -8983,7 +8979,7 @@ S_BCNT1_I32_B32(0xcccccccc) => 16
 S_BCNT1_I32_B32(0xffffffff) => 32
 ```
 
-#### S\_BCNT1\_I32\_B64
+#### S_BCNT1_I32_B64
 **25**
 
 Count the number of "1" bits in a scalar input, store the result into a scalar register and set SCC iff the result is nonzero.
@@ -8997,7 +8993,7 @@ D0.i32 = tmp;
 SCC = D0.u64 != 0ULL
 ```
 
-#### S\_QUADMASK\_B32
+#### S_QUADMASK_B32
 **26**
 
 Reduce a pixel mask from the scalar input into a quad mask, store the result in a scalar register and set SCC iff the result is nonzero.
@@ -9013,9 +9009,9 @@ SCC = D0.u32 != 0U
 
 **Notes**
 
-To perform the inverse operation see S\_BITREPLICATE\_B64\_B32.
+To perform the inverse operation see S_BITREPLICATE_B64_B32.
 
-#### S\_QUADMASK\_B64
+#### S_QUADMASK_B64
 **27**
 
 Reduce a pixel mask from the scalar input into a quad mask, store the result in a scalar register and set SCC iff the result is nonzero.
@@ -9031,9 +9027,9 @@ SCC = D0.u64 != 0ULL
 
 **Notes**
 
-To perform the inverse operation see S\_BITREPLICATE\_B64\_B32.
+To perform the inverse operation see S_BITREPLICATE_B64_B32.
 
-#### S\_WQM\_B32
+#### S_WQM_B32
 **28**
 
 Given an active pixel mask in a scalar input, calculate whole quad mode mask for that input, store the result into a scalar register and set SCC iff the result is nonzero.
@@ -9050,7 +9046,7 @@ D0.u32 = tmp;
 SCC = D0.u32 != 0U
 ```
 
-#### S\_WQM\_B64
+#### S_WQM_B64
 **29**
 
 Given an active pixel mask in a scalar input, calculate whole quad mode mask for that input, store the result into a scalar register and set SCC iff the result is nonzero.
@@ -9067,7 +9063,7 @@ D0.u64 = tmp;
 SCC = D0.u64 != 0ULL
 ```
 
-#### S\_NOT\_B32
+#### S_NOT_B32
 **30**
 
 Calculate bitwise negation on a scalar input, store the result into a scalar register and set SCC iff the result is nonzero.
@@ -9077,7 +9073,7 @@ D0.u32 = ~S0.u32;
 SCC = D0.u32 != 0U
 ```
 
-#### S\_NOT\_B64
+#### S_NOT_B64
 **31**
 
 Calculate bitwise negation on a scalar input, store the result into a scalar register and set SCC iff the result is nonzero.
@@ -9087,7 +9083,7 @@ D0.u64 = ~S0.u64;
 SCC = D0.u64 != 0ULL
 ```
 
-#### S\_AND\_SAVEEXEC\_B32
+#### S_AND_SAVEEXEC_B32
 **32**
 
 Calculate bitwise AND on the scalar input and the EXEC mask, store the calculated result into the EXEC mask, set SCC iff the calculated result is nonzero and store the *original* value of the EXEC mask into the scalar destination register.
@@ -9101,7 +9097,7 @@ D0.u32 = saveexec.u32;
 SCC = EXEC.u32 != 0U
 ```
 
-#### S\_AND\_SAVEEXEC\_B64
+#### S_AND_SAVEEXEC_B64
 **33**
 
 Calculate bitwise AND on the scalar input and the EXEC mask, store the calculated result into the EXEC mask, set SCC iff the calculated result is nonzero and store the *original* value of the EXEC mask into the scalar destination register.
@@ -9115,7 +9111,7 @@ D0.u64 = saveexec.u64;
 SCC = EXEC.u64 != 0ULL
 ```
 
-#### S\_OR\_SAVEEXEC\_B32
+#### S_OR_SAVEEXEC_B32
 **34**
 
 Calculate bitwise OR on the scalar input and the EXEC mask, store the calculated result into the EXEC mask, set SCC iff the calculated result is nonzero and store the *original* value of the EXEC mask into the scalar destination register.
@@ -9129,7 +9125,7 @@ D0.u32 = saveexec.u32;
 SCC = EXEC.u32 != 0U
 ```
 
-#### S\_OR\_SAVEEXEC\_B64
+#### S_OR_SAVEEXEC_B64
 **35**
 
 Calculate bitwise OR on the scalar input and the EXEC mask, store the calculated result into the EXEC mask, set SCC iff the calculated result is nonzero and store the *original* value of the EXEC mask into the scalar destination register.
@@ -9143,7 +9139,7 @@ D0.u64 = saveexec.u64;
 SCC = EXEC.u64 != 0ULL
 ```
 
-#### S\_XOR\_SAVEEXEC\_B32
+#### S_XOR_SAVEEXEC_B32
 **36**
 
 Calculate bitwise XOR on the scalar input and the EXEC mask, store the calculated result into the EXEC mask, set SCC iff the calculated result is nonzero and store the *original* value of the EXEC mask into the scalar destination register.
@@ -9157,7 +9153,7 @@ D0.u32 = saveexec.u32;
 SCC = EXEC.u32 != 0U
 ```
 
-#### S\_XOR\_SAVEEXEC\_B64
+#### S_XOR_SAVEEXEC_B64
 **37**
 
 Calculate bitwise XOR on the scalar input and the EXEC mask, store the calculated result into the EXEC mask, set SCC iff the calculated result is nonzero and store the *original* value of the EXEC mask into the scalar destination register.
@@ -9171,7 +9167,7 @@ D0.u64 = saveexec.u64;
 SCC = EXEC.u64 != 0ULL
 ```
 
-#### S\_NAND\_SAVEEXEC\_B32
+#### S_NAND_SAVEEXEC_B32
 **38**
 
 Calculate bitwise NAND on the scalar input and the EXEC mask, store the calculated result into the EXEC mask, set SCC iff the calculated result is nonzero and store the *original* value of the EXEC mask into the scalar destination register.
@@ -9183,7 +9179,7 @@ D0.u32 = saveexec.u32;
 SCC = EXEC.u32 != 0U
 ```
 
-#### S\_NAND\_SAVEEXEC\_B64
+#### S_NAND_SAVEEXEC_B64
 **39**
 
 Calculate bitwise NAND on the scalar input and the EXEC mask, store the calculated result into the EXEC mask, set SCC iff the calculated result is nonzero and store the *original* value of the EXEC mask into the scalar destination register.
@@ -9195,7 +9191,7 @@ D0.u64 = saveexec.u64;
 SCC = EXEC.u64 != 0ULL
 ```
 
-#### S\_NOR\_SAVEEXEC\_B32
+#### S_NOR_SAVEEXEC_B32
 **40**
 
 Calculate bitwise NOR on the scalar input and the EXEC mask, store the calculated result into the EXEC mask, set SCC iff the calculated result is nonzero and store the *original* value of the EXEC mask into the scalar destination register.
@@ -9207,7 +9203,7 @@ D0.u32 = saveexec.u32;
 SCC = EXEC.u32 != 0U
 ```
 
-#### S\_NOR\_SAVEEXEC\_B64
+#### S_NOR_SAVEEXEC_B64
 **41**
 
 Calculate bitwise NOR on the scalar input and the EXEC mask, store the calculated result into the EXEC mask, set SCC iff the calculated result is nonzero and store the *original* value of the EXEC mask into the scalar destination register.
@@ -9219,7 +9215,7 @@ D0.u64 = saveexec.u64;
 SCC = EXEC.u64 != 0ULL
 ```
 
-#### S\_XNOR\_SAVEEXEC\_B32
+#### S_XNOR_SAVEEXEC_B32
 **42**
 
 Calculate bitwise XNOR on the scalar input and the EXEC mask, store the calculated result into the EXEC mask, set SCC iff the calculated result is nonzero and store the *original* value of the EXEC mask into the scalar destination register.
@@ -9231,7 +9227,7 @@ D0.u32 = saveexec.u32;
 SCC = EXEC.u32 != 0U
 ```
 
-#### S\_XNOR\_SAVEEXEC\_B64
+#### S_XNOR_SAVEEXEC_B64
 **43**
 
 Calculate bitwise XNOR on the scalar input and the EXEC mask, store the calculated result into the EXEC mask, set SCC iff the calculated result is nonzero and store the *original* value of the EXEC mask into the scalar destination register.
@@ -9243,7 +9239,7 @@ D0.u64 = saveexec.u64;
 SCC = EXEC.u64 != 0ULL
 ```
 
-#### S\_AND\_NOT0\_SAVEEXEC\_B32
+#### S_AND_NOT0_SAVEEXEC_B32
 **44**
 
 Calculate bitwise AND on the EXEC mask and the negation of the scalar input, store the calculated result into the EXEC mask, set SCC iff the calculated result is nonzero and store the *original* value of the EXEC mask into the scalar destination register.
@@ -9257,7 +9253,7 @@ D0.u32 = saveexec.u32;
 SCC = EXEC.u32 != 0U
 ```
 
-#### S\_AND\_NOT0\_SAVEEXEC\_B64
+#### S_AND_NOT0_SAVEEXEC_B64
 **45**
 
 Calculate bitwise AND on the EXEC mask and the negation of the scalar input, store the calculated result into the EXEC mask, set SCC iff the calculated result is nonzero and store the *original* value of the EXEC mask into the scalar destination register.
@@ -9271,7 +9267,7 @@ D0.u64 = saveexec.u64;
 SCC = EXEC.u64 != 0ULL
 ```
 
-#### S\_OR\_NOT0\_SAVEEXEC\_B32
+#### S_OR_NOT0_SAVEEXEC_B32
 **46**
 
 Calculate bitwise OR on the EXEC mask and the negation of the scalar input, store the calculated result into the EXEC mask, set SCC iff the calculated result is nonzero and store the *original* value of the EXEC mask into the scalar destination register.
@@ -9285,7 +9281,7 @@ D0.u32 = saveexec.u32;
 SCC = EXEC.u32 != 0U
 ```
 
-#### S\_OR\_NOT0\_SAVEEXEC\_B64
+#### S_OR_NOT0_SAVEEXEC_B64
 **47**
 
 Calculate bitwise OR on the EXEC mask and the negation of the scalar input, store the calculated result into the EXEC mask, set SCC iff the calculated result is nonzero and store the *original* value of the EXEC mask into the scalar destination register.
@@ -9299,7 +9295,7 @@ D0.u64 = saveexec.u64;
 SCC = EXEC.u64 != 0ULL
 ```
 
-#### S\_AND\_NOT1\_SAVEEXEC\_B32
+#### S_AND_NOT1_SAVEEXEC_B32
 **48**
 
 Calculate bitwise AND on the scalar input and the negation of the EXEC mask, store the calculated result into the EXEC mask, set SCC iff the calculated result is nonzero and store the *original* value of the EXEC mask into the scalar destination register.
@@ -9313,7 +9309,7 @@ D0.u32 = saveexec.u32;
 SCC = EXEC.u32 != 0U
 ```
 
-#### S\_AND\_NOT1\_SAVEEXEC\_B64
+#### S_AND_NOT1_SAVEEXEC_B64
 **49**
 
 Calculate bitwise AND on the scalar input and the negation of the EXEC mask, store the calculated result into the EXEC mask, set SCC iff the calculated result is nonzero and store the *original* value of the EXEC mask into the scalar destination register.
@@ -9327,7 +9323,7 @@ D0.u64 = saveexec.u64;
 SCC = EXEC.u64 != 0ULL
 ```
 
-#### S\_OR\_NOT1\_SAVEEXEC\_B32
+#### S_OR_NOT1_SAVEEXEC_B32
 **50**
 
 Calculate bitwise OR on the scalar input and the negation of the EXEC mask, store the calculated result into the EXEC mask, set SCC iff the calculated result is nonzero and store the *original* value of the EXEC mask into the scalar destination register.
@@ -9341,7 +9337,7 @@ D0.u32 = saveexec.u32;
 SCC = EXEC.u32 != 0U
 ```
 
-#### S\_OR\_NOT1\_SAVEEXEC\_B64
+#### S_OR_NOT1_SAVEEXEC_B64
 **51**
 
 Calculate bitwise OR on the scalar input and the negation of the EXEC mask, store the calculated result into the EXEC mask, set SCC iff the calculated result is nonzero and store the *original* value of the EXEC mask into the scalar destination register.
@@ -9355,7 +9351,7 @@ D0.u64 = saveexec.u64;
 SCC = EXEC.u64 != 0ULL
 ```
 
-#### S\_AND\_NOT0\_WREXEC\_B32
+#### S_AND_NOT0_WREXEC_B32
 **52**
 
 Calculate bitwise AND on the EXEC mask and the negation of the scalar input, store the calculated result into the EXEC mask and also into the scalar destination register, and set SCC iff the calculated result is nonzero.
@@ -9368,7 +9364,7 @@ D0.u32 = EXEC.u32;
 SCC = EXEC.u32 != 0U
 ```
 
-#### S\_AND\_NOT0\_WREXEC\_B64
+#### S_AND_NOT0_WREXEC_B64
 **53**
 
 Calculate bitwise AND on the EXEC mask and the negation of the scalar input, store the calculated result into the EXEC mask and also into the scalar destination register, and set SCC iff the calculated result is nonzero.
@@ -9381,7 +9377,7 @@ D0.u64 = EXEC.u64;
 SCC = EXEC.u64 != 0ULL
 ```
 
-#### S\_AND\_NOT1\_WREXEC\_B32
+#### S_AND_NOT1_WREXEC_B32
 **54**
 
 Calculate bitwise AND on the scalar input and the negation of the EXEC mask, store the calculated result into the EXEC mask and also into the scalar destination register, and set SCC iff the calculated result is nonzero.
@@ -9396,9 +9392,9 @@ SCC = EXEC.u32 != 0U
 
 **Notes**
 
-See S\_AND\_NOT1\_WREXEC\_B64 for example code.
+See S_AND_NOT1_WREXEC_B64 for example code.
 
-#### S\_AND\_NOT1\_WREXEC\_B64
+#### S_AND_NOT1_WREXEC_B64
 **55**
 
 Calculate bitwise AND on the scalar input and the negation of the EXEC mask, store the calculated result into the EXEC mask and also into the scalar destination register, and set SCC iff the calculated result is nonzero.
@@ -9436,7 +9432,7 @@ s_cbranch_scc1 loop
 s_mov_b64   exec, s2
 ```
 
-#### S\_MOVRELS\_B32
+#### S_MOVRELS_B32
 **64**
 
 Move data from a relatively-indexed scalar register into another scalar register.
@@ -9457,7 +9453,7 @@ s_mov_b32 m0, 10
 s_movrels_b32 s5, s7
 ```
 
-#### S\_MOVRELS\_B64
+#### S_MOVRELS_B64
 **65**
 
 Move data from a relatively-indexed scalar register into another scalar register.
@@ -9471,7 +9467,7 @@ addr += M0.u32[31 : 0];
 D0.b64 = SGPR[addr].b64
 ```
 
-#### S\_MOVRELD\_B32
+#### S_MOVRELD_B32
 **66**
 
 Move data from a scalar input into a relatively-indexed scalar register.
@@ -9492,7 +9488,7 @@ s_mov_b32 m0, 10
 s_movreld_b32 s5, s7
 ```
 
-#### S\_MOVRELD\_B64
+#### S_MOVRELD_B64
 **67**
 
 Move data from a scalar input into a relatively-indexed scalar register.
@@ -9506,7 +9502,7 @@ addr += M0.u32[31 : 0];
 SGPR[addr].b64 = S0.b64
 ```
 
-#### S\_MOVRELSD\_2\_B32
+#### S_MOVRELSD_2_B32
 **68**
 
 Move data from a relatively-indexed scalar register into another relatively-indexed scalar register, using different offsets for each index.
@@ -9530,7 +9526,7 @@ s_mov_b32 m0, ((20 << 16) | 10)
 s_movrelsd_2_b32 s5, s7
 ```
 
-#### S\_GETPC\_B64
+#### S_GETPC_B64
 **71**
 
 Store the address of the next instruction to a scalar register.
@@ -9545,7 +9541,7 @@ D0.i64 = PC + 4LL
 
 This instruction must be 4 bytes.
 
-#### S\_SETPC\_B64
+#### S_SETPC_B64
 **72**
 
 Jump to an address specified in a scalar register.
@@ -9556,7 +9552,7 @@ The argument is a byte address of the instruction to jump to.
 PC = S0.i64
 ```
 
-#### S\_SWAPPC\_B64
+#### S_SWAPPC_B64
 **73**
 
 Store the address of the next instruction to a scalar register and then jump to an address specified in the scalar input.
@@ -9573,7 +9569,7 @@ PC = jump_addr.i64
 
 This instruction must be 4 bytes.
 
-#### S\_RFE\_B64
+#### S_RFE_B64
 **74**
 
 Return from the exception handler. Clear the wave's PRIV bit and then jump to an address specified by the scalar input.
@@ -9587,33 +9583,33 @@ WAVE_STATUS.PRIV = 1'0U;
 PC = S0.i64
 ```
 
-#### S\_SENDMSG\_RTN\_B32
+#### S_SENDMSG_RTN_B32
 **76**
 
 Send a message to upstream control hardware.
 
 SSRC[7:0] contains the message type encoded in the instruction directly (this instruction does not read an SGPR). The message is expected to return a response from the upstream control hardware and the result is written to SDST. Use `s_waitcnt lgkmcnt(...)` to wait for the response on the dependent instruction.
 
-S\_SENDMSG\_RTN\* instructions return data in-order among themselves but out-of-order with other instructions that manipulate `lgkmcnt` (including S\_SENDMSG and S\_SENDMSGHALT).
+S_SENDMSG_RTN\* instructions return data in-order among themselves but out-of-order with other instructions that manipulate `lgkmcnt` (including S_SENDMSG and S_SENDMSGHALT).
 
 If the message returns a 64 bit value then only the lower 32 bits are written to SDST.
 
 If SDST is VCC then VCCZ is undefined.
 
-#### S\_SENDMSG\_RTN\_B64
+#### S_SENDMSG_RTN_B64
 **77**
 
 Send a message to upstream control hardware.
 
 SSRC[7:0] contains the message type encoded in the instruction directly (this instruction does not read an SGPR). The message is expected to return a response from the upstream control hardware and the result is written to SDST. Use `s_waitcnt lgkmcnt(...)` to wait for the response on the dependent instruction.
 
-S\_SENDMSG\_RTN\* instructions return data in-order among themselves but out-of-order with other instructions that manipulate `lgkmcnt` (including S\_SENDMSG and S\_SENDMSGHALT).
+S_SENDMSG_RTN\* instructions return data in-order among themselves but out-of-order with other instructions that manipulate `lgkmcnt` (including S_SENDMSG and S_SENDMSGHALT).
 
 If the message returns a 32 bit value then this instruction fills the upper bits of SDST with zero.
 
 If SDST is VCC then VCCZ is undefined.
 
-#### S\_CEIL\_F32
+#### S_CEIL_F32
 **96**
 
 Round the single-precision float input up to next integer and store the result in floating point format into a scalar register.
@@ -9625,7 +9621,7 @@ if ((S0.f32 > 0.0F) && (S0.f32 != D0.f32)) then
 endif
 ```
 
-#### S\_FLOOR\_F32
+#### S_FLOOR_F32
 **97**
 
 Round the single-precision float input down to previous integer and store the result in floating point format into a scalar register.
@@ -9637,7 +9633,7 @@ if ((S0.f32 < 0.0F) && (S0.f32 != D0.f32)) then
 endif
 ```
 
-#### S\_TRUNC\_F32
+#### S_TRUNC_F32
 **98**
 
 Compute the integer part of a single-precision float input using round toward zero semantics and store the result in floating point format into a scalar register.
@@ -9646,7 +9642,7 @@ Compute the integer part of a single-precision float input using round toward ze
 D0.f32 = trunc(S0.f32)
 ```
 
-#### S\_RNDNE\_F32
+#### S_RNDNE_F32
 **99**
 
 Round the single-precision float input to the nearest even integer and store the result in floating point format into a scalar register.
@@ -9658,7 +9654,7 @@ if (isEven(64'F(floor(S0.f32))) && (fract(S0.f32) == 0.5F)) then
 endif
 ```
 
-#### S\_CVT\_F32\_I32
+#### S_CVT_F32_I32
 **100**
 
 Convert from a signed 32-bit integer input to a single-precision float value and store the result into a scalar register.
@@ -9667,7 +9663,7 @@ Convert from a signed 32-bit integer input to a single-precision float value and
 D0.f32 = i32_to_f32(S0.i32)
 ```
 
-#### S\_CVT\_F32\_U32
+#### S_CVT_F32_U32
 **101**
 
 Convert from an unsigned 32-bit integer input to a single-precision float value and store the result into a scalar register.
@@ -9676,7 +9672,7 @@ Convert from an unsigned 32-bit integer input to a single-precision float value 
 D0.f32 = u32_to_f32(S0.u32)
 ```
 
-#### S\_CVT\_I32\_F32
+#### S_CVT_I32_F32
 **102**
 
 Convert from a single-precision float input to a signed 32-bit integer value and store the result into a scalar register.
@@ -9685,7 +9681,7 @@ Convert from a single-precision float input to a signed 32-bit integer value and
 D0.i32 = f32_to_i32(S0.f32)
 ```
 
-#### S\_CVT\_U32\_F32
+#### S_CVT_U32_F32
 **103**
 
 Convert from a single-precision float input to an unsigned 32-bit integer value and store the result into a scalar register.
@@ -9694,7 +9690,7 @@ Convert from a single-precision float input to an unsigned 32-bit integer value 
 D0.u32 = f32_to_u32(S0.f32)
 ```
 
-#### S\_CVT\_F16\_F32
+#### S_CVT_F16_F32
 **104**
 
 Convert from a single-precision float input to a half-precision float value and store the result into a scalar register.
@@ -9703,7 +9699,7 @@ Convert from a single-precision float input to a half-precision float value and 
 D0.f16 = f32_to_f16(S0.f32)
 ```
 
-#### S\_CVT\_F32\_F16
+#### S_CVT_F32_F16
 **105**
 
 Convert from a half-precision float input to a single-precision float value and store the result into a scalar register.
@@ -9712,7 +9708,7 @@ Convert from a half-precision float input to a single-precision float value and 
 D0.f32 = f16_to_f32(S0.f16)
 ```
 
-#### S\_CVT\_HI\_F32\_F16
+#### S_CVT_HI_F32_F16
 **106**
 
 Convert from a half-precision float value in the high 16 bits of a scalar input to a single-precision float value and store the result into a scalar register.
@@ -9721,7 +9717,7 @@ Convert from a half-precision float value in the high 16 bits of a scalar input 
 D0.f32 = f16_to_f32(S0[31 : 16].f16)
 ```
 
-#### S\_CEIL\_F16
+#### S_CEIL_F16
 **107**
 
 Round the half-precision float input up to next integer and store the result in floating point format into a scalar register.
@@ -9733,7 +9729,7 @@ if ((S0.f16 > 16'0.0) && (S0.f16 != D0.f16)) then
 endif
 ```
 
-#### S\_FLOOR\_F16
+#### S_FLOOR_F16
 **108**
 
 Round the half-precision float input down to previous integer and store the result in floating point format into a scalar register.
@@ -9745,7 +9741,7 @@ if ((S0.f16 < 16'0.0) && (S0.f16 != D0.f16)) then
 endif
 ```
 
-#### S\_TRUNC\_F16
+#### S_TRUNC_F16
 **109**
 
 Compute the integer part of a half-precision float input using round toward zero semantics and store the result in floating point format into a scalar register.
@@ -9754,7 +9750,7 @@ Compute the integer part of a half-precision float input using round toward zero
 D0.f16 = trunc(S0.f16)
 ```
 
-#### S\_RNDNE\_F16
+#### S_RNDNE_F16
 **110**
 
 Round the half-precision float input to the nearest even integer and store the result in floating point format into a scalar register.
@@ -9777,7 +9773,7 @@ endif
 
 Instructions in this format may use a 32-bit literal constant that occurs immediately after the instruction.
 
-#### S\_CMP\_EQ\_I32
+#### S_CMP_EQ_I32
 **0**
 
 Set SCC to 1 iff the first scalar input is equal to the second scalar input.
@@ -9788,9 +9784,9 @@ SCC = S0.i32 == S1.i32
 
 **Notes**
 
-Note that S\_CMP\_EQ\_I32 and S\_CMP\_EQ\_U32 are identical opcodes, but both are provided for symmetry.
+Note that S_CMP_EQ_I32 and S_CMP_EQ_U32 are identical opcodes, but both are provided for symmetry.
 
-#### S\_CMP\_LG\_I32
+#### S_CMP_LG_I32
 **1**
 
 Set SCC to 1 iff the first scalar input is less than or greater than the second scalar input.
@@ -9801,9 +9797,9 @@ SCC = S0.i32 <> S1.i32
 
 **Notes**
 
-Note that S\_CMP\_LG\_I32 and S\_CMP\_LG\_U32 are identical opcodes, but both are provided for symmetry.
+Note that S_CMP_LG_I32 and S_CMP_LG_U32 are identical opcodes, but both are provided for symmetry.
 
-#### S\_CMP\_GT\_I32
+#### S_CMP_GT_I32
 **2**
 
 Set SCC to 1 iff the first scalar input is greater than the second scalar input.
@@ -9812,7 +9808,7 @@ Set SCC to 1 iff the first scalar input is greater than the second scalar input.
 SCC = S0.i32 > S1.i32
 ```
 
-#### S\_CMP\_GE\_I32
+#### S_CMP_GE_I32
 **3**
 
 Set SCC to 1 iff the first scalar input is greater than or equal to the second scalar input.
@@ -9821,7 +9817,7 @@ Set SCC to 1 iff the first scalar input is greater than or equal to the second s
 SCC = S0.i32 >= S1.i32
 ```
 
-#### S\_CMP\_LT\_I32
+#### S_CMP_LT_I32
 **4**
 
 Set SCC to 1 iff the first scalar input is less than the second scalar input.
@@ -9830,7 +9826,7 @@ Set SCC to 1 iff the first scalar input is less than the second scalar input.
 SCC = S0.i32 < S1.i32
 ```
 
-#### S\_CMP\_LE\_I32
+#### S_CMP_LE_I32
 **5**
 
 Set SCC to 1 iff the first scalar input is less than or equal to the second scalar input.
@@ -9839,7 +9835,7 @@ Set SCC to 1 iff the first scalar input is less than or equal to the second scal
 SCC = S0.i32 <= S1.i32
 ```
 
-#### S\_CMP\_EQ\_U32
+#### S_CMP_EQ_U32
 **6**
 
 Set SCC to 1 iff the first scalar input is equal to the second scalar input.
@@ -9850,9 +9846,9 @@ SCC = S0.u32 == S1.u32
 
 **Notes**
 
-Note that S\_CMP\_EQ\_I32 and S\_CMP\_EQ\_U32 are identical opcodes, but both are provided for symmetry.
+Note that S_CMP_EQ_I32 and S_CMP_EQ_U32 are identical opcodes, but both are provided for symmetry.
 
-#### S\_CMP\_LG\_U32
+#### S_CMP_LG_U32
 **7**
 
 Set SCC to 1 iff the first scalar input is less than or greater than the second scalar input.
@@ -9863,9 +9859,9 @@ SCC = S0.u32 <> S1.u32
 
 **Notes**
 
-Note that S\_CMP\_LG\_I32 and S\_CMP\_LG\_U32 are identical opcodes, but both are provided for symmetry.
+Note that S_CMP_LG_I32 and S_CMP_LG_U32 are identical opcodes, but both are provided for symmetry.
 
-#### S\_CMP\_GT\_U32
+#### S_CMP_GT_U32
 **8**
 
 Set SCC to 1 iff the first scalar input is greater than the second scalar input.
@@ -9874,7 +9870,7 @@ Set SCC to 1 iff the first scalar input is greater than the second scalar input.
 SCC = S0.u32 > S1.u32
 ```
 
-#### S\_CMP\_GE\_U32
+#### S_CMP_GE_U32
 **9**
 
 Set SCC to 1 iff the first scalar input is greater than or equal to the second scalar input.
@@ -9883,7 +9879,7 @@ Set SCC to 1 iff the first scalar input is greater than or equal to the second s
 SCC = S0.u32 >= S1.u32
 ```
 
-#### S\_CMP\_LT\_U32
+#### S_CMP_LT_U32
 **10**
 
 Set SCC to 1 iff the first scalar input is less than the second scalar input.
@@ -9892,7 +9888,7 @@ Set SCC to 1 iff the first scalar input is less than the second scalar input.
 SCC = S0.u32 < S1.u32
 ```
 
-#### S\_CMP\_LE\_U32
+#### S_CMP_LE_U32
 **11**
 
 Set SCC to 1 iff the first scalar input is less than or equal to the second scalar input.
@@ -9901,7 +9897,7 @@ Set SCC to 1 iff the first scalar input is less than or equal to the second scal
 SCC = S0.u32 <= S1.u32
 ```
 
-#### S\_BITCMP0\_B32
+#### S_BITCMP0_B32
 **12**
 
 Extract a bit from the first scalar input based on an index in the second scalar input, and set SCC to 1 iff the extracted bit is equal to 0.
@@ -9910,7 +9906,7 @@ Extract a bit from the first scalar input based on an index in the second scalar
 SCC = S0.u32[S1.u32[4 : 0]] == 1'0U
 ```
 
-#### S\_BITCMP1\_B32
+#### S_BITCMP1_B32
 **13**
 
 Extract a bit from the first scalar input based on an index in the second scalar input, and set SCC to 1 iff the extracted bit is equal to 1.
@@ -9919,7 +9915,7 @@ Extract a bit from the first scalar input based on an index in the second scalar
 SCC = S0.u32[S1.u32[4 : 0]] == 1'1U
 ```
 
-#### S\_BITCMP0\_B64
+#### S_BITCMP0_B64
 **14**
 
 Extract a bit from the first scalar input based on an index in the second scalar input, and set SCC to 1 iff the extracted bit is equal to 0.
@@ -9928,7 +9924,7 @@ Extract a bit from the first scalar input based on an index in the second scalar
 SCC = S0.u64[S1.u32[5 : 0]] == 1'0U
 ```
 
-#### S\_BITCMP1\_B64
+#### S_BITCMP1_B64
 **15**
 
 Extract a bit from the first scalar input based on an index in the second scalar input, and set SCC to 1 iff the extracted bit is equal to 1.
@@ -9937,7 +9933,7 @@ Extract a bit from the first scalar input based on an index in the second scalar
 SCC = S0.u64[S1.u32[5 : 0]] == 1'1U
 ```
 
-#### S\_CMP\_EQ\_U64
+#### S_CMP_EQ_U64
 **16**
 
 Set SCC to 1 iff the first scalar input is equal to the second scalar input.
@@ -9946,7 +9942,7 @@ Set SCC to 1 iff the first scalar input is equal to the second scalar input.
 SCC = S0.u64 == S1.u64
 ```
 
-#### S\_CMP\_LG\_U64
+#### S_CMP_LG_U64
 **17**
 
 Set SCC to 1 iff the first scalar input is less than or greater than the second scalar input.
@@ -9955,7 +9951,7 @@ Set SCC to 1 iff the first scalar input is less than or greater than the second 
 SCC = S0.u64 <> S1.u64
 ```
 
-#### S\_CMP\_LT\_F32
+#### S_CMP_LT_F32
 **65**
 
 Set SCC to 1 iff the first scalar input is less than the second scalar input.
@@ -9964,7 +9960,7 @@ Set SCC to 1 iff the first scalar input is less than the second scalar input.
 SCC = S0.f32 < S1.f32
 ```
 
-#### S\_CMP\_LT\_F16
+#### S_CMP_LT_F16
 **81**
 
 Set SCC to 1 iff the first scalar input is less than the second scalar input.
@@ -9973,7 +9969,7 @@ Set SCC to 1 iff the first scalar input is less than the second scalar input.
 SCC = S0.f16 < S1.f16
 ```
 
-#### S\_CMP\_EQ\_F32
+#### S_CMP_EQ_F32
 **66**
 
 Set SCC to 1 iff the first scalar input is equal to the second scalar input.
@@ -9982,7 +9978,7 @@ Set SCC to 1 iff the first scalar input is equal to the second scalar input.
 SCC = S0.f32 == S1.f32
 ```
 
-#### S\_CMP\_EQ\_F16
+#### S_CMP_EQ_F16
 **82**
 
 Set SCC to 1 iff the first scalar input is equal to the second scalar input.
@@ -9991,7 +9987,7 @@ Set SCC to 1 iff the first scalar input is equal to the second scalar input.
 SCC = S0.f16 == S1.f16
 ```
 
-#### S\_CMP\_LE\_F32
+#### S_CMP_LE_F32
 **67**
 
 Set SCC to 1 iff the first scalar input is less than or equal to the second scalar input.
@@ -10000,7 +9996,7 @@ Set SCC to 1 iff the first scalar input is less than or equal to the second scal
 SCC = S0.f32 <= S1.f32
 ```
 
-#### S\_CMP\_LE\_F16
+#### S_CMP_LE_F16
 **83**
 
 Set SCC to 1 iff the first scalar input is less than or equal to the second scalar input.
@@ -10009,7 +10005,7 @@ Set SCC to 1 iff the first scalar input is less than or equal to the second scal
 SCC = S0.f16 <= S1.f16
 ```
 
-#### S\_CMP\_GT\_F32
+#### S_CMP_GT_F32
 **68**
 
 Set SCC to 1 iff the first scalar input is greater than the second scalar input.
@@ -10018,7 +10014,7 @@ Set SCC to 1 iff the first scalar input is greater than the second scalar input.
 SCC = S0.f32 > S1.f32
 ```
 
-#### S\_CMP\_GT\_F16
+#### S_CMP_GT_F16
 **84**
 
 Set SCC to 1 iff the first scalar input is greater than the second scalar input.
@@ -10027,7 +10023,7 @@ Set SCC to 1 iff the first scalar input is greater than the second scalar input.
 SCC = S0.f16 > S1.f16
 ```
 
-#### S\_CMP\_LG\_F32
+#### S_CMP_LG_F32
 **69**
 
 Set SCC to 1 iff the first scalar input is less than or greater than the second scalar input.
@@ -10036,7 +10032,7 @@ Set SCC to 1 iff the first scalar input is less than or greater than the second 
 SCC = S0.f32 <> S1.f32
 ```
 
-#### S\_CMP\_LG\_F16
+#### S_CMP_LG_F16
 **85**
 
 Set SCC to 1 iff the first scalar input is less than or greater than the second scalar input.
@@ -10045,7 +10041,7 @@ Set SCC to 1 iff the first scalar input is less than or greater than the second 
 SCC = S0.f16 <> S1.f16
 ```
 
-#### S\_CMP\_GE\_F32
+#### S_CMP_GE_F32
 **70**
 
 Set SCC to 1 iff the first scalar input is greater than or equal to the second scalar input.
@@ -10054,7 +10050,7 @@ Set SCC to 1 iff the first scalar input is greater than or equal to the second s
 SCC = S0.f32 >= S1.f32
 ```
 
-#### S\_CMP\_GE\_F16
+#### S_CMP_GE_F16
 **86**
 
 Set SCC to 1 iff the first scalar input is greater than or equal to the second scalar input.
@@ -10063,7 +10059,7 @@ Set SCC to 1 iff the first scalar input is greater than or equal to the second s
 SCC = S0.f16 >= S1.f16
 ```
 
-#### S\_CMP\_O\_F32
+#### S_CMP_O_F32
 **71**
 
 Set SCC to 1 iff the first scalar input is orderable to the second scalar input.
@@ -10072,7 +10068,7 @@ Set SCC to 1 iff the first scalar input is orderable to the second scalar input.
 SCC = (!isNAN(64'F(S0.f32)) && !isNAN(64'F(S1.f32)))
 ```
 
-#### S\_CMP\_O\_F16
+#### S_CMP_O_F16
 **87**
 
 Set SCC to 1 iff the first scalar input is orderable to the second scalar input.
@@ -10081,7 +10077,7 @@ Set SCC to 1 iff the first scalar input is orderable to the second scalar input.
 SCC = (!isNAN(64'F(S0.f16)) && !isNAN(64'F(S1.f16)))
 ```
 
-#### S\_CMP\_U\_F32
+#### S_CMP_U_F32
 **72**
 
 Set SCC to 1 iff the first scalar input is not orderable to the second scalar input.
@@ -10090,7 +10086,7 @@ Set SCC to 1 iff the first scalar input is not orderable to the second scalar in
 SCC = (isNAN(64'F(S0.f32)) || isNAN(64'F(S1.f32)))
 ```
 
-#### S\_CMP\_U\_F16
+#### S_CMP_U_F16
 **88**
 
 Set SCC to 1 iff the first scalar input is not orderable to the second scalar input.
@@ -10099,7 +10095,7 @@ Set SCC to 1 iff the first scalar input is not orderable to the second scalar in
 SCC = (isNAN(64'F(S0.f16)) || isNAN(64'F(S1.f16)))
 ```
 
-#### S\_CMP\_NGE\_F32
+#### S_CMP_NGE_F32
 **73**
 
 Set SCC to 1 iff the first scalar input is not greater than or equal to the second scalar input.
@@ -10109,7 +10105,7 @@ SCC = !(S0.f32 >= S1.f32);
 // With NAN inputs this is not the same operation as <
 ```
 
-#### S\_CMP\_NGE\_F16
+#### S_CMP_NGE_F16
 **89**
 
 Set SCC to 1 iff the first scalar input is not greater than or equal to the second scalar input.
@@ -10119,7 +10115,7 @@ SCC = !(S0.f16 >= S1.f16);
 // With NAN inputs this is not the same operation as <
 ```
 
-#### S\_CMP\_NLG\_F32
+#### S_CMP_NLG_F32
 **74**
 
 Set SCC to 1 iff the first scalar input is not less than or greater than the second scalar input.
@@ -10129,7 +10125,7 @@ SCC = !(S0.f32 <> S1.f32);
 // With NAN inputs this is not the same operation as ==
 ```
 
-#### S\_CMP\_NLG\_F16
+#### S_CMP_NLG_F16
 **90**
 
 Set SCC to 1 iff the first scalar input is not less than or greater than the second scalar input.
@@ -10139,7 +10135,7 @@ SCC = !(S0.f16 <> S1.f16);
 // With NAN inputs this is not the same operation as ==
 ```
 
-#### S\_CMP\_NGT\_F32
+#### S_CMP_NGT_F32
 **75**
 
 Set SCC to 1 iff the first scalar input is not greater than the second scalar input.
@@ -10149,7 +10145,7 @@ SCC = !(S0.f32 > S1.f32);
 // With NAN inputs this is not the same operation as <=
 ```
 
-#### S\_CMP\_NGT\_F16
+#### S_CMP_NGT_F16
 **91**
 
 Set SCC to 1 iff the first scalar input is not greater than the second scalar input.
@@ -10159,7 +10155,7 @@ SCC = !(S0.f16 > S1.f16);
 // With NAN inputs this is not the same operation as <=
 ```
 
-#### S\_CMP\_NLE\_F32
+#### S_CMP_NLE_F32
 **76**
 
 Set SCC to 1 iff the first scalar input is not less than or equal to the second scalar input.
@@ -10169,7 +10165,7 @@ SCC = !(S0.f32 <= S1.f32);
 // With NAN inputs this is not the same operation as >
 ```
 
-#### S\_CMP\_NLE\_F16
+#### S_CMP_NLE_F16
 **92**
 
 Set SCC to 1 iff the first scalar input is not less than or equal to the second scalar input.
@@ -10179,7 +10175,7 @@ SCC = !(S0.f16 <= S1.f16);
 // With NAN inputs this is not the same operation as >
 ```
 
-#### S\_CMP\_NEQ\_F32
+#### S_CMP_NEQ_F32
 **77**
 
 Set SCC to 1 iff the first scalar input is not equal to the second scalar input.
@@ -10189,7 +10185,7 @@ SCC = !(S0.f32 == S1.f32);
 // With NAN inputs this is not the same operation as !=
 ```
 
-#### S\_CMP\_NEQ\_F16
+#### S_CMP_NEQ_F16
 **93**
 
 Set SCC to 1 iff the first scalar input is not equal to the second scalar input.
@@ -10199,7 +10195,7 @@ SCC = !(S0.f16 == S1.f16);
 // With NAN inputs this is not the same operation as !=
 ```
 
-#### S\_CMP\_NLT\_F32
+#### S_CMP_NLT_F32
 **78**
 
 Set SCC to 1 iff the first scalar input is not less than the second scalar input.
@@ -10209,7 +10205,7 @@ SCC = !(S0.f32 < S1.f32);
 // With NAN inputs this is not the same operation as >=
 ```
 
-#### S\_CMP\_NLT\_F16
+#### S_CMP_NLT_F16
 **94**
 
 Set SCC to 1 iff the first scalar input is not less than the second scalar input.
@@ -10226,7 +10222,7 @@ SCC = !(S0.f16 < S1.f16);
 | 0    | 22:16 | OP          |
 | 0    | 31:23 | 101111111   |
 
-#### S\_NOP
+#### S_NOP
 **0**
 
 Do nothing. Delay issue of next instruction by a small, fixed amount.
@@ -10248,30 +10244,30 @@ s_nop 0      // Wait 1 cycle.
 s_nop 0xf    // Wait 16 cycles.
 ```
 
-#### S\_SETKILL
+#### S_SETKILL
 **1**
 
 Kill this wave if the least significant bit of the immediate constant is 1.
 
 Used primarily for debugging kill wave host command behavior.
 
-#### S\_SETHALT
+#### S_SETHALT
 **2**
 
-Set or clear the HALT or FATAL\_HALT status bits.
+Set or clear the HALT or FATAL_HALT status bits.
 
-The particular status bit is chosen by halt type control as indicated in SIMM16[2]; 0 = HALT bit select; 1 = FATAL\_HALT bit select.
+The particular status bit is chosen by halt type control as indicated in SIMM16[2]; 0 = HALT bit select; 1 = FATAL_HALT bit select.
 
 When halt type control is set to 0 (HALT bit select): Set HALT bit to value of SIMM16[0]; 1 = halt, 0 = clear HALT bit. The halt flag is ignored while PRIV == 1 (inside trap handlers) but the shader halts after the handler returns if HALT is still set at that time.
 
-When halt type control is set to 1 (FATAL HALT bit select): Set FATAL\_HALT bit to value of SIMM16[0]; 1 = fatal\_halt, 0 = clear FATAL\_HALT bit. Setting the fatal\_halt flag halts the shader in or outside of the trap handlers.
+When halt type control is set to 1 (FATAL HALT bit select): Set FATAL_HALT bit to value of SIMM16[0]; 1 = fatal_halt, 0 = clear FATAL_HALT bit. Setting the fatal_halt flag halts the shader in or outside of the trap handlers.
 
-#### S\_SLEEP
+#### S_SLEEP
 **3**
 
 Cause a wave to sleep for up to ~8000 clocks.
 
-The wave sleeps for $(64 \times (\text{SIMM16}[6:0] - 1) \dots 64 \times \text{SIMM16}[6:0])$ clocks. The exact amount of delay is approximate. Compare with S\_NOP. When SIMM16[6:0] is zero then no sleep occurs.
+The wave sleeps for $(64 \times (\text{SIMM16}[6:0] - 1) \dots 64 \times \text{SIMM16}[6:0])$ clocks. The exact amount of delay is approximate. Compare with S_NOP. When SIMM16[6:0] is zero then no sleep occurs.
 
 **Notes**
 
@@ -10283,32 +10279,32 @@ s_sleep 1      // Wait for 1-64 clocks.
 s_sleep 2      // Wait for 65-128 clocks.
 ```
 
-#### S\_SET\_INST\_PREFETCH\_DISTANCE
+#### S_SET_INST_PREFETCH_DISTANCE
 **4**
 
 Change instruction prefetch mode. This controls how many cachelines ahead of the current PC the shader attempts to prefetch.
 
 SIMM16[1:0] specifies the prefetch mode to switch to. Prefetch modes are:
 
-**PREFETCH\_SAFE (0x0)**
+**PREFETCH_SAFE (0x0)**
 
 Reserved, do not use.
 
-**PREFETCH\_1\_LINE (0x1)**
+**PREFETCH_1_LINE (0x1)**
 
 Prefetch 1 cache line ahead of PC; keep 2 lines behind PC.
 
-**PREFETCH\_2\_LINES (0x2)**
+**PREFETCH_2_LINES (0x2)**
 
 Prefetch 2 cache lines ahead of PC; keep 1 line behind PC.
 
-**PREFETCH\_3\_LINES (0x3)**
+**PREFETCH_3_LINES (0x3)**
 
 Prefetch 3 cache lines ahead of PC; keep 0 lines behind PC.
 
 SIMM16[15:2] must be set to zero.
 
-#### S\_CLAUSE
+#### S_CLAUSE
 **5**
 
 Mark the beginning of a clause.
@@ -10329,14 +10325,14 @@ The next instruction determines the clause type, which may be one of the followi
 * Scalar Memory
 * Vector ALU
 
-Once the clause type is determined, any instruction encountered within the clause that is not of the same type (and not an internal instruction described below) is illegal and may lead to undefined behaviour. Attempting to issue S\_CLAUSE while inside a clause is also illegal.
+Once the clause type is determined, any instruction encountered within the clause that is not of the same type (and not an internal instruction described below) is illegal and may lead to undefined behaviour. Attempting to issue S_CLAUSE while inside a clause is also illegal.
 
 Instructions that are processed internally do not interrupt the clause. The following instructions are internal:
 
-* S\_NOP,
-* S\_WAITCNT and its variants, *unless* they read an SGPR,
-* S\_SLEEP,
-* S\_DELAY\_ALU.
+* S_NOP,
+* S_WAITCNT and its variants, *unless* they read an SGPR,
+* S_SLEEP,
+* S_DELAY_ALU.
 
 Halting or killing a wave breaks the clause. VALU exceptions and other traps that cause the shader to enter its trap handler breaks the clause. The single-step debug mode breaks the clause.
 
@@ -10346,7 +10342,7 @@ The clause length must be between 2 and 63 instructions, inclusive. Clause break
 
 This field is set to the logical number of instructions in the clause, minus 1 (e.g. if a clause has 4 instructions, program this field to 3). The minimum number of instructions required for a clause is 2 and the maximum number of instructions is 63, therefore this field must be programmed in the range [1, 62] inclusive.
 
-**BREAK\_SPAN = SIMM16[11:8]**
+**BREAK_SPAN = SIMM16[11:8]**
 
 This field is set to the number of instructions to issue before each clause break. If set to zero then there are no clause breaks. If set to nonzero value then the maximum number of instructions between clause breaks is 15.
 
@@ -10360,11 +10356,11 @@ The following instruction types cannot appear in a clause:
 * VINTERP
 * GDS
 
-To schedule an S\_WAITCNT or S\_DELAY\_ALU instruction for the first instruction in the clause, the waitcnt/delay instruction must appear *before* the S\_CLAUSE instruction so that S\_CLAUSE can accurately determine the clause type.
+To schedule an S_WAITCNT or S_DELAY_ALU instruction for the first instruction in the clause, the waitcnt/delay instruction must appear *before* the S_CLAUSE instruction so that S_CLAUSE can accurately determine the clause type.
 
-S\_DELAY\_ALU must not appear inside a clause. The features are orthogonal; ALU clauses should be structured to avoid any stalling.
+S_DELAY_ALU must not appear inside a clause. The features are orthogonal; ALU clauses should be structured to avoid any stalling.
 
-#### S\_DELAY\_ALU
+#### S_DELAY_ALU
 **7**
 
 Insert delay between dependent SALU/VALU instructions.
@@ -10385,91 +10381,91 @@ Hazard to delay for with the VALU instruction identified by INSTSKIP.
 
 Legal values for the InstID0 and InstID1 fields are:
 
-**INSTID\_NO\_DEP (0x0)**
+**INSTID_NO_DEP (0x0)**
 
 No dependency on any prior instruction.
 
-**INSTID\_VALU\_DEP\_1 (0x1)**
+**INSTID_VALU_DEP_1 (0x1)**
 
 Dependent on previous VALU instruction, 1 instruction(s) back.
 
-**INSTID\_VALU\_DEP\_2 (0x2)**
+**INSTID_VALU_DEP_2 (0x2)**
 
 Dependent on previous VALU instruction, 2 instruction(s) back.
 
-**INSTID\_VALU\_DEP\_3 (0x3)**
+**INSTID_VALU_DEP_3 (0x3)**
 
 Dependent on previous VALU instruction, 3 instruction(s) back.
 
-**INSTID\_VALU\_DEP\_4 (0x4)**
+**INSTID_VALU_DEP_4 (0x4)**
 
 Dependent on previous VALU instruction, 4 instruction(s) back.
 
-**INSTID\_TRANS32\_DEP\_1 (0x5)**
+**INSTID_TRANS32_DEP_1 (0x5)**
 
 Dependent on previous TRANS32 instruction, 1 instruction(s) back.
 
-**INSTID\_TRANS32\_DEP\_2 (0x6)**
+**INSTID_TRANS32_DEP_2 (0x6)**
 
 Dependent on previous TRANS32 instruction, 2 instruction(s) back.
 
-**INSTID\_TRANS32\_DEP\_3 (0x7)**
+**INSTID_TRANS32_DEP_3 (0x7)**
 
 Dependent on previous TRANS32 instruction, 3 instruction(s) back.
 
-**INSTID\_FMA\_ACCUM\_CYCLE\_1 (0x8)**
+**INSTID_FMA_ACCUM_CYCLE_1 (0x8)**
 
 Single cycle penalty for FMA accumulation (reserved).
 
-**INSTID\_SALU\_CYCLE\_1 (0x9)**
+**INSTID_SALU_CYCLE_1 (0x9)**
 
 1 cycle penalty for a prior SALU instruction.
 
-**INSTID\_SALU\_CYCLE\_2 (0xa)**
+**INSTID_SALU_CYCLE_2 (0xa)**
 
 2 cycle penalty for a prior SALU instruction.
 
-**INSTID\_SALU\_CYCLE\_3 (0xb)**
+**INSTID_SALU_CYCLE_3 (0xb)**
 
 3 cycle penalty for a prior SALU instruction.
 
 Legal values for the InstSkip field are:
 
-**INSTSKIP\_SAME (0x0)**
+**INSTSKIP_SAME (0x0)**
 
 Apply second dependency to same instruction (2 dependencies on one instruction).
 
-**INSTSKIP\_NEXT (0x1)**
+**INSTSKIP_NEXT (0x1)**
 
 Apply second dependency to next instruction (no skip).
 
-**INSTSKIP\_SKIP\_1 (0x2)**
+**INSTSKIP_SKIP_1 (0x2)**
 
 Skip 1 instruction(s) then apply dependency.
 
-**INSTSKIP\_SKIP\_2 (0x3)**
+**INSTSKIP_SKIP_2 (0x3)**
 
 Skip 2 instruction(s) then apply dependency.
 
-**INSTSKIP\_SKIP\_3 (0x4)**
+**INSTSKIP_SKIP_3 (0x4)**
 
 Skip 3 instruction(s) then apply dependency.
 
-**INSTSKIP\_SKIP\_4 (0x5)**
+**INSTSKIP_SKIP_4 (0x5)**
 
 Skip 4 instruction(s) then apply dependency.
 
 This instruction describes dependencies for two instructions, directing the hardware to insert delay if the dependent instruction was issued too recently to forward data to the second.
 
-S\_DELAY\_ALU instructions record the required delay with respect to a previous VALU instruction and indicate data dependencies that benefit from having extra idle cycles inserted between them. These instructions are optional: without them the program still functions correctly but performance may suffer when multiple waves are in flight; IB may issue dependent instructions that stall in the ALU, preventing those cycles from being utilized by other wavefronts.
+S_DELAY_ALU instructions record the required delay with respect to a previous VALU instruction and indicate data dependencies that benefit from having extra idle cycles inserted between them. These instructions are optional: without them the program still functions correctly but performance may suffer when multiple waves are in flight; IB may issue dependent instructions that stall in the ALU, preventing those cycles from being utilized by other wavefronts.
 
-If enough independent instructions are between dependent ones then no delay is necessary and this instruction may be omitted. For wave64 the compiler may not know the status of the EXEC mask and hence does not know if instructions require 1 or 2 passes to issue. S\_DELAY\_ALU encodes the type of dependency so that hardware may apply the correct delay depending on the number of active passes.
+If enough independent instructions are between dependent ones then no delay is necessary and this instruction may be omitted. For wave64 the compiler may not know the status of the EXEC mask and hence does not know if instructions require 1 or 2 passes to issue. S_DELAY_ALU encodes the type of dependency so that hardware may apply the correct delay depending on the number of active passes.
 
-S\_DELAY\_ALU may execute in zero cycles.
+S_DELAY_ALU may execute in zero cycles.
 
-To reduce instruction stream overhead the S\_DELAY\_ALU instructions packs two delay values into one instruction, with a "skip" indicator so the two delayed instructions don't need to be back-to-back.
+To reduce instruction stream overhead the S_DELAY_ALU instructions packs two delay values into one instruction, with a "skip" indicator so the two delayed instructions don't need to be back-to-back.
 
-S\_DELAY\_ALU is illegal inside of a clause created by S\_CLAUSE.
+S_DELAY_ALU is illegal inside of a clause created by S_CLAUSE.
 
 Example:
 
@@ -10485,7 +10481,7 @@ v_sub_f32 v11, v9, v9
 v_mul_f32 v10, v13, v11
 ```
 
-#### S\_WAITCNT
+#### S_WAITCNT
 **9**
 
 Wait for the counts of outstanding local data share, vector memory and export instructions to be at or below the specified levels.
@@ -10514,27 +10510,27 @@ vmcnt <= WaitVMCNT
 
 VMCNT only counts vector memory loads, image sample instructions, and vector memory atomics that return data. Contrast with the VSCNT counter.
 
-See also S\_WAITCNT\_VSCNT.
+See also S_WAITCNT_VSCNT.
 
-#### S\_WAIT\_IDLE
+#### S_WAIT_IDLE
 **10**
 
 Wait for all activity in the wave to be complete (all dependency and memory counters at zero).
 
-#### S\_WAIT\_EVENT
+#### S_WAIT_EVENT
 **11**
 
 Wait for an event to occur or a condition to be satisfied before continuing. The SIMM16 argument specifies which event(s) to wait on.
 
-**DONT\_WAIT\_EXPORT\_READY = SIMM16[0]**
+**DONT_WAIT_EXPORT_READY = SIMM16[0]**
 
-If this value is ZERO then sleep until the export\_ready bit is 1. If the export\_ready bit is already 1, no sleep occurs. Effect is the same as the export\_ready check performed before issuing an export instruction.
+If this value is ZERO then sleep until the export_ready bit is 1. If the export_ready bit is already 1, no sleep occurs. Effect is the same as the export_ready check performed before issuing an export instruction.
 
 No wait occurs if this value is ONE.
 
 This wait **cannot** be preempted by KILL, context-save, host trap, single-step or trap after instruction events. IB waits for the event to occur before processing internal or external exceptions which can delay entry to the trap handler for a significant amount of time.
 
-#### S\_TRAP
+#### S_TRAP
 **16**
 
 Enter the trap handler.
@@ -10552,21 +10548,21 @@ PC = TBA.i64;
 WAVE_STATUS.PRIV = 1'1U
 ```
 
-#### S\_ROUND\_MODE
+#### S_ROUND_MODE
 **17**
 
 Set floating point round mode using an immediate constant.
 
-Avoids wait state penalty that would be imposed by S\_SETREG.
+Avoids wait state penalty that would be imposed by S_SETREG.
 
-#### S\_DENORM\_MODE
+#### S_DENORM_MODE
 **18**
 
 Set floating point denormal mode using an immediate constant.
 
-Avoids wait state penalty that would be imposed by S\_SETREG.
+Avoids wait state penalty that would be imposed by S_SETREG.
 
-#### S\_CODE\_END
+#### S_CODE_END
 **31**
 
 Generate an illegal instruction interrupt. This instruction is used to mark the end of a shader buffer for debug tools.
@@ -10589,7 +10585,7 @@ s_code_end   // 4
 s_code_end   // done!
 ```
 
-#### S\_BRANCH
+#### S_BRANCH
 **32**
 
 Jump to a constant offset relative to the current PC.
@@ -10603,7 +10599,7 @@ PC = PC + signext(SIMM16.i16 * 16'4) + 4LL;
 
 **Notes**
 
-For a long jump or an indirect jump use S\_SETPC\_B64.
+For a long jump or an indirect jump use S_SETPC_B64.
 
 Examples:
 
@@ -10615,7 +10611,7 @@ s_nop 0          // 4 bytes
 s_branch label    // Set SIMM16 = -8 = 0xffff8
 ```
 
-#### S\_CBRANCH\_SCC0
+#### S_CBRANCH_SCC0
 **33**
 
 If SCC is 0 then jump to a constant offset relative to the current PC.
@@ -10630,7 +10626,7 @@ else
 endif
 ```
 
-#### S\_CBRANCH\_SCC1
+#### S_CBRANCH_SCC1
 **34**
 
 If SCC is 1 then jump to a constant offset relative to the current PC.
@@ -10645,7 +10641,7 @@ else
 endif
 ```
 
-#### S\_CBRANCH\_VCCZ
+#### S_CBRANCH_VCCZ
 **35**
 
 If VCCZ is 1 then jump to a constant offset relative to the current PC.
@@ -10660,7 +10656,7 @@ else
 endif
 ```
 
-#### S\_CBRANCH\_VCCNZ
+#### S_CBRANCH_VCCNZ
 **36**
 
 If VCCZ is 0 then jump to a constant offset relative to the current PC.
@@ -10675,7 +10671,7 @@ else
 endif
 ```
 
-#### S\_CBRANCH\_EXECZ
+#### S_CBRANCH_EXECZ
 **37**
 
 If EXECZ is 1 then jump to a constant offset relative to the current PC.
@@ -10690,7 +10686,7 @@ else
 endif
 ```
 
-#### S\_CBRANCH\_EXECNZ
+#### S_CBRANCH_EXECNZ
 **38**
 
 If EXECZ is 0 then jump to a constant offset relative to the current PC.
@@ -10705,7 +10701,7 @@ else
 endif
 ```
 
-#### S\_CBRANCH\_CDBGSYS
+#### S_CBRANCH_CDBGSYS
 **39**
 
 If the system debug flag is set then jump to a constant offset relative to the current PC.
@@ -10720,7 +10716,7 @@ else
 endif
 ```
 
-#### S\_CBRANCH\_CDBGUSER
+#### S_CBRANCH_CDBGUSER
 **40**
 
 If the user debug flag is set then jump to a constant offset relative to the current PC.
@@ -10735,7 +10731,7 @@ else
 endif
 ```
 
-#### S\_CBRANCH\_CDBGSYS\_OR\_USER
+#### S_CBRANCH_CDBGSYS_OR_USER
 **41**
 
 If either the system debug flag or the user debug flag is set then jump to a constant offset relative to the current PC.
@@ -10750,7 +10746,7 @@ else
 endif
 ```
 
-#### S\_CBRANCH\_CDBGSYS\_AND\_USER
+#### S_CBRANCH_CDBGSYS_AND_USER
 **42**
 
 If both the system debug flag and the user debug flag are set then jump to a constant offset relative to the current PC.
@@ -10765,39 +10761,39 @@ else
 endif
 ```
 
-#### S\_ENDPGM
+#### S_ENDPGM
 **48**
 
 End of program; terminate wavefront.
 
-The hardware implicitly executes S\_WAITCNT 0 and S\_WAITCNT\_VSCNT 0 before executing this instruction. See S\_ENDPGM\_SAVED for the context-switch version of this instruction and S\_ENDPGM\_ORDERED\_PS\_DONE for the POPS critical region version of this instruction.
+The hardware implicitly executes S_WAITCNT 0 and S_WAITCNT_VSCNT 0 before executing this instruction. See S_ENDPGM_SAVED for the context-switch version of this instruction and S_ENDPGM_ORDERED_PS_DONE for the POPS critical region version of this instruction.
 
-#### S\_ENDPGM\_SAVED
+#### S_ENDPGM_SAVED
 **49**
 
 End of program; signal that a wave has been saved by the context-switch trap handler and terminate wavefront.
 
-The hardware implicitly executes S\_WAITCNT 0 and S\_WAITCNT\_VSCNT 0 before executing this instruction. See S\_ENDPGM for additional variants.
+The hardware implicitly executes S_WAITCNT 0 and S_WAITCNT_VSCNT 0 before executing this instruction. See S_ENDPGM for additional variants.
 
-#### S\_ENDPGM\_ORDERED\_PS\_DONE
+#### S_ENDPGM_ORDERED_PS_DONE
 **50**
 
 End of program; signal that a wave has exited its POPS critical section and terminate wavefront.
 
-The hardware implicitly executes S\_WAITCNT 0 and S\_WAITCNT\_VSCNT 0 before executing this instruction. This instruction is an optimization that combines S\_SENDMSG(MSG\_ORDERED\_PS\_DONE) and S\_ENDPGM; there may be cases where the message needs to be sent separately, in which case the shader can be terminated with a normal S\_ENDPGM instruction.
+The hardware implicitly executes S_WAITCNT 0 and S_WAITCNT_VSCNT 0 before executing this instruction. This instruction is an optimization that combines S_SENDMSG(MSG_ORDERED_PS_DONE) and S_ENDPGM; there may be cases where the message needs to be sent separately, in which case the shader can be terminated with a normal S_ENDPGM instruction.
 
-See S\_ENDPGM for additional variants.
+See S_ENDPGM for additional variants.
 
-#### S\_WAKEUP
+#### S_WAKEUP
 **52**
 
-Allow a wave to 'ping' all the other waves in its threadgroup to force them to wake up early from an S\_SLEEP instruction.
+Allow a wave to 'ping' all the other waves in its threadgroup to force them to wake up early from an S_SLEEP instruction.
 
-The ping is ignored if the waves are not sleeping. This allows for efficient polling on a memory location. The waves which are polling can sit in a long S\_SLEEP between memory reads, but the wave which writes the value can tell them all to wake up early now that the data is available. This method is also safe from races since any waves that miss the ping resume when they complete their S\_SLEEP.
+The ping is ignored if the waves are not sleeping. This allows for efficient polling on a memory location. The waves which are polling can sit in a long S_SLEEP between memory reads, but the wave which writes the value can tell them all to wake up early now that the data is available. This method is also safe from races since any waves that miss the ping resume when they complete their S_SLEEP.
 
-If the wave executing S\_WAKEUP is in a threadgroup (in\_wg set), then it wakes up all waves associated with the same threadgroup ID. Otherwise, S\_WAKEUP is treated as an S\_NOP.
+If the wave executing S_WAKEUP is in a threadgroup (in_wg set), then it wakes up all waves associated with the same threadgroup ID. Otherwise, S_WAKEUP is treated as an S_NOP.
 
-#### S\_SETPRIO
+#### S_SETPRIO
 **53**
 
 Change wave user priority.
@@ -10811,7 +10807,7 @@ SysUserPrio = MIN(3, SysPrio[1:0] + UserPrio[1:0]).
 
 The system priority cannot be modified from within the wave.
 
-#### S\_SENDMSG
+#### S_SENDMSG
 **54**
 
 Send a message to upstream control hardware.
@@ -10820,34 +10816,34 @@ SIMM16[7:0] contains the message type.
 
 **Notes**
 
-#### S\_SENDMSGHALT
+#### S_SENDMSGHALT
 **55**
 
-Send a message to upstream control hardware and then HALT the wavefront; see S\_SENDMSG for details.
+Send a message to upstream control hardware and then HALT the wavefront; see S_SENDMSG for details.
 
-#### S\_INCPERFLEVEL
+#### S_INCPERFLEVEL
 **56**
 
 Increment performance counter specified in SIMM16[3:0] by 1.
 
-#### S\_DECPERFLEVEL
+#### S_DECPERFLEVEL
 **57**
 
 Decrement performance counter specified in SIMM16[3:0] by 1.
 
-#### S\_ICACHE\_INV
+#### S_ICACHE_INV
 **60**
 
 Invalidate entire first level instruction cache.
 
-#### S\_BARRIER
+#### S_BARRIER
 **61**
 
 Synchronize waves within a threadgroup.
 
 If not all waves of the threadgroup have been created yet, waits for entire group before proceeding. If some waves in the threadgroup have already terminated, this waits on only the surviving waves. Barriers are legal inside trap handlers.
 
-Barrier instructions do not wait for any counters to go to zero before issuing. If the barrier is being used to protect an outstanding memory operation use the appropriate S\_WAITCNT instruction before the barrier.
+Barrier instructions do not wait for any counters to go to zero before issuing. If the barrier is being used to protect an outstanding memory operation use the appropriate S_WAITCNT instruction before the barrier.
 
 ## 16.6. SMEM Instructions
 
@@ -10864,7 +10860,7 @@ Barrier instructions do not wait for any counters to go to zero before issuing. 
 | 1    | 20:0  | OFFSET_21   |
 | 1    | 31:25 | SOFFSET     |
 
-#### S\_LOAD\_B32
+#### S_LOAD_B32
 **0**
 
 Load 32 bits of data from the scalar memory into a scalar register.
@@ -10879,7 +10875,7 @@ If the offset is specified as an SGPR, the SGPR contains an UNSIGNED BYTE offset
 
 If the offset is specified as an immediate 21-bit constant, the constant is a SIGNED BYTE offset.
 
-#### S\_LOAD\_B64
+#### S_LOAD_B64
 **1**
 
 Load 64 bits of data from the scalar memory into a scalar register.
@@ -10895,7 +10891,7 @@ If the offset is specified as an SGPR, the SGPR contains an UNSIGNED BYTE offset
 
 If the offset is specified as an immediate 21-bit constant, the constant is a SIGNED BYTE offset.
 
-#### S\_LOAD\_B128
+#### S_LOAD_B128
 **2**
 
 Load 128 bits of data from the scalar memory into a scalar register.
@@ -10913,7 +10909,7 @@ If the offset is specified as an SGPR, the SGPR contains an UNSIGNED BYTE offset
 
 If the offset is specified as an immediate 21-bit constant, the constant is a SIGNED BYTE offset.
 
-#### S\_LOAD\_B256
+#### S_LOAD_B256
 **3**
 
 Load 256 bits of data from the scalar memory into a scalar register.
@@ -10935,7 +10931,7 @@ If the offset is specified as an SGPR, the SGPR contains an UNSIGNED BYTE offset
 
 If the offset is specified as an immediate 21-bit constant, the constant is a SIGNED BYTE offset.
 
-#### S\_LOAD\_B512
+#### S_LOAD_B512
 **4**
 
 Load 512 bits of data from the scalar memory into a scalar register.
@@ -10965,7 +10961,7 @@ If the offset is specified as an SGPR, the SGPR contains an UNSIGNED BYTE offset
 
 If the offset is specified as an immediate 21-bit constant, the constant is a SIGNED BYTE offset.
 
-#### S\_BUFFER\_LOAD\_B32
+#### S_BUFFER_LOAD_B32
 **8**
 
 Load 32 bits of data from a scalar buffer surface into a scalar register.
@@ -10980,7 +10976,7 @@ If the offset is specified as an SGPR, the SGPR contains an UNSIGNED BYTE offset
 
 If the offset is specified as an immediate 21-bit constant, the constant is a SIGNED BYTE offset.
 
-#### S\_BUFFER\_LOAD\_B64
+#### S_BUFFER_LOAD_B64
 **9**
 
 Load 64 bits of data from a scalar buffer surface into a scalar register.
@@ -10996,7 +10992,7 @@ If the offset is specified as an SGPR, the SGPR contains an UNSIGNED BYTE offset
 
 If the offset is specified as an immediate 21-bit constant, the constant is a SIGNED BYTE offset.
 
-#### S\_BUFFER\_LOAD\_B128
+#### S_BUFFER_LOAD_B128
 **10**
 
 Load 128 bits of data from a scalar buffer surface into a scalar register.
@@ -11014,7 +11010,7 @@ If the offset is specified as an SGPR, the SGPR contains an UNSIGNED BYTE offset
 
 If the offset is specified as an immediate 21-bit constant, the constant is a SIGNED BYTE offset.
 
-#### S\_BUFFER\_LOAD\_B256
+#### S_BUFFER_LOAD_B256
 **11**
 
 Load 256 bits of data from a scalar buffer surface into a scalar register.
@@ -11036,7 +11032,7 @@ If the offset is specified as an SGPR, the SGPR contains an UNSIGNED BYTE offset
 
 If the offset is specified as an immediate 21-bit constant, the constant is a SIGNED BYTE offset.
 
-#### S\_BUFFER\_LOAD\_B512
+#### S_BUFFER_LOAD_B512
 **12**
 
 Load 512 bits of data from a scalar buffer surface into a scalar register.
@@ -11066,12 +11062,12 @@ If the offset is specified as an SGPR, the SGPR contains an UNSIGNED BYTE offset
 
 If the offset is specified as an immediate 21-bit constant, the constant is a SIGNED BYTE offset.
 
-#### S\_GL1\_INV
+#### S_GL1_INV
 **32**
 
 Invalidate the GL1 cache only.
 
-#### S\_DCACHE\_INV
+#### S_DCACHE_INV
 **33**
 
 Invalidate the scalar data L0 cache.
@@ -11088,7 +11084,7 @@ Invalidate the scalar data L0 cache.
 
 Instructions in this format may use a 32-bit literal constant or DPP that occurs immediately after the instruction.
 
-#### V\_CNDMASK\_B32
+#### V_CNDMASK_B32
 **1**
 
 Copy data from one of two inputs based on the per-lane condition code and store the result into a vector register.
@@ -11103,7 +11099,7 @@ In VOP3 the VCC source may be a scalar GPR specified in S2.
 
 Floating-point modifiers are valid for this instruction if S0 and S1 are 32-bit floating point values. This instruction is suitable for negating or taking the absolute value of a floating-point value.
 
-#### V\_DOT2ACC\_F32\_F16
+#### V_DOT2ACC_F32_F16
 **2**
 
 Compute the dot product of two packed 2-D half-precision float inputs in the single-precision float domain and accumulate the resulting single-precision float value into the destination vector register.
@@ -11115,7 +11111,7 @@ tmp += f16_to_f32(S0[31 : 16].f16) * f16_to_f32(S1[31 : 16].f16);
 D0.f32 = tmp
 ```
 
-#### V\_ADD\_F32
+#### V_ADD_F32
 **3**
 
 Add two floating point inputs and store the result into a vector register.
@@ -11128,7 +11124,7 @@ D0.f32 = S0.f32 + S1.f32
 
 0.5ULP precision, denormals are supported.
 
-#### V\_SUB\_F32
+#### V_SUB_F32
 **4**
 
 Subtract the second floating point input from the first input and store the result into a vector register.
@@ -11141,7 +11137,7 @@ D0.f32 = S0.f32 - S1.f32
 
 0.5ULP precision, denormals are supported.
 
-#### V\_SUBREV\_F32
+#### V_SUBREV_F32
 **5**
 
 Subtract the *first* floating point input from the *second* input and store the result into a vector register.
@@ -11154,7 +11150,7 @@ D0.f32 = S1.f32 - S0.f32
 
 0.5ULP precision, denormals are supported.
 
-#### V\_FMAC\_DX9\_ZERO\_F32
+#### V_FMAC_DX9_ZERO_F32
 **6**
 
 Multiply two single-precision values and accumulate the result with the destination. Follows DX9 rules where 0.0 times anything produces 0.0.
@@ -11168,7 +11164,7 @@ else
 endif
 ```
 
-#### V\_MUL\_DX9\_ZERO\_F32
+#### V_MUL_DX9_ZERO_F32
 **7**
 
 Multiply two floating point inputs and store the result into a vector register. Follows DX9 rules where 0.0 times anything produces 0.0 (this differs from other APIs when the other input is infinity or NaN).
@@ -11182,7 +11178,7 @@ else
 endif
 ```
 
-#### V\_MUL\_F32
+#### V_MUL_F32
 **8**
 
 Multiply two floating point inputs and store the result into a vector register.
@@ -11195,7 +11191,7 @@ D0.f32 = S0.f32 * S1.f32
 
 0.5ULP precision, denormals are supported.
 
-#### V\_MUL\_I32\_I24
+#### V_MUL_I32_I24
 **9**
 
 Multiply two signed 24-bit integer inputs and store the result as a signed 32-bit integer into a vector register.
@@ -11206,9 +11202,9 @@ D0.i32 = 32'I(S0.i24) * 32'I(S1.i24)
 
 **Notes**
 
-This opcode is expected to be as efficient as basic single-precision opcodes since it utilizes the single-precision floating point multiplier. See also V\_MUL\_HI\_I32\_I24.
+This opcode is expected to be as efficient as basic single-precision opcodes since it utilizes the single-precision floating point multiplier. See also V_MUL_HI_I32_I24.
 
-#### V\_MUL\_HI\_I32\_I24
+#### V_MUL_HI_I32_I24
 **10**
 
 Multiply two signed 24-bit integer inputs and store the high 32 bits of the result as a signed 32-bit integer into a vector register.
@@ -11219,9 +11215,9 @@ D0.i32 = 32'I((64'I(S0.i24) * 64'I(S1.i24)) >> 32U)
 
 **Notes**
 
-See also V\_MUL\_I32\_I24.
+See also V_MUL_I32_I24.
 
-#### V\_MUL\_U32\_U24
+#### V_MUL_U32_U24
 **11**
 
 Multiply two unsigned 24-bit integer inputs and store the result as an unsigned 32-bit integer into a vector register.
@@ -11232,9 +11228,9 @@ D0.u32 = 32'U(S0.u24) * 32'U(S1.u24)
 
 **Notes**
 
-This opcode is expected to be as efficient as basic single-precision opcodes since it utilizes the single-precision floating point multiplier. See also V\_MUL\_HI\_U32\_U24.
+This opcode is expected to be as efficient as basic single-precision opcodes since it utilizes the single-precision floating point multiplier. See also V_MUL_HI_U32_U24.
 
-#### V\_MUL\_HI\_U32\_U24
+#### V_MUL_HI_U32_U24
 **12**
 
 Multiply two unsigned 24-bit integer inputs and store the high 32 bits of the result as an unsigned 32-bit integer into a vector register.
@@ -11245,9 +11241,9 @@ D0.u32 = 32'U((64'U(S0.u24) * 64'U(S1.u24)) >> 32U)
 
 **Notes**
 
-See also V\_MUL\_U32\_U24.
+See also V_MUL_U32_U24.
 
-#### V\_MIN\_F32
+#### V_MIN_F32
 **15**
 
 Select the minimum of two single-precision float inputs and store the result into a vector register.
@@ -11293,7 +11289,7 @@ IEEE compliant. Supports denormals, round mode, exception flags, saturation.
 
 Denorm flushing for this operation is effectively controlled by the input denorm mode control: If input denorm mode is disabling denorm, the internal result of a min/max operation cannot be a denorm value, so output denorm mode is irrelevant. If input denorm mode is *enabling* denorm, the internal min/max result can be a denorm and this operation outputs as a denorm regardless of output denorm mode.
 
-#### V\_MAX\_F32
+#### V_MAX_F32
 **16**
 
 Select the maximum of two single-precision float inputs and store the result into a vector register.
@@ -11339,7 +11335,7 @@ IEEE compliant. Supports denormals, round mode, exception flags, saturation.
 
 Denorm flushing for this operation is effectively controlled by the input denorm mode control: If input denorm mode is disabling denorm, the internal result of a min/max operation cannot be a denorm value, so output denorm mode is irrelevant. If input denorm mode is *enabling* denorm, the internal min/max result can be a denorm and this operation outputs as a denorm regardless of output denorm mode.
 
-#### V\_MIN\_I32
+#### V_MIN_I32
 **17**
 
 Select the minimum of two signed 32-bit integer inputs and store the selected value into a vector register.
@@ -11348,7 +11344,7 @@ Select the minimum of two signed 32-bit integer inputs and store the selected va
 D0.i32 = S0.i32 < S1.i32 ? S0.i32 : S1.i32
 ```
 
-#### V\_MAX\_I32
+#### V_MAX_I32
 **18**
 
 Select the maximum of two signed 32-bit integer inputs and store the selected value into a vector register.
@@ -11357,7 +11353,7 @@ Select the maximum of two signed 32-bit integer inputs and store the selected va
 D0.i32 = S0.i32 >= S1.i32 ? S0.i32 : S1.i32
 ```
 
-#### V\_MIN\_U32
+#### V_MIN_U32
 **19**
 
 Select the minimum of two unsigned 32-bit integer inputs and store the selected value into a vector register.
@@ -11366,7 +11362,7 @@ Select the minimum of two unsigned 32-bit integer inputs and store the selected 
 D0.u32 = S0.u32 < S1.u32 ? S0.u32 : S1.u32
 ```
 
-#### V\_MAX\_U32
+#### V_MAX_U32
 **20**
 
 Select the maximum of two unsigned 32-bit integer inputs and store the selected value into a vector register.
@@ -11375,7 +11371,7 @@ Select the maximum of two unsigned 32-bit integer inputs and store the selected 
 D0.u32 = S0.u32 >= S1.u32 ? S0.u32 : S1.u32
 ```
 
-#### V\_LSHLREV\_B32
+#### V_LSHLREV_B32
 **24**
 
 Given a shift count in the *first* vector input, calculate the logical shift left of the *second* vector input and store the result into a vector register.
@@ -11388,7 +11384,7 @@ D0.u32 = (S1.u32 << S0[4 : 0].u32)
 
 DPP operates on the shift count, not the data being shifted.
 
-#### V\_LSHRREV\_B32
+#### V_LSHRREV_B32
 **25**
 
 Given a shift count in the *first* vector input, calculate the logical shift right of the *second* vector input and store the result into a vector register.
@@ -11401,7 +11397,7 @@ D0.u32 = (S1.u32 >> S0[4 : 0].u32)
 
 DPP operates on the shift count, not the data being shifted.
 
-#### V\_ASHRREV\_I32
+#### V_ASHRREV_I32
 **26**
 
 Given a shift count in the *first* vector input, calculate the arithmetic shift right (preserving sign bit) of the *second* vector input and store the result into a vector register.
@@ -11414,7 +11410,7 @@ D0.i32 = (S1.i32 >> S0[4 : 0].u32)
 
 DPP operates on the shift count, not the data being shifted.
 
-#### V\_AND\_B32
+#### V_AND_B32
 **27**
 
 Calculate bitwise AND on two vector inputs and store the result into a vector register.
@@ -11427,7 +11423,7 @@ D0.u32 = (S0.u32 & S1.u32)
 
 Input and output modifiers not supported.
 
-#### V\_OR\_B32
+#### V_OR_B32
 **28**
 
 Calculate bitwise OR on two vector inputs and store the result into a vector register.
@@ -11440,7 +11436,7 @@ D0.u32 = (S0.u32 | S1.u32)
 
 Input and output modifiers not supported.
 
-#### V\_XOR\_B32
+#### V_XOR_B32
 **29**
 
 Calculate bitwise XOR on two vector inputs and store the result into a vector register.
@@ -11453,7 +11449,7 @@ D0.u32 = (S0.u32 ^ S1.u32)
 
 Input and output modifiers not supported.
 
-#### V\_XNOR\_B32
+#### V_XNOR_B32
 **30**
 
 Calculate bitwise XNOR on two vector inputs and store the result into a vector register.
@@ -11466,7 +11462,7 @@ D0.u32 = ~(S0.u32 ^ S1.u32)
 
 Input and output modifiers not supported.
 
-#### V\_ADD\_CO\_CI\_U32
+#### V_ADD_CO_CI_U32
 **32**
 
 Add two unsigned 32-bit integer inputs and a bit from a carry-in mask, store the result into a vector register and store the carry-out mask into a scalar register.
@@ -11484,7 +11480,7 @@ In VOP3 the VCC destination may be an arbitrary SGPR-pair, and the VCC source co
 
 Supports saturation (unsigned 32-bit integer domain).
 
-#### V\_SUB\_CO\_CI\_U32
+#### V_SUB_CO_CI_U32
 **33**
 
 Subtract the second unsigned 32-bit integer input from the first input, subtract a bit from the carry-in mask, store the result into a vector register and store the carry-out mask into a scalar register.
@@ -11502,7 +11498,7 @@ In VOP3 the VCC destination may be an arbitrary SGPR-pair, and the VCC source co
 
 Supports saturation (unsigned 32-bit integer domain).
 
-#### V\_SUBREV\_CO\_CI\_U32
+#### V_SUBREV_CO_CI_U32
 **34**
 
 Subtract the *first* unsigned 32-bit integer input from the *second* input, subtract a bit from the carry-in mask, store the result into a vector register and store the carry-out mask into a scalar register.
@@ -11520,7 +11516,7 @@ In VOP3 the VCC destination may be an arbitrary SGPR-pair, and the VCC source co
 
 Supports saturation (unsigned 32-bit integer domain).
 
-#### V\_ADD\_NC\_U32
+#### V_ADD_NC_U32
 **37**
 
 Add two unsigned 32-bit integer inputs and store the result into a vector register. No carry-in or carry-out support.
@@ -11533,7 +11529,7 @@ D0.u32 = S0.u32 + S1.u32
 
 Supports saturation (unsigned 32-bit integer domain).
 
-#### V\_SUB\_NC\_U32
+#### V_SUB_NC_U32
 **38**
 
 Subtract the second unsigned 32-bit integer input from the first input and store the result into a vector register. No carry-in or carry-out support.
@@ -11546,7 +11542,7 @@ D0.u32 = S0.u32 - S1.u32
 
 Supports saturation (unsigned 32-bit integer domain).
 
-#### V\_SUBREV\_NC\_U32
+#### V_SUBREV_NC_U32
 **39**
 
 Subtract the *first* unsigned 32-bit integer input from the *second* input and store the result into a vector register. No carry-in or carry-out support.
@@ -11559,7 +11555,7 @@ D0.u32 = S1.u32 - S0.u32
 
 Supports saturation (unsigned 32-bit integer domain).
 
-#### V\_FMAC\_F32
+#### V_FMAC_F32
 **43**
 
 Multiply two floating point inputs and accumulate the result into the destination register using fused multiply add.
@@ -11568,7 +11564,7 @@ Multiply two floating point inputs and accumulate the result into the destinatio
 D0.f32 = fma(S0.f32, S1.f32, D0.f32)
 ```
 
-#### V\_FMAMK\_F32
+#### V_FMAMK_F32
 **44**
 
 Multiply a single-precision float input with a literal constant and add a second single-precision float input using fused multiply add, and store the result into a vector register.
@@ -11581,7 +11577,7 @@ D0.f32 = fma(S0.f32, SIMM32.f32, S1.f32)
 
 This opcode cannot use the VOP3 encoding and cannot use input/output modifiers.
 
-#### V\_FMAAK\_F32
+#### V_FMAAK_F32
 **45**
 
 Multiply two single-precision float inputs and add a literal constant using fused multiply add, and store the result into a vector register.
@@ -11594,7 +11590,7 @@ D0.f32 = fma(S0.f32, S1.f32, SIMM32.f32)
 
 This opcode cannot use the VOP3 encoding and cannot use input/output modifiers.
 
-#### V\_CVT\_PK\_RTZ\_F16\_F32
+#### V_CVT_PK_RTZ_F16_F32
 **47**
 
 Convert two single-precision float inputs to a packed half-precision float value using round toward zero semantics (ignore the current rounding mode), and store the result into a vector register.
@@ -11611,7 +11607,7 @@ ROUND_MODE = prev_mode;
 
 **Notes**
 
-#### V\_ADD\_F16
+#### V_ADD_F16
 **50**
 
 Add two floating point inputs and store the result into a vector register.
@@ -11624,7 +11620,7 @@ D0.f16 = S0.f16 + S1.f16
 
 0.5ULP precision. Supports denormals, round mode, exception flags and saturation.
 
-#### V\_SUB\_F16
+#### V_SUB_F16
 **51**
 
 Subtract the second floating point input from the first input and store the result into a vector register.
@@ -11637,7 +11633,7 @@ D0.f16 = S0.f16 - S1.f16
 
 0.5ULP precision. Supports denormals, round mode, exception flags and saturation.
 
-#### V\_SUBREV\_F16
+#### V_SUBREV_F16
 **52**
 
 Subtract the *first* floating point input from the *second* input and store the result into a vector register.
@@ -11650,7 +11646,7 @@ D0.f16 = S1.f16 - S0.f16
 
 0.5ULP precision. Supports denormals, round mode, exception flags and saturation.
 
-#### V\_MUL\_F16
+#### V_MUL_F16
 **53**
 
 Multiply two floating point inputs and store the result into a vector register.
@@ -11663,7 +11659,7 @@ D0.f16 = S0.f16 * S1.f16
 
 0.5ULP precision. Supports denormals, round mode, exception flags and saturation.
 
-#### V\_FMAC\_F16
+#### V_FMAC_F16
 **54**
 
 Multiply two floating point inputs and accumulate the result into the destination register using fused multiply add.
@@ -11676,7 +11672,7 @@ D0.f16 = fma(S0.f16, S1.f16, D0.f16)
 
 0.5ULP precision. Supports denormals, round mode, exception flags and saturation.
 
-#### V\_FMAMK\_F16
+#### V_FMAMK_F16
 **55**
 
 Multiply a half-precision float input with a literal constant and add a second half-precision float input using fused multiply add, and store the result into a vector register.
@@ -11689,7 +11685,7 @@ D0.f16 = fma(S0.f16, SIMM32.f16, S1.f16)
 
 This opcode cannot use the VOP3 encoding and cannot use input/output modifiers.
 
-#### V\_FMAAK\_F16
+#### V_FMAAK_F16
 **56**
 
 Multiply two half-precision float inputs and add a literal constant using fused multiply add, and store the result into a vector register.
@@ -11702,7 +11698,7 @@ D0.f16 = fma(S0.f16, S1.f16, SIMM32.f16)
 
 This opcode cannot use the VOP3 encoding and cannot use input/output modifiers.
 
-#### V\_MAX\_F16
+#### V_MAX_F16
 **57**
 
 Select the maximum of two half-precision float inputs and store the result into a vector register.
@@ -11748,7 +11744,7 @@ IEEE compliant. Supports denormals, round mode, exception flags, saturation.
 
 Denorm flushing for this operation is effectively controlled by the input denorm mode control: If input denorm mode is disabling denorm, the internal result of a min/max operation cannot be a denorm value, so output denorm mode is irrelevant. If input denorm mode is *enabling* denorm, the internal min/max result can be a denorm and this operation outputs as a denorm regardless of output denorm mode.
 
-#### V\_MIN\_F16
+#### V_MIN_F16
 **58**
 
 Select the minimum of two half-precision float inputs and store the result into a vector register.
@@ -11794,7 +11790,7 @@ IEEE compliant. Supports denormals, round mode, exception flags, saturation.
 
 Denorm flushing for this operation is effectively controlled by the input denorm mode control: If input denorm mode is disabling denorm, the internal result of a min/max operation cannot be a denorm value, so output denorm mode is irrelevant. If input denorm mode is *enabling* denorm, the internal min/max result can be a denorm and this operation outputs as a denorm regardless of output denorm mode.
 
-#### V\_LDEXP\_F16
+#### V_LDEXP_F16
 **59**
 
 Multiply the first input, a floating point value, by an integral power of 2 specified in the second input, a signed integer value, and store the floating point result into a vector register.
@@ -11807,7 +11803,7 @@ D0.f16 = S0.f16 * 16'F(2.0F ** 32'I(S1.i16))
 
 Compare with the `ldexp()` function in C.
 
-#### V\_PK\_FMAC\_F16
+#### V_PK_FMAC_F16
 **60**
 
 Multiply two packed half-precision float inputs component-wise and accumulate the result into the destination register using fused multiply add.
@@ -11819,7 +11815,7 @@ D0[15 : 0].f16 = fma(S0[15 : 0].f16, S1[15 : 0].f16, D0[15 : 0].f16)
 
 **Notes**
 
-VOP2 version of V\_PK\_FMA\_F16 with third source VGPR address is the destination.
+VOP2 version of V_PK_FMA_F16 with third source VGPR address is the destination.
 
 ## 16.7.1. VOP2 using VOP3 or VOP3SD encoding
 
@@ -11868,12 +11864,12 @@ Instructions in this format may also be encoded as VOP3. VOP3 allows access to t
 
 Instructions in this format may use a 32-bit literal constant or DPP that occurs immediately after the instruction.
 
-#### V\_NOP
+#### V_NOP
 **0**
 
 Do nothing.
 
-#### V\_MOV\_B32
+#### V_MOV_B32
 **1**
 
 Move 32-bit data from a vector input into a vector register.
@@ -11894,7 +11890,7 @@ v_mov_b32 v0, -v1      // Set v0 to the negation of v1
 v_mov_b32 v0, abs(v1)  // Set v0 to the absolute value of v1
 ```
 
-#### V\_READFIRSTLANE\_B32
+#### V_READFIRSTLANE_B32
 **2**
 
 Read the scalar value in the lowest active lane of the input vector register and store it into a scalar register.
@@ -11927,7 +11923,7 @@ D0.b32 = VGPR[lane][SRC0.u32]
 
 Overrides EXEC mask for the VGPR read. Input and output modifiers not supported; this is an untyped operation.
 
-#### V\_CVT\_I32\_F64
+#### V_CVT_I32_F64
 **3**
 
 Convert from a double-precision float input to a signed 32-bit integer value and store the result into a vector register.
@@ -11942,7 +11938,7 @@ D0.i32 = f64_to_i32(S0.f64)
 
 Generation of the INEXACT exception is controlled by the CLAMP bit. INEXACT exceptions are enabled for this conversion iff CLAMP == 1.
 
-#### V\_CVT\_F64\_I32
+#### V_CVT_F64_I32
 **4**
 
 Convert from a signed 32-bit integer input to a double-precision float value and store the result into a vector register.
@@ -11955,7 +11951,7 @@ D0.f64 = i32_to_f64(S0.i32)
 
 0ULP accuracy.
 
-#### V\_CVT\_F32\_I32
+#### V_CVT_F32_I32
 **5**
 
 Convert from a signed 32-bit integer input to a single-precision float value and store the result into a vector register.
@@ -11968,7 +11964,7 @@ D0.f32 = i32_to_f32(S0.i32)
 
 0.5ULP accuracy.
 
-#### V\_CVT\_F32\_U32
+#### V_CVT_F32_U32
 **6**
 
 Convert from an unsigned 32-bit integer input to a single-precision float value and store the result into a vector register.
@@ -11981,7 +11977,7 @@ D0.f32 = u32_to_f32(S0.u32)
 
 0.5ULP accuracy.
 
-#### V\_CVT\_U32\_F32
+#### V_CVT_U32_F32
 **7**
 
 Convert from a single-precision float input to an unsigned 32-bit integer value and store the result into a vector register.
@@ -11996,7 +11992,7 @@ D0.u32 = f32_to_u32(S0.f32)
 
 Generation of the INEXACT exception is controlled by the CLAMP bit. INEXACT exceptions are enabled for this conversion iff CLAMP == 1.
 
-#### V\_CVT\_I32\_F32
+#### V_CVT_I32_F32
 **8**
 
 Convert from a single-precision float input to a signed 32-bit integer value and store the result into a vector register.
@@ -12011,7 +12007,7 @@ D0.i32 = f32_to_i32(S0.f32)
 
 Generation of the INEXACT exception is controlled by the CLAMP bit. INEXACT exceptions are enabled for this conversion iff CLAMP == 1.
 
-#### V\_CVT\_F16\_F32
+#### V_CVT_F16_F32
 **10**
 
 Convert from a single-precision float input to a half-precision float value and store the result into a vector register.
@@ -12024,7 +12020,7 @@ D0.f16 = f32_to_f16(S0.f32)
 
 0.5ULP accuracy, supports input modifiers and creates FP16 denormals when appropriate. Flush denorms on output if specified based on DP denorm mode. Output rounding based on DP rounding mode.
 
-#### V\_CVT\_F32\_F16
+#### V_CVT_F32_F16
 **11**
 
 Convert from a half-precision float input to a single-precision float value and store the result into a vector register.
@@ -12037,7 +12033,7 @@ D0.f32 = f16_to_f32(S0.f16)
 
 0ULP accuracy, FP16 denormal inputs are accepted. Flush denorms on input if specified based on DP denorm mode.
 
-#### V\_CVT\_NEAREST\_I32\_F32
+#### V_CVT_NEAREST_I32_F32
 **12**
 
 Convert from a single-precision float input to a signed 32-bit integer value using round to nearest integer semantics (ignore the default rounding mode) and store the result into a vector register.
@@ -12050,7 +12046,7 @@ D0.i32 = f32_to_i32(floor(S0.f32 + 0.5F))
 
 0.5ULP accuracy, denormals are supported.
 
-#### V\_CVT\_FLOOR\_I32\_F32
+#### V_CVT_FLOOR_I32_F32
 **13**
 
 Convert from a single-precision float input to a signed 32-bit integer value using round-down semantics (ignore the default rounding mode) and store the result into a vector register.
@@ -12063,7 +12059,7 @@ D0.i32 = f32_to_i32(floor(S0.f32))
 
 1ULP accuracy, denormals are supported.
 
-#### V\_CVT\_OFF\_F32\_I4
+#### V_CVT_OFF_F32_I4
 **14**
 
 Convert from a signed 4-bit integer input to a single-precision float value using an offset table and store the result into a vector register.
@@ -12094,7 +12090,7 @@ declare CVT_OFF_TABLE : 32'F[16];
 D0.f32 = CVT_OFF_TABLE[S0.u32[3 : 0]]
 ```
 
-#### V\_CVT\_F32\_F64
+#### V_CVT_F32_F64
 **15**
 
 Convert from a double-precision float input to a single-precision float value and store the result into a vector register.
@@ -12107,7 +12103,7 @@ D0.f32 = f64_to_f32(S0.f64)
 
 0.5ULP accuracy, denormals are supported.
 
-#### V\_CVT\_F64\_F32
+#### V_CVT_F64_F32
 **16**
 
 Convert from a single-precision float input to a double-precision float value and store the result into a vector register.
@@ -12120,7 +12116,7 @@ D0.f64 = f32_to_f64(S0.f32)
 
 0ULP accuracy, denormals are supported.
 
-#### V\_CVT\_F32\_UBYTE0
+#### V_CVT_F32_UBYTE0
 **17**
 
 Convert an unsigned byte in byte 0 of the input to a single-precision float value and store the result into a vector register.
@@ -12129,7 +12125,7 @@ Convert an unsigned byte in byte 0 of the input to a single-precision float valu
 D0.f32 = u32_to_f32(S0[7 : 0].u32)
 ```
 
-#### V\_CVT\_F32\_UBYTE1
+#### V_CVT_F32_UBYTE1
 **18**
 
 Convert an unsigned byte in byte 1 of the input to a single-precision float value and store the result into a vector register.
@@ -12138,7 +12134,7 @@ Convert an unsigned byte in byte 1 of the input to a single-precision float valu
 D0.f32 = u32_to_f32(S0[15 : 8].u32)
 ```
 
-#### V\_CVT\_F32\_UBYTE2
+#### V_CVT_F32_UBYTE2
 **19**
 
 Convert an unsigned byte in byte 2 of the input to a single-precision float value and store the result into a vector register.
@@ -12147,7 +12143,7 @@ Convert an unsigned byte in byte 2 of the input to a single-precision float valu
 D0.f32 = u32_to_f32(S0[23 : 16].u32)
 ```
 
-#### V\_CVT\_F32\_UBYTE3
+#### V_CVT_F32_UBYTE3
 **20**
 
 Convert an unsigned byte in byte 3 of the input to a single-precision float value and store the result into a vector register.
@@ -12156,7 +12152,7 @@ Convert an unsigned byte in byte 3 of the input to a single-precision float valu
 D0.f32 = u32_to_f32(S0[31 : 24].u32)
 ```
 
-#### V\_CVT\_U32\_F64
+#### V_CVT_U32_F64
 **21**
 
 Convert from a double-precision float input to an unsigned 32-bit integer value and store the result into a vector register.
@@ -12171,7 +12167,7 @@ D0.u32 = f64_to_u32(S0.f64)
 
 Generation of the INEXACT exception is controlled by the CLAMP bit. INEXACT exceptions are enabled for this conversion iff CLAMP == 1.
 
-#### V\_CVT\_F64\_U32
+#### V_CVT_F64_U32
 **22**
 
 Convert from an unsigned 32-bit integer input to a double-precision float value and store the result into a vector register.
@@ -12184,7 +12180,7 @@ D0.f64 = u32_to_f64(S0.u32)
 
 0ULP accuracy.
 
-#### V\_TRUNC\_F64
+#### V_TRUNC_F64
 **23**
 
 Compute the integer part of a double-precision float input using round toward zero semantics and store the result in floating point format into a vector register.
@@ -12193,7 +12189,7 @@ Compute the integer part of a double-precision float input using round toward ze
 D0.f64 = trunc(S0.f64)
 ```
 
-#### V\_CEIL\_F64
+#### V_CEIL_F64
 **24**
 
 Round the double-precision float input up to next integer and store the result in floating point format into a vector register.
@@ -12205,7 +12201,7 @@ if ((S0.f64 > 0.0) && (S0.f64 != D0.f64)) then
 endif
 ```
 
-#### V\_RNDNE\_F64
+#### V_RNDNE_F64
 **25**
 
 Round the double-precision float input to the nearest even integer and store the result in floating point format into a vector register.
@@ -12217,7 +12213,7 @@ if (isEven(floor(S0.f64)) && (fract(S0.f64) == 0.5)) then
 endif
 ```
 
-#### V\_FLOOR\_F64
+#### V_FLOOR_F64
 **26**
 
 Round the double-precision float input down to previous integer and store the result in floating point format into a vector register.
@@ -12229,12 +12225,12 @@ if ((S0.f64 < 0.0) && (S0.f64 != D0.f64)) then
 endif
 ```
 
-#### V\_PIPEFLUSH
+#### V_PIPEFLUSH
 **27**
 
 Flush the vector ALU pipeline through the destination cache.
 
-#### V\_MOV\_B16
+#### V_MOV_B16
 **28**
 
 Move 16-bit data from a vector input into a vector register.
@@ -12247,7 +12243,7 @@ D0.b16 = S0.b16
 
 Floating-point modifiers are valid for this instruction if S0 is a 16-bit floating point value. This instruction is suitable for negating or taking the absolute value of a floating-point value.
 
-#### V\_FRACT\_F32
+#### V_FRACT_F32
 **32**
 
 Compute the fractional portion of a single-precision float input and store the result in floating point format into a vector register.
@@ -12264,7 +12260,7 @@ This is intended to comply with the DX specification of `fract` where the functi
 
 Obey round mode, result clamped to 0x3f7fffff.
 
-#### V\_TRUNC\_F32
+#### V_TRUNC_F32
 **33**
 
 Compute the integer part of a single-precision float input using round toward zero semantics and store the result in floating point format into a vector register.
@@ -12273,7 +12269,7 @@ Compute the integer part of a single-precision float input using round toward ze
 D0.f32 = trunc(S0.f32)
 ```
 
-#### V\_CEIL\_F32
+#### V_CEIL_F32
 **34**
 
 Round the single-precision float input up to next integer and store the result in floating point format into a vector register.
@@ -12285,7 +12281,7 @@ if ((S0.f32 > 0.0F) && (S0.f32 != D0.f32)) then
 endif
 ```
 
-#### V\_RNDNE\_F32
+#### V_RNDNE_F32
 **35**
 
 Round the single-precision float input to the nearest even integer and store the result in floating point format into a vector register.
@@ -12297,7 +12293,7 @@ if (isEven(64'F(floor(S0.f32))) && (fract(S0.f32) == 0.5F)) then
 endif
 ```
 
-#### V\_FLOOR\_F32
+#### V_FLOOR_F32
 **36**
 
 Round the single-precision float input down to previous integer and store the result in floating point format into a vector register.
@@ -12309,7 +12305,7 @@ if ((S0.f32 < 0.0F) && (S0.f32 != D0.f32)) then
 endif
 ```
 
-#### V\_EXP\_F32
+#### V_EXP_F32
 **37**
 
 Calculate 2 raised to the power of the single-precision float input and store the result into a vector register.
@@ -12330,7 +12326,7 @@ V_EXP_F32(0x80000000) => 0x3f800000    // exp(-0.0) = 1
 V_EXP_F32(0x7f800000) => 0x7f800000    // exp(+INF) = +INF
 ```
 
-#### V\_LOG\_F32
+#### V_LOG_F32
 **39**
 
 Calculate the base 2 logarithm of the single-precision float input and store the result into a vector register.
@@ -12354,7 +12350,7 @@ V_LOG_F32(0x3f800000) => 0x00000000      // log(+1.0) = 0
 V_LOG_F32(0x7f800000) => 0x7f800000      // log(+INF) = +INF
 ```
 
-#### V\_RCP\_F32
+#### V_RCP_F32
 **42**
 
 Calculate the reciprocal of the single-precision float input using IEEE rules and store the result into a vector register.
@@ -12377,7 +12373,7 @@ V_RCP_F32(0x00000000) => 0x7f800000    // rcp(+0.0) = +INF
 V_RCP_F32(0x7f800000) => 0x00000000    // rcp(+INF) = +0
 ```
 
-#### V\_RCP\_IFLAG\_F32
+#### V_RCP_IFLAG_F32
 **43**
 
 Calculate the reciprocal of the vector float input in a manner suitable for integer division and store the result into a vector register. This opcode is intended for use as part of an integer division macro.
@@ -12389,7 +12385,7 @@ D0.f32 = 1.0F / S0.f32;
 
 **Notes**
 
-Can raise integer DIV\_BY\_ZERO exception but cannot raise floating-point exceptions. To be used in an integer reciprocal macro by the compiler with one of the sequences listed below (depending on signed or unsigned operation).
+Can raise integer DIV_BY_ZERO exception but cannot raise floating-point exceptions. To be used in an integer reciprocal macro by the compiler with one of the sequences listed below (depending on signed or unsigned operation).
 
 Unsigned usage:
 
@@ -12409,7 +12405,7 @@ MUL_F32 (2**31 - 1)
 CVT_I32_F32
 ```
 
-#### V\_RSQ\_F32
+#### V_RSQ_F32
 **46**
 
 Calculate the reciprocal of the square root of the single-precision float input using IEEE rules and store the result into a vector register.
@@ -12432,7 +12428,7 @@ V_RSQ_F32(0x408000000) => 0x3f0000000      // rsq(+4.0) = +0.5
 V_RSQ_F32(0x7f8000000) => 0x000000000      // rsq(+INF) = +0
 ```
 
-#### V\_RCP\_F64
+#### V_RCP_F64
 **47**
 
 Calculate the reciprocal of the double-precision float input using IEEE rules and store the result into a vector register.
@@ -12445,7 +12441,7 @@ D0.f64 = 1.0 / S0.f64
 
 This opcode has (2**29) ULP accuracy and supports denormals.
 
-#### V\_RSQ\_F64
+#### V_RSQ_F64
 **49**
 
 Calculate the reciprocal of the square root of the double-precision float input using IEEE rules and store the result into a vector register.
@@ -12458,7 +12454,7 @@ D0.f64 = 1.0 / sqrt(S0.f64)
 
 This opcode has (2**29) ULP accuracy and supports denormals.
 
-#### V\_SQRT\_F32
+#### V_SQRT_F32
 **51**
 
 Calculate the square root of the single-precision float input using IEEE rules and store the result into a vector register.
@@ -12481,7 +12477,7 @@ V_SQRT_F32(0x40800000) => 0x40000000    // sqrt(+4.0) = +2.0
 V_SQRT_F32(0x7f800000) => 0x7f800000    // sqrt(+INF) = +INF
 ```
 
-#### V\_SQRT\_F64
+#### V_SQRT_F64
 **52**
 
 Calculate the square root of the double-precision float input using IEEE rules and store the result into a vector register.
@@ -12494,7 +12490,7 @@ D0.f64 = sqrt(S0.f64)
 
 This opcode has (2**29) ULP accuracy and supports denormals.
 
-#### V\_SIN\_F32
+#### V_SIN_F32
 **53**
 
 Calculate the trigonometric sine of a single-precision float value using IEEE rules and store the result into a vector register. The operand is calculated by scaling the vector input by 2 PI.
@@ -12517,7 +12513,7 @@ V_SIN_F32(0x3e800000) => 0x3f800000    // sin(0.25) = 1
 V_SIN_F32(0x7f800000) => 0xffc00000    // sin(+INF) = NAN
 ```
 
-#### V\_COS\_F32
+#### V_COS_F32
 **54**
 
 Calculate the trigonometric cosine of a single-precision float value using IEEE rules and store the result into a vector register. The operand is calculated by scaling the vector input by 2 PI.
@@ -12540,7 +12536,7 @@ V_COS_F32(0x3e800000) => 0x00000000    // cos(0.25) = 0
 V_COS_F32(0x7f800000) => 0xffc00000    // cos(+INF) = NAN
 ```
 
-#### V\_NOT\_B32
+#### V_NOT_B32
 **55**
 
 Calculate bitwise negation on a vector input and store the result into a vector register.
@@ -12553,7 +12549,7 @@ D0.u32 = ~S0.u32
 
 Input and output modifiers not supported.
 
-#### V\_BFREV\_B32
+#### V_BFREV_B32
 **56**
 
 Reverse the order of bits in a vector input and store the result into a vector register.
@@ -12566,7 +12562,7 @@ D0.u32[31 : 0] = S0.u32[0 : 31]
 
 Input and output modifiers not supported.
 
-#### V\_CLZ\_I32\_U32
+#### V_CLZ_I32_U32
 **57**
 
 Count the number of leading "0" bits before the first "1" in a vector input and store the result into a vector register. Store -1 if there are no "1" bits.
@@ -12585,7 +12581,7 @@ endfor
 
 **Notes**
 
-Compare with S\_CLZ\_I32\_U32, which performs the equivalent operation in the scalar ALU.
+Compare with S_CLZ_I32_U32, which performs the equivalent operation in the scalar ALU.
 
 Functional examples:
 
@@ -12597,7 +12593,7 @@ V_CLZ_I32_U32(0x0000ffff) => 16
 V_CLZ_I32_U32(0x00000001) => 31
 ```
 
-#### V\_CTZ\_I32\_B32
+#### V_CTZ_I32_B32
 **58**
 
 Count the number of trailing "0" bits before the first "1" in a vector input and store the result into a vector register. Store -1 if there are no "1" bits in the input.
@@ -12616,7 +12612,7 @@ endfor
 
 **Notes**
 
-Compare with S\_CTZ\_I32\_B32, which performs the equivalent operation in the scalar ALU.
+Compare with S_CTZ_I32_B32, which performs the equivalent operation in the scalar ALU.
 
 Functional examples:
 
@@ -12628,7 +12624,7 @@ V_CTZ_I32_B32(0xffff0000) => 16
 V_CTZ_I32_B32(0x80000000) => 31
 ```
 
-#### V\_CLS\_I32
+#### V_CLS_I32
 **59**
 
 Count the number of leading bits that are the same as the sign bit of a vector input and store the result into a vector register. Store -1 if all input bits are the same.
@@ -12647,7 +12643,7 @@ endfor
 
 **Notes**
 
-Compare with S\_CLS\_I32, which performs the equivalent operation in the scalar ALU.
+Compare with S_CLS_I32, which performs the equivalent operation in the scalar ALU.
 
 Functional examples:
 
@@ -12661,7 +12657,7 @@ V_CLS_I32(0xfffffffff) => 31
 V_CLS_I32(0xfffffffff) => 0xffffffff
 ```
 
-#### V\_FREXP\_EXP\_I32\_F64
+#### V_FREXP_EXP_I32_F64
 **60**
 
 Extract the exponent of a double-precision float input and store the result as a signed 32-bit integer into a vector register.
@@ -12676,9 +12672,9 @@ endif
 
 **Notes**
 
-This operation satisfies the invariant $S0.f64 = \text{significand} \times (2^{\text{exponent}})$. See also V\_FREXP\_MANT\_F64, which returns the significand. See the C library function `frexp()` for more information.
+This operation satisfies the invariant $S0.f64 = \text{significand} \times (2^{\text{exponent}})$. See also V_FREXP_MANT_F64, which returns the significand. See the C library function `frexp()` for more information.
 
-#### V\_FREXP\_MANT\_F64
+#### V_FREXP_MANT_F64
 **61**
 
 Extract the binary significand, or mantissa, of a double-precision float input and store the result as a double-precision float into a vector register.
@@ -12693,9 +12689,9 @@ endif
 
 **Notes**
 
-This operation satisfies the invariant $S0.f64 = \text{significand} \times (2^{\text{exponent}})$. Result range is in $(-1.0, -0.5\] \cup \[0.5, 1.0)$ in normal cases. See also V\_FREXP\_EXP\_I32\_F64, which returns integer exponent. See the C library function `frexp()` for more information.
+This operation satisfies the invariant $S0.f64 = \text{significand} \times (2^{\text{exponent}})$. Result range is in $(-1.0, -0.5\] \cup \[0.5, 1.0)$ in normal cases. See also V_FREXP_EXP_I32_F64, which returns integer exponent. See the C library function `frexp()` for more information.
 
-#### V\_FRACT\_F64
+#### V_FRACT_F64
 **62**
 
 Compute the fractional portion of a double-precision float input and store the result in floating point format into a vector register.
@@ -12712,7 +12708,7 @@ This is intended to comply with the DX specification of `fract` where the functi
 
 Obey round mode, result clamped to 0x3fefffffffffff.
 
-#### V\_FREXP\_EXP\_I32\_F32
+#### V_FREXP_EXP_I32_F32
 **63**
 
 Extract the exponent of a single-precision float input and store the result as a signed 32-bit integer into a vector register.
@@ -12729,7 +12725,7 @@ endif
 
 This operation satisfies the invariant $S0.f32 = \text{significand} \times (2^{\text{exponent}})$. See also `V_FREXP_MANT_F32`, which returns the significand. See the C library function `frexp()` for more information.
 
-#### V\_FREXP\_MANT\_F32
+#### V_FREXP_MANT_F32
 **64**
 
 Extract the binary significand, or mantissa, of a single-precision float input and store the result as a single-precision float into a vector register.
@@ -12746,7 +12742,7 @@ endif
 
 This operation satisfies the invariant $S0.f32 = \text{significand} \times (2^{\text{exponent}})$. Result range is in $(-1.0, -0.5\] \cup \[0.5, 1.0)$ in normal cases. See also `V_FREXP_EXP_I32_F32`, which returns integer exponent. See the C library function `frexp()` for more information.
 
-#### V\_MOVRELD\_B32
+#### V_MOVRELD_B32
 **66**
 
 Move data from a vector input into a relatively-indexed vector register.
@@ -12767,7 +12763,7 @@ s_mov_b32 m0, 10
 v_movreld_b32 v5, v7
 ```
 
-#### V\_MOVRELS\_B32
+#### V_MOVRELS_B32
 **67**
 
 Move data from a relatively-indexed vector register into another vector register.
@@ -12788,7 +12784,7 @@ s_mov_b32 m0, 10
 v_movrels_b32 v5, v7
 ```
 
-#### V\_MOVRELSD\_B32
+#### V_MOVRELSD_B32
 **68**
 
 Move data from a relatively-indexed vector register into another relatively-indexed vector register.
@@ -12811,7 +12807,7 @@ s_mov_b32 m0, 10
 v_movrelsd_b32 v5, v7
 ```
 
-#### V\_MOVRELSD\_2\_B32
+#### V_MOVRELSD_2_B32
 **72**
 
 Move data from a relatively-indexed vector register into another relatively-indexed vector register, using different offsets for each index.
@@ -12835,7 +12831,7 @@ s_mov_b32 m0, ((20 << 16) | 10)
 v_movrelsd_2_b32 v5, v7
 ```
 
-#### V\_CVT\_F16\_U16
+#### V_CVT_F16_U16
 **80**
 
 Convert from an unsigned 16-bit integer input to a half-precision float value and store the result into a vector register.
@@ -12848,7 +12844,7 @@ D0.f16 = u16_to_f16(S0.u16)
 
 0.5ULP accuracy, supports denormals, rounding, exception flags and saturation.
 
-#### V\_CVT\_F16\_I16
+#### V_CVT_F16_I16
 **81**
 
 Convert from a signed 16-bit integer input to a half-precision float value and store the result into a vector register.
@@ -12861,7 +12857,7 @@ D0.f16 = i16_to_f16(S0.i16)
 
 0.5ULP accuracy, supports denormals, rounding, exception flags and saturation.
 
-#### V\_CVT\_U16\_F16
+#### V_CVT_U16_F16
 **82**
 
 Convert from a half-precision float input to an unsigned 16-bit integer value and store the result into a vector register.
@@ -12876,7 +12872,7 @@ D0.u16 = f16_to_u16(S0.f16)
 
 Generation of the INEXACT exception is controlled by the CLAMP bit. INEXACT exceptions are enabled for this conversion iff CLAMP == 1.
 
-#### V\_CVT\_I16\_F16
+#### V_CVT_I16_F16
 **83**
 
 Convert from a half-precision float input to a signed 16-bit integer value and store the result into a vector register.
@@ -12891,7 +12887,7 @@ D0.i16 = f16_to_i16(S0.f16)
 
 Generation of the INEXACT exception is controlled by the CLAMP bit. INEXACT exceptions are enabled for this conversion iff CLAMP == 1.
 
-#### V\_RCP\_F16
+#### V_RCP_F16
 **84**
 
 Calculate the reciprocal of the half-precision float input using IEEE rules and store the result into a vector register.
@@ -12914,7 +12910,7 @@ V_RCP_F16(0x0000) => 0x7c00    // rcp(+0.0) = +INF
 V_RCP_F16(0x7c00) => 0x0000    // rcp(+INF) = +0
 ```
 
-#### V\_SQRT\_F16
+#### V_SQRT_F16
 **85**
 
 Calculate the square root of the half-precision float input using IEEE rules and store the result into a vector register.
@@ -12937,7 +12933,7 @@ V_SQRT_F16(0x4400) => 0x4000    // sqrt(+4.0) = +2.0
 V_SQRT_F16(0x7c00) => 0x7c00    // sqrt(+INF) = +INF
 ```
 
-#### V\_RSQ\_F16
+#### V_RSQ_F16
 **86**
 
 Calculate the reciprocal of the square root of the half-precision float input using IEEE rules and store the result into a vector register.
@@ -12960,7 +12956,7 @@ V_RSQ_F16(0x4400) => 0x3800    // rsq(+4.0) = +0.5
 V_RSQ_F16(0x7c00) => 0x0000    // rsq(+INF) = +0
 ```
 
-#### V\_LOG\_F16
+#### V_LOG_F16
 **87**
 
 Calculate the base 2 logarithm of the half-precision float input and store the result into a vector register.
@@ -12984,7 +12980,7 @@ V_LOG_F16(0x3c00) => 0x0000    // log(+1.0) = 0
 V_LOG_F16(0x7c00) => 0x7c00    // log(+INF) = +INF
 ```
 
-#### V\_EXP\_F16
+#### V_EXP_F16
 **88**
 
 Calculate 2 raised to the power of the half-precision float input and store the result into a vector register.
@@ -13005,7 +13001,7 @@ V_EXP_F16(0x8000) => 0x3c00    // exp(-0.0) = 1
 V_EXP_F16(0x7c00) => 0x7c00    // exp(+INF) = +INF
 ```
 
-#### V\_FREXP\_MANT\_F16
+#### V_FREXP_MANT_F16
 **89**
 
 Extract the binary significand, or mantissa, of a half-precision float input and store the result as a half-precision float into a vector register.
@@ -13020,9 +13016,9 @@ endif
 
 **Notes**
 
-This operation satisfies the invariant $S0.f16 = \text{significand} \times (2^{\text{exponent}})$. Result range is in $(-1.0, -0.5\] \cup \[0.5, 1.0)$ in normal cases. See also V\_FREXP\_EXP\_I16\_F16, which returns integer exponent. See the C library function `frexp()` for more information.
+This operation satisfies the invariant $S0.f16 = \text{significand} \times (2^{\text{exponent}})$. Result range is in $(-1.0, -0.5\] \cup \[0.5, 1.0)$ in normal cases. See also V_FREXP_EXP_I16_F16, which returns integer exponent. See the C library function `frexp()` for more information.
 
-#### V\_FREXP\_EXP\_I16\_F16
+#### V_FREXP_EXP_I16_F16
 **90**
 
 Extract the exponent of a half-precision float input and store the result as a signed 16-bit integer into a vector register.
@@ -13037,9 +13033,9 @@ endif
 
 **Notes**
 
-This operation satisfies the invariant $S0.f16 = \text{significand} \times (2^{\text{exponent}})$. See also V\_FREXP\_MANT\_F16, which returns the significand. See the C library function `frexp()` for more information.
+This operation satisfies the invariant $S0.f16 = \text{significand} \times (2^{\text{exponent}})$. See also V_FREXP_MANT_F16, which returns the significand. See the C library function `frexp()` for more information.
 
-#### V\_FLOOR\_F16
+#### V_FLOOR_F16
 **91**
 
 Round the half-precision float input down to previous integer and store the result in floating point format into a vector register.
@@ -13051,7 +13047,7 @@ if ((S0.f16 < 16'0.0) && (S0.f16 != D0.f16)) then
 endif
 ```
 
-#### V\_CEIL\_F16
+#### V_CEIL_F16
 **92**
 
 Round the half-precision float input up to next integer and store the result in floating point format into a vector register.
@@ -13063,7 +13059,7 @@ if ((S0.f16 > 16'0.0) && (S0.f16 != D0.f16)) then
 endif
 ```
 
-#### V\_TRUNC\_F16
+#### V_TRUNC_F16
 **93**
 
 Compute the integer part of a half-precision float input using round toward zero semantics and store the result in floating point format into a vector register.
@@ -13072,7 +13068,7 @@ Compute the integer part of a half-precision float input using round toward zero
 D0.f16 = trunc(S0.f16)
 ```
 
-#### V\_RNDNE\_F16
+#### V_RNDNE_F16
 **94**
 
 Round the half-precision float input to the nearest even integer and store the result in floating point format into a vector register.
@@ -13084,7 +13080,7 @@ if (isEven(64'F(floor(S0.f16))) && (fract(S0.f16) == 16'0.5)) then
 endif
 ```
 
-#### V\_FRACT\_F16
+#### V_FRACT_F16
 **95**
 
 Compute the fractional portion of a half-precision float input and store the result in floating point format into a vector register.
@@ -13099,7 +13095,7 @@ D0.f16 = S0.f16 + -floor(S0.f16)
 
 This is intended to comply with the DX specification of `fract` where the function behaves like an extension of integer modulus; be aware this may differ from how `fract()` is defined in other domains. For example: `fract(-1.2) = 0.8` in DX.
 
-#### V\_SIN\_F16
+#### V_SIN_F16
 **96**
 
 Calculate the trigonometric sine of a half-precision float value using IEEE rules and store the result into a vector register. The operand is calculated by scaling the vector input by 2 PI.
@@ -13123,7 +13119,7 @@ V_SIN_F16(0x7bff) => 0x0000    // Most positive finite FP16
 V_SIN_F16(0x7c00) => 0xfe00    // sin(+INF) = NAN
 ```
 
-#### V\_COS\_F16
+#### V_COS_F16
 **97**
 
 Calculate the trigonometric cosine of a half-precision float value using IEEE rules and store the result into a vector register. The operand is calculated by scaling the vector input by 2 PI.
@@ -13147,7 +13143,7 @@ V_COS_F16(0x7bff) => 0x3c00    // Most positive finite FP16
 V_COS_F16(0x7c00) => 0xfe00    // cos(+INF) = NAN
 ```
 
-#### V\_SAT\_PK\_U8\_I16
+#### V_SAT_PK_U8_I16
 **98**
 
 Given two 16-bit signed integer inputs, saturate each input over an 8-bit unsigned range, pack the resulting values into a 16-bit word and store the result into a vector register.
@@ -13168,7 +13164,7 @@ D0.b16 = { SAT8(S0[31 : 16].i16), SAT8(S0[15 : 0].i16) }
 
 Used for 4x16bit data packed as 4x8bit data.
 
-#### V\_CVT\_NORM\_I16\_F16
+#### V_CVT_NORM_I16_F16
 **99**
 
 Convert from a half-precision float input to a signed normalized short and store the result into a vector register.
@@ -13181,7 +13177,7 @@ D0.i16 = f16_to_snorm(S0.f16)
 
 0.5ULP accuracy, supports rounding, exception flags and saturation, denormals are supported.
 
-#### V\_CVT\_NORM\_U16\_F16
+#### V_CVT_NORM_U16_F16
 **100**
 
 Convert from a half-precision float input to an unsigned normalized short and store the result into a vector register.
@@ -13194,7 +13190,7 @@ D0.u16 = f16_to_unorm(S0.f16)
 
 0.5ULP accuracy, supports rounding, exception flags and saturation, denormals are supported.
 
-#### V\_SWAP\_B32
+#### V_SWAP_B32
 **101**
 
 Swap the values in two vector registers.
@@ -13209,7 +13205,7 @@ S0.b32 = tmp
 
 Input and output modifiers not supported; this is an untyped operation.
 
-#### V\_SWAP\_B16
+#### V_SWAP_B16
 **102**
 
 Swap the values in two vector registers.
@@ -13224,7 +13220,7 @@ S0.b16 = tmp
 
 Input and output modifiers not supported; this is an untyped operation.
 
-#### V\_PERMLANE64\_B32
+#### V_PERMLANE64_B32
 **103**
 
 Perform a specific permutation across lanes where the high half and low half of a wave64 are swapped. Performs no operation in wave32 mode.
@@ -13252,7 +13248,7 @@ endif
 
 **Notes**
 
-In wave32 mode this opcode is translated to V\_NOP and performs no writes.
+In wave32 mode this opcode is translated to V_NOP and performs no writes.
 
 In wave64 the EXEC mask of the destination lane is used as the read mask for the alternate lane; as a result this opcode may read values from disabled lanes.
 
@@ -13260,7 +13256,7 @@ The source must be a VGPR and SVGPRs are not allowed for this opcode.
 
 ABS, NEG and OMOD modifiers should all be zeroed for this instruction.
 
-#### V\_SWAPREL\_B32
+#### V_SWAPREL_B32
 **104**
 
 Swap the values in two relatively-indexed vector registers.
@@ -13288,7 +13284,7 @@ s_mov_b32 m0, ((20 << 16) | 10)
 v_swaprel_b32 v5, v7
 ```
 
-#### V\_NOT\_B16
+#### V_NOT_B16
 **105**
 
 Calculate bitwise negation on a vector input and store the result into a vector register.
@@ -13301,7 +13297,7 @@ D0.u16 = ~S0.u16
 
 Input and output modifiers not supported.
 
-#### V\_CVT\_I32\_I16
+#### V_CVT_I32_I16
 **106**
 
 Convert from a signed 16-bit integer input to a signed 32-bit integer value using sign extension and store the result into a vector register.
@@ -13312,9 +13308,9 @@ D0.i32 = 32'I(signext(S0.i16))
 
 **Notes**
 
-To convert in the other direction (from 32-bit to 16-bit integer) use V\_MOV\_B16.
+To convert in the other direction (from 32-bit to 16-bit integer) use V_MOV_B16.
 
-#### V\_CVT\_U32\_U16
+#### V_CVT_U32_U16
 **107**
 
 Convert from an unsigned 16-bit integer input to an unsigned 32-bit integer value using zero extension and store the result into a vector register.
@@ -13325,7 +13321,7 @@ D0 = { 16'0, S0.u16 }
 
 **Notes**
 
-To convert in the other direction (from 32-bit to 16-bit integer) use V\_MOV\_B16.
+To convert in the other direction (from 32-bit to 16-bit integer) use V_MOV_B16.
 
 ## 16.8.1. VOP1 using VOP3 encoding
 
@@ -13412,14 +13408,14 @@ Table 112. Float Compare Operations
 
 Table 113. Instructions with Sixteen Compare Operations
 
-| Instruction           | Description                            | Hex Range    |
-|-----------------------|----------------------------------------|--------------|
-| V\_CMP\_{COMPF}\_F16  | 16-bit float compare. Writes VCC/SGPR. | 0x20 to 0x2F |
-| V\_CMPX\_{COMPF}\_F16 | 16-bit float compare. Writes EXEC.     | 0x30 to 0x3F |
-| V\_CMP\_{COMPF}\_F32  | 32-bit float compare. Writes VCC/SGPR. | 0x40 to 0x4F |
-| V\_CMPX\_{COMPF}\_F32 | 32-bit float compare. Writes EXEC.     | 0x50 to 0x5F |
-| V\_CMP\_{COMPF}\_F64  | 64-bit float compare. Writes VCC/SGPR. | 0x60 to 0x6F |
-| V\_CMPX\_{COMPF}\_F64 | 64-bit float compare. Writes EXEC.     | 0x70 to 0x7F |
+| Instruction        | Description                            | Hex Range    |
+|--------------------|----------------------------------------|--------------|
+| V_CMP_{COMPF}_F16  | 16-bit float compare. Writes VCC/SGPR. | 0x20 to 0x2F |
+| V_CMPX_{COMPF}_F16 | 16-bit float compare. Writes EXEC.     | 0x30 to 0x3F |
+| V_CMP_{COMPF}_F32  | 32-bit float compare. Writes VCC/SGPR. | 0x40 to 0x4F |
+| V_CMPX_{COMPF}_F32 | 32-bit float compare. Writes EXEC.     | 0x50 to 0x5F |
+| V_CMP_{COMPF}_F64  | 64-bit float compare. Writes VCC/SGPR. | 0x60 to 0x6F |
+| V_CMPX_{COMPF}_F64 | 64-bit float compare. Writes EXEC.     | 0x70 to 0x7F |
 
 Table 114. Integer Compare Operations
 
@@ -13436,22 +13432,22 @@ Table 114. Integer Compare Operations
 
 Table 115. Instructions with Eight Compare Operations
 
-| Instruction           | Description                                       | Hex Range   |
-|-----------------------|---------------------------------------------------|-------------|
-| V\_CMP\_{COMPI}\_I16  | 16-bit signed integer compare. Writes VCC/SGPR.   | 0xA0 - 0xA7 |
-| V\_CMP\_{COMPI}\_U16  | 16-bit unsigned integer compare. Writes VCC/SGPR. | 0xA8 - 0xAF |
-| V\_CMPX\_{COMPI}\_I16 | 16-bit signed integer compare. Writes EXEC.       | 0xB0 - 0xB7 |
-| V\_CMPX\_{COMPI}\_U16 | 16-bit unsigned integer compare. Writes EXEC.     | 0xB8 - 0xBF |
-| V\_CMP\_{COMPI}\_I32  | 32-bit signed integer compare. Writes VCC/SGPR.   | 0xC0 - 0xC7 |
-| V\_CMP\_{COMPI}\_U32  | 32-bit unsigned integer compare. Writes VCC/SGPR. | 0xC8 - 0xCF |
-| V\_CMPX\_{COMPI}\_I32 | 32-bit signed integer compare. Writes EXEC.       | 0xD0 - 0xD7 |
-| V\_CMPX\_{COMPI}\_U32 | 32-bit unsigned integer compare. Writes EXEC.     | 0xD8 - 0xDF |
-| V\_CMP\_{COMPI}\_I64  | 64-bit signed integer compare. Writes VCC/SGPR.   | 0xE0 - 0xE7 |
-| V\_CMP\_{COMPI}\_U64  | 64-bit unsigned integer compare. Writes VCC/SGPR. | 0xE8 - 0xEF |
-| V\_CMPX\_{COMPI}\_I64 | 64-bit signed integer compare. Writes EXEC.       | 0xF0 - 0xF7 |
-| V\_CMPX\_{COMPI}\_U64 | 64-bit unsigned integer compare. Writes EXEC.     | 0xF8 - 0xFF |
+| Instruction        | Description                                       | Hex Range   |
+|--------------------|---------------------------------------------------|-------------|
+| V_CMP_{COMPI}_I16  | 16-bit signed integer compare. Writes VCC/SGPR.   | 0xA0 - 0xA7 |
+| V_CMP_{COMPI}_U16  | 16-bit unsigned integer compare. Writes VCC/SGPR. | 0xA8 - 0xAF |
+| V_CMPX_{COMPI}_I16 | 16-bit signed integer compare. Writes EXEC.       | 0xB0 - 0xB7 |
+| V_CMPX_{COMPI}_U16 | 16-bit unsigned integer compare. Writes EXEC.     | 0xB8 - 0xBF |
+| V_CMP_{COMPI}_I32  | 32-bit signed integer compare. Writes VCC/SGPR.   | 0xC0 - 0xC7 |
+| V_CMP_{COMPI}_U32  | 32-bit unsigned integer compare. Writes VCC/SGPR. | 0xC8 - 0xCF |
+| V_CMPX_{COMPI}_I32 | 32-bit signed integer compare. Writes EXEC.       | 0xD0 - 0xD7 |
+| V_CMPX_{COMPI}_U32 | 32-bit unsigned integer compare. Writes EXEC.     | 0xD8 - 0xDF |
+| V_CMP_{COMPI}_I64  | 64-bit signed integer compare. Writes VCC/SGPR.   | 0xE0 - 0xE7 |
+| V_CMP_{COMPI}_U64  | 64-bit unsigned integer compare. Writes VCC/SGPR. | 0xE8 - 0xEF |
+| V_CMPX_{COMPI}_I64 | 64-bit signed integer compare. Writes EXEC.       | 0xF0 - 0xF7 |
+| V_CMPX_{COMPI}_U64 | 64-bit unsigned integer compare. Writes EXEC.     | 0xF8 - 0xFF |
 
-#### V\_CMP\_F\_F16
+#### V_CMP_F_F16
 **0**
 
 Set the per-lane condition code to 0. Store the result into VCC or a scalar register.
@@ -13465,7 +13461,7 @@ D0.u64[laneId] = 1'0U;
 
 Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
 
-#### V\_CMP\_LT\_F16
+#### V_CMP_LT_F16
 **1**
 
 Set the per-lane condition code to 1 iff the first input is less than the second input. Store the result into VCC or a scalar register.
@@ -13479,7 +13475,7 @@ D0.u64[laneId] = S0.f16 < S1.f16;
 
 Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
 
-#### V\_CMP\_EQ\_F16
+#### V_CMP_EQ_F16
 **2**
 
 Set the per-lane condition code to 1 iff the first input is equal to the second input. Store the result into VCC or a scalar register.
@@ -13493,7 +13489,7 @@ D0.u64[laneId] = S0.f16 == S1.f16;
 
 Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
 
-#### V\_CMP\_LE\_F16
+#### V_CMP_LE_F16
 **3**
 
 Set the per-lane condition code to 1 iff the first input is less than or equal to the second input. Store the result into VCC or a scalar register.
@@ -13507,7 +13503,7 @@ D0.u64[laneId] = S0.f16 <= S1.f16;
 
 Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
 
-#### V\_CMP\_GT\_F16
+#### V_CMP_GT_F16
 **4**
 
 Set the per-lane condition code to 1 iff the first input is greater than the second input. Store the result into VCC or a scalar register.
@@ -13521,7 +13517,7 @@ D0.u64[laneId] = S0.f16 > S1.f16;
 
 Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
 
-#### V\_CMP\_LG\_F16
+#### V_CMP_LG_F16
 **5**
 
 Set the per-lane condition code to 1 iff the first input is less than or greater than the second input. Store the result into VCC or a scalar register.
@@ -13535,7 +13531,7 @@ D0.u64[laneId] = S0.f16 <> S1.f16;
 
 Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
 
-#### V\_CMP\_GE\_F16
+#### V_CMP_GE_F16
 **6**
 
 Set the per-lane condition code to 1 iff the first input is greater than or equal to the second input. Store the result into VCC or a scalar register.
@@ -13549,7 +13545,7 @@ D0.u64[laneId] = S0.f16 >= S1.f16;
 
 Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
 
-#### V\_CMP\_O\_F16
+#### V_CMP_O_F16
 **7**
 
 Set the per-lane condition code to 1 iff the first input is orderable to the second input. Store the result into VCC or a scalar register.
@@ -13563,7 +13559,7 @@ D0.u64[laneId] = (!isNAN(64'F(S0.f16)) && !isNAN(64'F(S1.f16)));
 
 Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
 
-#### V\_CMP\_U\_F16
+#### V_CMP_U_F16
 **8**
 
 Set the per-lane condition code to 1 iff the first input is not orderable to the second input. Store the result into VCC or a scalar register.
@@ -13577,7 +13573,7 @@ D0.u64[laneId] = (isNAN(64'F(S0.f16)) || isNAN(64'F(S1.f16)));
 
 Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
 
-#### V\_CMP\_NGE\_F16
+#### V_CMP_NGE_F16
 **9**
 
 Set the per-lane condition code to 1 iff the first input is not greater than or equal to the second input. Store the result into VCC or a scalar register.
@@ -13592,7 +13588,7 @@ D0.u64[laneId] = !(S0.f16 >= S1.f16);
 
 Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
 
-#### V\_CMP\_NLG\_F16
+#### V_CMP_NLG_F16
 **10**
 
 Set the per-lane condition code to 1 iff the first input is not less than or greater than the second input. Store the result into VCC or a scalar register.
@@ -13607,7 +13603,7 @@ D0.u64[laneId] = !(S0.f16 <> S1.f16);
 
 Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
 
-#### V\_CMP\_NGT\_F16
+#### V_CMP_NGT_F16
 **11**
 
 Set the per-lane condition code to 1 iff the first input is not greater than the second input. Store the result into VCC or a scalar register.
@@ -13622,7 +13618,7 @@ D0.u64[laneId] = !(S0.f16 > S1.f16);
 
 Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
 
-#### V\_CMP\_NLE\_F16
+#### V_CMP_NLE_F16
 **12**
 
 Set the per-lane condition code to 1 iff the first input is not less than or equal to the second input. Store the result into VCC or a scalar register.
@@ -13637,7 +13633,7 @@ D0.u64[laneId] = !(S0.f16 <= S1.f16);
 
 Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
 
-#### V\_CMP\_NEQ\_F16
+#### V_CMP_NEQ_F16
 **13**
 
 Set the per-lane condition code to 1 iff the first input is not equal to the second input. Store the result into VCC or a scalar register.
@@ -13652,7 +13648,7 @@ D0.u64[laneId] = !(S0.f16 == S1.f16);
 
 Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
 
-#### V\_CMP\_NLT\_F16
+#### V_CMP_NLT_F16
 **14**
 
 Set the per-lane condition code to 1 iff the first input is not less than the second input. Store the result into VCC or a scalar register.
@@ -13667,7 +13663,7 @@ D0.u64[laneId] = !(S0.f16 < S1.f16);
 
 Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
 
-#### V\_CMP\_T\_F16
+#### V_CMP_T_F16
 **15**
 
 Set the per-lane condition code to 1. Store the result into VCC or a scalar register.
@@ -13681,7 +13677,7 @@ D0.u64[laneId] = 1'1U;
 
 Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
 
-#### V\_CMP\_F\_F32
+#### V_CMP_F_F32
 **16**
 
 Set the per-lane condition code to 0. Store the result into VCC or a scalar register.
@@ -13695,7 +13691,7 @@ D0.u64[laneId] = 1'0U;
 
 Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
 
-#### V\_CMP\_LT\_F32
+#### V_CMP_LT_F32
 **17**
 
 Set the per-lane condition code to 1 iff the first input is less than the second input. Store the result into VCC or a scalar register.
@@ -13709,7 +13705,7 @@ D0.u64[laneId] = S0.f32 < S1.f32;
 
 Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
 
-#### V\_CMP\_EQ\_F32
+#### V_CMP_EQ_F32
 **18**
 
 Set the per-lane condition code to 1 iff the first input is equal to the second input. Store the result into VCC or a scalar register.
@@ -13723,7 +13719,7 @@ D0.u64[laneId] = S0.f32 == S1.f32;
 
 Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
 
-#### V\_CMP\_LE\_F32
+#### V_CMP_LE_F32
 **19**
 
 Set the per-lane condition code to 1 iff the first input is less than or equal to the second input. Store the result into VCC or a scalar register.
@@ -13737,7 +13733,7 @@ D0.u64[laneId] = S0.f32 <= S1.f32;
 
 Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
 
-#### V\_CMP\_GT\_F32
+#### V_CMP_GT_F32
 **20**
 
 Set the per-lane condition code to 1 iff the first input is greater than the second input. Store the result into VCC or a scalar register.
@@ -13751,7 +13747,7 @@ D0.u64[laneId] = S0.f32 > S1.f32;
 
 Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
 
-#### V\_CMP\_LG\_F32
+#### V_CMP_LG_F32
 **21**
 
 Set the per-lane condition code to 1 iff the first input is less than or greater than the second input. Store the result into VCC or a scalar register.
@@ -13765,7 +13761,7 @@ D0.u64[laneId] = S0.f32 <> S1.f32;
 
 Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
 
-#### V\_CMP\_GE\_F32
+#### V_CMP_GE_F32
 **22**
 
 Set the per-lane condition code to 1 iff the first input is greater than or equal to the second input. Store the result into VCC or a scalar register.
@@ -13779,7 +13775,7 @@ D0.u64[laneId] = S0.f32 >= S1.f32;
 
 Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
 
-#### V\_CMP\_O\_F32
+#### V_CMP_O_F32
 **23**
 
 Set the per-lane condition code to 1 iff the first input is orderable to the second input. Store the result into VCC or a scalar register.
@@ -13793,7 +13789,7 @@ D0.u64[laneId] = (!isNAN(64'F(S0.f32)) && !isNAN(64'F(S1.f32)));
 
 Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
 
-#### V\_CMP\_U\_F32
+#### V_CMP_U_F32
 **24**
 
 Set the per-lane condition code to 1 iff the first input is not orderable to the second input. Store the result into VCC or a scalar register.
@@ -13807,7 +13803,7 @@ D0.u64[laneId] = (isNAN(64'F(S0.f32)) || isNAN(64'F(S1.f32)));
 
 Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
 
-#### V\_CMP\_NGE\_F32
+#### V_CMP_NGE_F32
 **25**
 
 Set the per-lane condition code to 1 iff the first input is not greater than or equal to the second input. Store the result into VCC or a scalar register.
@@ -13822,7 +13818,7 @@ D0.u64[laneId] = !(S0.f32 >= S1.f32);
 
 Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
 
-#### V\_CMP\_NLG\_F32
+#### V_CMP_NLG_F32
 **26**
 
 Set the per-lane condition code to 1 iff the first input is not less than or greater than the second input. Store the result into VCC or a scalar register.
@@ -13837,7 +13833,7 @@ D0.u64[laneId] = !(S0.f32 <> S1.f32);
 
 Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
 
-#### V\_CMP\_NGT\_F32
+#### V_CMP_NGT_F32
 **27**
 
 Set the per-lane condition code to 1 iff the first input is not greater than the second input. Store the result into VCC or a scalar register.
@@ -13852,7 +13848,7 @@ D0.u64[laneId] = !(S0.f32 > S1.f32);
 
 Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
 
-#### V\_CMP\_NLE\_F32
+#### V_CMP_NLE_F32
 **28**
 
 Set the per-lane condition code to 1 iff the first input is not less than or equal to the second input. Store the result into VCC or a scalar register.
@@ -13867,7 +13863,7 @@ D0.u64[laneId] = !(S0.f32 <= S1.f32);
 
 Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
 
-#### V\_CMP\_NEQ\_F32
+#### V_CMP_NEQ_F32
 **29**
 
 Set the per-lane condition code to 1 iff the first input is not equal to the second input. Store the result into VCC or a scalar register.
@@ -13882,7 +13878,7 @@ D0.u64[laneId] = !(S0.f32 == S1.f32);
 
 Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
 
-#### V\_CMP\_NLT\_F32
+#### V_CMP_NLT_F32
 **30**
 
 Set the per-lane condition code to 1 iff the first input is not less than the second input. Store the result into VCC or a scalar register.
@@ -13897,7 +13893,7 @@ D0.u64[laneId] = !(S0.f32 < S1.f32);
 
 Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
 
-#### V\_CMP\_T\_F32
+#### V_CMP_T_F32
 **31**
 
 Set the per-lane condition code to 1. Store the result into VCC or a scalar register.
@@ -13911,7 +13907,7 @@ D0.u64[laneId] = 1'1U;
 
 Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
 
-#### V\_CMP\_F\_F64
+#### V_CMP_F_F64
 **32**
 
 Set the per-lane condition code to 0. Store the result into VCC or a scalar register.
@@ -13925,7 +13921,7 @@ D0.u64[laneId] = 1'0U;
 
 Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
 
-#### V\_CMP\_LT\_F64
+#### V_CMP_LT_F64
 **33**
 
 Set the per-lane condition code to 1 iff the first input is less than the second input. Store the result into VCC or a scalar register.
@@ -13939,7 +13935,7 @@ D0.u64[laneId] = S0.f64 < S1.f64;
 
 Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
 
-#### V\_CMP\_EQ\_F64
+#### V_CMP_EQ_F64
 **34**
 
 Set the per-lane condition code to 1 iff the first input is equal to the second input. Store the result into VCC or a scalar register.
@@ -13953,7 +13949,7 @@ D0.u64[laneId] = S0.f64 == S1.f64;
 
 Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
 
-#### V\_CMP\_LE\_F64
+#### V_CMP_LE_F64
 **35**
 
 Set the per-lane condition code to 1 iff the first input is less than or equal to the second input. Store the result into VCC or a scalar register.
@@ -13967,7 +13963,7 @@ D0.u64[laneId] = S0.f64 <= S1.f64;
 
 Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
 
-#### V\_CMP\_GT\_F64
+#### V_CMP_GT_F64
 **36**
 
 Set the per-lane condition code to 1 iff the first input is greater than the second input. Store the result into VCC or a scalar register.
@@ -13981,7 +13977,7 @@ D0.u64[laneId] = S0.f64 > S1.f64;
 
 Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
 
-#### V\_CMP\_LG\_F64
+#### V_CMP_LG_F64
 **37**
 
 Set the per-lane condition code to 1 iff the first input is less than or greater than the second input. Store the result into VCC or a scalar register.
@@ -13995,7 +13991,7 @@ D0.u64[laneId] = S0.f64 <> S1.f64;
 
 Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
 
-#### V\_CMP\_GE\_F64
+#### V_CMP_GE_F64
 **38**
 
 Set the per-lane condition code to 1 iff the first input is greater than or equal to the second input. Store the result into VCC or a scalar register.
@@ -14009,7 +14005,7 @@ D0.u64[laneId] = S0.f64 >= S1.f64;
 
 Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
 
-#### V\_CMP\_O\_F64
+#### V_CMP_O_F64
 **39**
 
 Set the per-lane condition code to 1 iff the first input is orderable to the second input. Store the result into VCC or a scalar register.
@@ -14023,7 +14019,7 @@ D0.u64[laneId] = (!isNAN(S0.f64) && !isNAN(S1.f64));
 
 Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
 
-#### V\_CMP\_U\_F64
+#### V_CMP_U_F64
 **40**
 
 Set the per-lane condition code to 1 iff the first input is not orderable to the second input. Store the result into VCC or a scalar register.
@@ -14037,7 +14033,7 @@ D0.u64[laneId] = (isNAN(S0.f64) || isNAN(S1.f64));
 
 Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
 
-#### V\_CMP\_NGE\_F64
+#### V_CMP_NGE_F64
 **41**
 
 Set the per-lane condition code to 1 iff the first input is not greater than or equal to the second input. Store the result into VCC or a scalar register.
@@ -14052,7 +14048,7 @@ D0.u64[laneId] = !(S0.f64 >= S1.f64);
 
 Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
 
-#### V\_CMP\_NLG\_F64
+#### V_CMP_NLG_F64
 **42**
 
 Set the per-lane condition code to 1 iff the first input is not less than or greater than the second input. Store the result into VCC or a scalar register.
@@ -14067,7 +14063,7 @@ D0.u64[laneId] = !(S0.f64 <> S1.f64);
 
 Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
 
-#### V\_CMP\_NGT\_F64
+#### V_CMP_NGT_F64
 **43**
 
 Set the per-lane condition code to 1 iff the first input is not greater than the second input. Store the result into VCC or a scalar register.
@@ -14082,7 +14078,7 @@ D0.u64[laneId] = !(S0.f64 > S1.f64);
 
 Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
 
-#### V\_CMP\_NLE\_F64
+#### V_CMP_NLE_F64
 **44**
 
 Set the per-lane condition code to 1 iff the first input is not less than or equal to the second input. Store the result into VCC or a scalar register.
@@ -14097,7 +14093,7 @@ D0.u64[laneId] = !(S0.f64 <= S1.f64);
 
 Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
 
-#### V\_CMP\_NEQ\_F64
+#### V_CMP_NEQ_F64
 **45**
 
 Set the per-lane condition code to 1 iff the first input is not equal to the second input. Store the result into VCC or a scalar register.
@@ -14112,7 +14108,7 @@ D0.u64[laneId] = !(S0.f64 == S1.f64);
 
 Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
 
-#### V\_CMP\_NLT\_F64
+#### V_CMP_NLT_F64
 **46**
 
 Set the per-lane condition code to 1 iff the first input is not less than the second input. Store the result into VCC or a scalar register.
@@ -14127,7 +14123,7 @@ D0.u64[laneId] = !(S0.f64 < S1.f64);
 
 Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
 
-#### V\_CMP\_T\_F64
+#### V_CMP_T_F64
 **47**
 
 Set the per-lane condition code to 1. Store the result into VCC or a scalar register.
@@ -14141,7 +14137,7 @@ D0.u64[laneId] = 1'1U;
 
 Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
 
-#### V\_CMP\_LT\_I16
+#### V_CMP_LT_I16
 **49**
 
 Set the per-lane condition code to 1 iff the first input is less than the second input. Store the result into VCC or a scalar register.
@@ -14155,7 +14151,7 @@ D0.u64[laneId] = S0.i16 < S1.i16;
 
 Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
 
-#### V\_CMP\_EQ\_I16
+#### V_CMP_EQ_I16
 **50**
 
 Set the per-lane condition code to 1 iff the first input is equal to the second input. Store the result into VCC or a scalar register.
@@ -14169,7 +14165,7 @@ D0.u64[laneId] = S0.i16 == S1.i16;
 
 Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
 
-#### V\_CMP\_LE\_I16
+#### V_CMP_LE_I16
 **51**
 
 Set the per-lane condition code to 1 iff the first input is less than or equal to the second input. Store the result into VCC or a scalar register.
@@ -14183,7 +14179,7 @@ D0.u64[laneId] = S0.i16 <= S1.i16;
 
 Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
 
-#### V\_CMP\_GT\_I16
+#### V_CMP_GT_I16
 **52**
 
 Set the per-lane condition code to 1 iff the first input is greater than the second input. Store the result into VCC or a scalar register.
@@ -14197,7 +14193,7 @@ D0.u64[laneId] = S0.i16 > S1.i16;
 
 Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
 
-#### V\_CMP\_NE\_I16
+#### V_CMP_NE_I16
 **53**
 
 Set the per-lane condition code to 1 iff the first input is not equal to the second input. Store the result into VCC or a scalar register.
@@ -14211,7 +14207,7 @@ D0.u64[laneId] = S0.i16 <> S1.i16;
 
 Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
 
-#### V\_CMP\_GE\_I16
+#### V_CMP_GE_I16
 **54**
 
 Set the per-lane condition code to 1 iff the first input is greater than or equal to the second input. Store the result into VCC or a scalar register.
@@ -14225,7 +14221,7 @@ D0.u64[laneId] = S0.i16 >= S1.i16;
 
 Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
 
-#### V\_CMP\_LT\_U16
+#### V_CMP_LT_U16
 **57**
 
 Set the per-lane condition code to 1 iff the first input is less than the second input. Store the result into VCC or a scalar register.
@@ -14239,7 +14235,7 @@ D0.u64[laneId] = S0.u16 < S1.u16;
 
 Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
 
-#### V\_CMP\_EQ\_U16
+#### V_CMP_EQ_U16
 **58**
 
 Set the per-lane condition code to 1 iff the first input is equal to the second input. Store the result into VCC or a scalar register.
@@ -14253,7 +14249,7 @@ D0.u64[laneId] = S0.u16 == S1.u16;
 
 Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
 
-#### V\_CMP\_LE\_U16
+#### V_CMP_LE_U16
 **59**
 
 Set the per-lane condition code to 1 iff the first input is less than or equal to the second input. Store the result into VCC or a scalar register.
@@ -14267,7 +14263,7 @@ D0.u64[laneId] = S0.u16 <= S1.u16;
 
 Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
 
-#### V\_CMP\_GT\_U16
+#### V_CMP_GT_U16
 **60**
 
 Set the per-lane condition code to 1 iff the first input is greater than the second input. Store the result into VCC or a scalar register.
@@ -14281,7 +14277,7 @@ D0.u64[laneId] = S0.u16 > S1.u16;
 
 Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
 
-#### V\_CMP\_NE\_U16
+#### V_CMP_NE_U16
 **61**
 
 Set the per-lane condition code to 1 iff the first input is not equal to the second input. Store the result into VCC or a scalar register.
@@ -14295,7 +14291,7 @@ D0.u64[laneId] = S0.u16 <> S1.u16;
 
 Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
 
-#### V\_CMP\_GE\_U16
+#### V_CMP_GE_U16
 **62**
 
 Set the per-lane condition code to 1 iff the first input is greater than or equal to the second input. Store the result into VCC or a scalar register.
@@ -14309,7 +14305,7 @@ D0.u64[laneId] = S0.u16 >= S1.u16;
 
 Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
 
-#### V\_CMP\_F\_I32
+#### V_CMP_F_I32
 **64**
 
 Set the per-lane condition code to 0. Store the result into VCC or a scalar register.
@@ -14323,7 +14319,7 @@ D0.u64[laneId] = 1'0U;
 
 Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
 
-#### V\_CMP\_LT\_I32
+#### V_CMP_LT_I32
 **65**
 
 Set the per-lane condition code to 1 iff the first input is less than the second input. Store the result into VCC or a scalar register.
@@ -14337,7 +14333,7 @@ D0.u64[laneId] = S0.i32 < S1.i32;
 
 Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
 
-#### V\_CMP\_EQ\_I32
+#### V_CMP_EQ_I32
 **66**
 
 Set the per-lane condition code to 1 iff the first input is equal to the second input. Store the result into VCC or a scalar register.
@@ -14351,7 +14347,7 @@ D0.u64[laneId] = S0.i32 == S1.i32;
 
 Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
 
-#### V\_CMP\_LE\_I32
+#### V_CMP_LE_I32
 **67**
 
 Set the per-lane condition code to 1 iff the first input is less than or equal to the second input. Store the result into VCC or a scalar register.
@@ -14365,7 +14361,7 @@ D0.u64[laneId] = S0.i32 <= S1.i32;
 
 Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
 
-#### V\_CMP\_GT\_I32
+#### V_CMP_GT_I32
 **68**
 
 Set the per-lane condition code to 1 iff the first input is greater than the second input. Store the result into VCC or a scalar register.
@@ -14379,7 +14375,7 @@ D0.u64[laneId] = S0.i32 > S1.i32;
 
 Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
 
-#### V\_CMP\_NE\_I32
+#### V_CMP_NE_I32
 **69**
 
 Set the per-lane condition code to 1 iff the first input is not equal to the second input. Store the result into VCC or a scalar register.
@@ -14393,7 +14389,7 @@ D0.u64[laneId] = S0.i32 <> S1.i32;
 
 Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
 
-#### V\_CMP\_GE\_I32
+#### V_CMP_GE_I32
 **70**
 
 Set the per-lane condition code to 1 iff the first input is greater than or equal to the second input. Store the result into VCC or a scalar register.
@@ -14407,7 +14403,7 @@ D0.u64[laneId] = S0.i32 >= S1.i32;
 
 Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
 
-#### V\_CMP\_T\_I32
+#### V_CMP_T_I32
 **71**
 
 Set the per-lane condition code to 1. Store the result into VCC or a scalar register.
@@ -14421,7 +14417,7 @@ D0.u64[laneId] = 1'1U;
 
 Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
 
-#### V\_CMP\_F\_U32
+#### V_CMP_F_U32
 **72**
 
 Set the per-lane condition code to 0. Store the result into VCC or a scalar register.
@@ -14435,7 +14431,7 @@ D0.u64[laneId] = 1'0U;
 
 Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
 
-#### V\_CMP\_LT\_U32
+#### V_CMP_LT_U32
 **73**
 
 Set the per-lane condition code to 1 iff the first input is less than the second input. Store the result into VCC or a scalar register.
@@ -14449,7 +14445,7 @@ D0.u64[laneId] = S0.u32 < S1.u32;
 
 Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
 
-#### V\_CMP\_EQ\_U32
+#### V_CMP_EQ_U32
 **74**
 
 Set the per-lane condition code to 1 iff the first input is equal to the second input. Store the result into VCC or a scalar register.
@@ -14463,7 +14459,7 @@ D0.u64[laneId] = S0.u32 == S1.u32;
 
 Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
 
-#### V\_CMP\_LE\_U32
+#### V_CMP_LE_U32
 **75**
 
 Set the per-lane condition code to 1 iff the first input is less than or equal to the second input. Store the result into VCC or a scalar register.
@@ -14477,7 +14473,7 @@ D0.u64[laneId] = S0.u32 <= S1.u32;
 
 Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
 
-#### V\_CMP\_GT\_U32
+#### V_CMP_GT_U32
 **76**
 
 Set the per-lane condition code to 1 iff the first input is greater than the second input. Store the result into VCC or a scalar register.
@@ -14491,7 +14487,7 @@ D0.u64[laneId] = S0.u32 > S1.u32;
 
 Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
 
-#### V\_CMP\_NE\_U32
+#### V_CMP_NE_U32
 **77**
 
 Set the per-lane condition code to 1 iff the first input is not equal to the second input. Store the result into VCC or a scalar register.
@@ -14505,7 +14501,7 @@ D0.u64[laneId] = S0.u32 <> S1.u32;
 
 Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
 
-#### V\_CMP\_GE\_U32
+#### V_CMP_GE_U32
 **78**
 
 Set the per-lane condition code to 1 iff the first input is greater than or equal to the second input. Store the result into VCC or a scalar register.
@@ -14519,7 +14515,7 @@ D0.u64[laneId] = S0.u32 >= S1.u32;
 
 Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
 
-#### V\_CMP\_T\_U32
+#### V_CMP_T_U32
 **79**
 
 Set the per-lane condition code to 1. Store the result into VCC or a scalar register.
@@ -14533,7 +14529,7 @@ D0.u64[laneId] = 1'1U;
 
 Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
 
-#### V\_CMP\_F\_I64
+#### V_CMP_F_I64
 **80**
 
 Set the per-lane condition code to 0. Store the result into VCC or a scalar register.
@@ -14547,7 +14543,7 @@ D0.u64[laneId] = 1'0U;
 
 Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
 
-#### V\_CMP\_LT\_I64
+#### V_CMP_LT_I64
 **81**
 
 Set the per-lane condition code to 1 iff the first input is less than the second input. Store the result into VCC or a scalar register.
@@ -14561,7 +14557,7 @@ D0.u64[laneId] = S0.i64 < S1.i64;
 
 Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
 
-#### V\_CMP\_EQ\_I64
+#### V_CMP_EQ_I64
 **82**
 
 Set the per-lane condition code to 1 iff the first input is equal to the second input. Store the result into VCC or a scalar register.
@@ -14575,7 +14571,7 @@ D0.u64[laneId] = S0.i64 == S1.i64;
 
 Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
 
-#### V\_CMP\_LE\_I64
+#### V_CMP_LE_I64
 **83**
 
 Set the per-lane condition code to 1 iff the first input is less than or equal to the second input. Store the result into VCC or a scalar register.
@@ -14589,7 +14585,7 @@ D0.u64[laneId] = S0.i64 <= S1.i64;
 
 Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
 
-#### V\_CMP\_GT\_I64
+#### V_CMP_GT_I64
 **84**
 
 Set the per-lane condition code to 1 iff the first input is greater than the second input. Store the result into VCC or a scalar register.
@@ -14603,7 +14599,7 @@ D0.u64[laneId] = S0.i64 > S1.i64;
 
 Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
 
-#### V\_CMP\_NE\_I64
+#### V_CMP_NE_I64
 **85**
 
 Set the per-lane condition code to 1 iff the first input is not equal to the second input. Store the result into VCC or a scalar register.
@@ -14617,7 +14613,7 @@ D0.u64[laneId] = S0.i64 <> S1.i64;
 
 Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
 
-#### V\_CMP\_GE\_I64
+#### V_CMP_GE_I64
 **86**
 
 Set the per-lane condition code to 1 iff the first input is greater than or equal to the second input. Store the result into VCC or a scalar register.
@@ -14631,7 +14627,7 @@ D0.u64[laneId] = S0.i64 >= S1.i64;
 
 Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
 
-#### V\_CMP\_T\_I64
+#### V_CMP_T_I64
 **87**
 
 Set the per-lane condition code to 1. Store the result into VCC or a scalar register.
@@ -14645,7 +14641,7 @@ D0.u64[laneId] = 1'1U;
 
 Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
 
-#### V\_CMP\_F\_U64
+#### V_CMP_F_U64
 **88**
 
 Set the per-lane condition code to 0. Store the result into VCC or a scalar register.
@@ -14659,7 +14655,7 @@ D0.u64[laneId] = 1'0U;
 
 Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
 
-#### V\_CMP\_LT\_U64
+#### V_CMP_LT_U64
 **89**
 
 Set the per-lane condition code to 1 iff the first input is less than the second input. Store the result into VCC or a scalar register.
@@ -14673,7 +14669,7 @@ D0.u64[laneId] = S0.u64 < S1.u64;
 
 Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
 
-#### V\_CMP\_EQ\_U64
+#### V_CMP_EQ_U64
 **90**
 
 Set the per-lane condition code to 1 iff the first input is equal to the second input. Store the result into VCC or a scalar register.
@@ -14687,7 +14683,7 @@ D0.u64[laneId] = S0.u64 == S1.u64;
 
 Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
 
-#### V\_CMP\_LE\_U64
+#### V_CMP_LE_U64
 **91**
 
 Set the per-lane condition code to 1 iff the first input is less than or equal to the second input. Store the result into VCC or a scalar register.
@@ -14701,7 +14697,7 @@ D0.u64[laneId] = S0.u64 <= S1.u64;
 
 Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
 
-#### V\_CMP\_GT\_U64
+#### V_CMP_GT_U64
 **92**
 
 Set the per-lane condition code to 1 iff the first input is greater than the second input. Store the result into VCC or a scalar register.
@@ -14715,7 +14711,7 @@ D0.u64[laneId] = S0.u64 > S1.u64;
 
 Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
 
-#### V\_CMP\_NE\_U64
+#### V_CMP_NE_U64
 **93**
 
 Set the per-lane condition code to 1 iff the first input is not equal to the second input. Store the result into VCC or a scalar register.
@@ -14729,7 +14725,7 @@ D0.u64[laneId] = S0.u64 <> S1.u64;
 
 Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
 
-#### V\_CMP\_GE\_U64
+#### V_CMP_GE_U64
 **94**
 
 Set the per-lane condition code to 1 iff the first input is greater than or equal to the second input. Store the result into VCC or a scalar register.
@@ -14743,7 +14739,7 @@ D0.u64[laneId] = S0.u64 >= S1.u64;
 
 Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
 
-#### V\_CMP\_T\_U64
+#### V_CMP_T_U64
 **95**
 
 Set the per-lane condition code to 1. Store the result into VCC or a scalar register.
@@ -14757,7 +14753,7 @@ D0.u64[laneId] = 1'1U;
 
 Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
 
-#### V\_CMP\_CLASS\_F16
+#### V_CMP_CLASS_F16
 **125**
 
 Evaluate the IEEE numeric class function specified as a 10 bit mask in the second input on the first input, a half-precision float, and set the per-lane condition code to the result. Store the result into VCC or a scalar register.
@@ -14802,7 +14798,7 @@ D0.u64[laneId] = result;
 
 Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
 
-#### V\_CMP\_CLASS\_F32
+#### V_CMP_CLASS_F32
 **126**
 
 Evaluate the IEEE numeric class function specified as a 10 bit mask in the second input on the first input, a single-precision float, and set the per-lane condition code to the result. Store the result into VCC or a scalar register.
@@ -14847,7 +14843,7 @@ D0.u64[laneId] = result;
 
 Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
 
-#### V\_CMP\_CLASS\_F64
+#### V_CMP_CLASS_F64
 **127**
 
 Evaluate the IEEE numeric class function specified as a 10 bit mask in the second input on the first input, a double-precision float, and set the per-lane condition code to the result. Store the result into VCC or a scalar register.
@@ -14892,7 +14888,7 @@ D0.u64[laneId] = result;
 
 Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
 
-#### V\_CMPX\_F\_F16
+#### V_CMPX_F_F16
 **128**
 
 Set the per-lane condition code to 0. Store the result into the EXEC mask.
@@ -14903,9 +14899,9 @@ EXEC.u64[laneId] = 1'0U
 
 **Notes**
 
-Write only EXEC. SDST must be set to EXEC\_LO. Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
+Write only EXEC. SDST must be set to EXEC_LO. Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
 
-#### V\_CMPX\_LT\_F16
+#### V_CMPX_LT_F16
 **129**
 
 Set the per-lane condition code to 1 iff the first input is less than the second input. Store the result into the EXEC mask.
@@ -14916,9 +14912,9 @@ EXEC.u64[laneId] = S0.f16 < S1.f16
 
 **Notes**
 
-Write only EXEC. SDST must be set to EXEC\_LO. Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
+Write only EXEC. SDST must be set to EXEC_LO. Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
 
-#### V\_CMPX\_EQ\_F16
+#### V_CMPX_EQ_F16
 **130**
 
 Set the per-lane condition code to 1 iff the first input is equal to the second input. Store the result into the EXEC mask.
@@ -14929,9 +14925,9 @@ EXEC.u64[laneId] = S0.f16 == S1.f16
 
 **Notes**
 
-Write only EXEC. SDST must be set to EXEC\_LO. Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
+Write only EXEC. SDST must be set to EXEC_LO. Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
 
-#### V\_CMPX\_LE\_F16
+#### V_CMPX_LE_F16
 **131**
 
 Set the per-lane condition code to 1 iff the first input is less than or equal to the second input. Store the result into the EXEC mask.
@@ -14942,9 +14938,9 @@ EXEC.u64[laneId] = S0.f16 <= S1.f16
 
 **Notes**
 
-Write only EXEC. SDST must be set to EXEC\_LO. Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
+Write only EXEC. SDST must be set to EXEC_LO. Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
 
-#### V\_CMPX\_GT\_F16
+#### V_CMPX_GT_F16
 **132**
 
 Set the per-lane condition code to 1 iff the first input is greater than the second input. Store the result into the EXEC mask.
@@ -14955,9 +14951,9 @@ EXEC.u64[laneId] = S0.f16 > S1.f16
 
 **Notes**
 
-Write only EXEC. SDST must be set to EXEC\_LO. Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
+Write only EXEC. SDST must be set to EXEC_LO. Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
 
-#### V\_CMPX\_LG\_F16
+#### V_CMPX_LG_F16
 **133**
 
 Set the per-lane condition code to 1 iff the first input is less than or greater than the second input. Store the result into the EXEC mask.
@@ -14968,9 +14964,9 @@ EXEC.u64[laneId] = S0.f16 <> S1.f16
 
 **Notes**
 
-Write only EXEC. SDST must be set to EXEC\_LO. Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
+Write only EXEC. SDST must be set to EXEC_LO. Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
 
-#### V\_CMPX\_GE\_F16
+#### V_CMPX_GE_F16
 **134**
 
 Set the per-lane condition code to 1 iff the first input is greater than or equal to the second input. Store the result into the EXEC mask.
@@ -14981,9 +14977,9 @@ EXEC.u64[laneId] = S0.f16 >= S1.f16
 
 **Notes**
 
-Write only EXEC. SDST must be set to EXEC\_LO. Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
+Write only EXEC. SDST must be set to EXEC_LO. Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
 
-#### V\_CMPX\_O\_F16
+#### V_CMPX_O_F16
 **135**
 
 Set the per-lane condition code to 1 iff the first input is orderable to the second input. Store the result into the EXEC mask.
@@ -14994,9 +14990,9 @@ EXEC.u64[laneId] = (!isNAN(64'F(S0.f16)) && !isNAN(64'F(S1.f16)))
 
 **Notes**
 
-Write only EXEC. SDST must be set to EXEC\_LO. Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
+Write only EXEC. SDST must be set to EXEC_LO. Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
 
-#### V\_CMPX\_U\_F16
+#### V_CMPX_U_F16
 **136**
 
 Set the per-lane condition code to 1 iff the first input is not orderable to the second input. Store the result into the EXEC mask.
@@ -15007,9 +15003,9 @@ EXEC.u64[laneId] = (isNAN(64'F(S0.f16)) || isNAN(64'F(S1.f16)))
 
 **Notes**
 
-Write only EXEC. SDST must be set to EXEC\_LO. Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
+Write only EXEC. SDST must be set to EXEC_LO. Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
 
-#### V\_CMPX\_NGE\_F16
+#### V_CMPX_NGE_F16
 **137**
 
 Set the per-lane condition code to 1 iff the first input is not greater than or equal to the second input. Store the result into the EXEC mask.
@@ -15021,9 +15017,9 @@ EXEC.u64[laneId] = !(S0.f16 >= S1.f16);
 
 **Notes**
 
-Write only EXEC. SDST must be set to EXEC\_LO. Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
+Write only EXEC. SDST must be set to EXEC_LO. Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
 
-#### V\_CMPX\_NLG\_F16
+#### V_CMPX_NLG_F16
 **138**
 
 Set the per-lane condition code to 1 iff the first input is not less than or greater than the second input. Store the result into the EXEC mask.
@@ -15035,9 +15031,9 @@ EXEC.u64[laneId] = !(S0.f16 <> S1.f16);
 
 **Notes**
 
-Write only EXEC. SDST must be set to EXEC\_LO. Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
+Write only EXEC. SDST must be set to EXEC_LO. Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
 
-#### V\_CMPX\_NGT\_F16
+#### V_CMPX_NGT_F16
 **139**
 
 Set the per-lane condition code to 1 iff the first input is not greater than the second input. Store the result into the EXEC mask.
@@ -15049,9 +15045,9 @@ EXEC.u64[laneId] = !(S0.f16 > S1.f16);
 
 **Notes**
 
-Write only EXEC. SDST must be set to EXEC\_LO. Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
+Write only EXEC. SDST must be set to EXEC_LO. Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
 
-#### V\_CMPX\_NLE\_F16
+#### V_CMPX_NLE_F16
 **140**
 
 Set the per-lane condition code to 1 iff the first input is not less than or equal to the second input. Store the result into the EXEC mask.
@@ -15063,9 +15059,9 @@ EXEC.u64[laneId] = !(S0.f16 <= S1.f16);
 
 **Notes**
 
-Write only EXEC. SDST must be set to EXEC\_LO. Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
+Write only EXEC. SDST must be set to EXEC_LO. Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
 
-#### V\_CMPX\_NEQ\_F16
+#### V_CMPX_NEQ_F16
 **141**
 
 Set the per-lane condition code to 1 iff the first input is not equal to the second input. Store the result into the EXEC mask.
@@ -15077,9 +15073,9 @@ EXEC.u64[laneId] = !(S0.f16 == S1.f16);
 
 **Notes**
 
-Write only EXEC. SDST must be set to EXEC\_LO. Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
+Write only EXEC. SDST must be set to EXEC_LO. Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
 
-#### V\_CMPX\_NLT\_F16
+#### V_CMPX_NLT_F16
 **142**
 
 Set the per-lane condition code to 1 iff the first input is not less than the second input. Store the result into the EXEC mask.
@@ -15091,9 +15087,9 @@ EXEC.u64[laneId] = !(S0.f16 < S1.f16);
 
 **Notes**
 
-Write only EXEC. SDST must be set to EXEC\_LO. Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
+Write only EXEC. SDST must be set to EXEC_LO. Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
 
-#### V\_CMPX\_T\_F16
+#### V_CMPX_T_F16
 **143**
 
 Set the per-lane condition code to 1. Store the result into the EXEC mask.
@@ -15104,9 +15100,9 @@ EXEC.u64[laneId] = 1'1U
 
 **Notes**
 
-Write only EXEC. SDST must be set to EXEC\_LO. Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
+Write only EXEC. SDST must be set to EXEC_LO. Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
 
-#### V\_CMPX\_F\_F32
+#### V_CMPX_F_F32
 **144**
 
 Set the per-lane condition code to 0. Store the result into the EXEC mask.
@@ -15117,9 +15113,9 @@ EXEC.u64[laneId] = 1'0U
 
 **Notes**
 
-Write only EXEC. SDST must be set to EXEC\_LO. Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
+Write only EXEC. SDST must be set to EXEC_LO. Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
 
-#### V\_CMPX\_LT\_F32
+#### V_CMPX_LT_F32
 **145**
 
 Set the per-lane condition code to 1 iff the first input is less than the second input. Store the result into the EXEC mask.
@@ -15130,9 +15126,9 @@ EXEC.u64[laneId] = S0.f32 < S1.f32
 
 **Notes**
 
-Write only EXEC. SDST must be set to EXEC\_LO. Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
+Write only EXEC. SDST must be set to EXEC_LO. Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
 
-#### V\_CMPX\_EQ\_F32
+#### V_CMPX_EQ_F32
 **146**
 
 Set the per-lane condition code to 1 iff the first input is equal to the second input. Store the result into the EXEC mask.
@@ -15143,9 +15139,9 @@ EXEC.u64[laneId] = S0.f32 == S1.f32
 
 **Notes**
 
-Write only EXEC. SDST must be set to EXEC\_LO. Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
+Write only EXEC. SDST must be set to EXEC_LO. Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
 
-#### V\_CMPX\_LE\_F32
+#### V_CMPX_LE_F32
 **147**
 
 Set the per-lane condition code to 1 iff the first input is less than or equal to the second input. Store the result into the EXEC mask.
@@ -15156,9 +15152,9 @@ EXEC.u64[laneId] = S0.f32 <= S1.f32
 
 **Notes**
 
-Write only EXEC. SDST must be set to EXEC\_LO. Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
+Write only EXEC. SDST must be set to EXEC_LO. Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
 
-#### V\_CMPX\_GT\_F32
+#### V_CMPX_GT_F32
 **148**
 
 Set the per-lane condition code to 1 iff the first input is greater than the second input. Store the result into the EXEC mask.
@@ -15169,9 +15165,9 @@ EXEC.u64[laneId] = S0.f32 > S1.f32
 
 **Notes**
 
-Write only EXEC. SDST must be set to EXEC\_LO. Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
+Write only EXEC. SDST must be set to EXEC_LO. Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
 
-#### V\_CMPX\_LG\_F32
+#### V_CMPX_LG_F32
 **149**
 
 Set the per-lane condition code to 1 iff the first input is less than or greater than the second input. Store the result into the EXEC mask.
@@ -15182,9 +15178,9 @@ EXEC.u64[laneId] = S0.f32 <> S1.f32
 
 **Notes**
 
-Write only EXEC. SDST must be set to EXEC\_LO. Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
+Write only EXEC. SDST must be set to EXEC_LO. Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
 
-#### V\_CMPX\_GE\_F32
+#### V_CMPX_GE_F32
 **150**
 
 Set the per-lane condition code to 1 iff the first input is greater than or equal to the second input. Store the result into the EXEC mask.
@@ -15195,9 +15191,9 @@ EXEC.u64[laneId] = S0.f32 >= S1.f32
 
 **Notes**
 
-Write only EXEC. SDST must be set to EXEC\_LO. Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
+Write only EXEC. SDST must be set to EXEC_LO. Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
 
-#### V\_CMPX\_O\_F32
+#### V_CMPX_O_F32
 **151**
 
 Set the per-lane condition code to 1 iff the first input is orderable to the second input. Store the result into the EXEC mask.
@@ -15208,9 +15204,9 @@ EXEC.u64[laneId] = (!isNAN(64'F(S0.f32)) && !isNAN(64'F(S1.f32)))
 
 **Notes**
 
-Write only EXEC. SDST must be set to EXEC\_LO. Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
+Write only EXEC. SDST must be set to EXEC_LO. Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
 
-#### V\_CMPX\_U\_F32
+#### V_CMPX_U_F32
 **152**
 
 Set the per-lane condition code to 1 iff the first input is not orderable to the second input. Store the result into the EXEC mask.
@@ -15221,9 +15217,9 @@ EXEC.u64[laneId] = (isNAN(64'F(S0.f32)) || isNAN(64'F(S1.f32)))
 
 **Notes**
 
-Write only EXEC. SDST must be set to EXEC\_LO. Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
+Write only EXEC. SDST must be set to EXEC_LO. Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
 
-#### V\_CMPX\_NGE\_F32
+#### V_CMPX_NGE_F32
 **153**
 
 Set the per-lane condition code to 1 iff the first input is not greater than or equal to the second input. Store the result into the EXEC mask.
@@ -15235,9 +15231,9 @@ EXEC.u64[laneId] = !(S0.f32 >= S1.f32);
 
 **Notes**
 
-Write only EXEC. SDST must be set to EXEC\_LO. Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
+Write only EXEC. SDST must be set to EXEC_LO. Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
 
-#### V\_CMPX\_NLG\_F32
+#### V_CMPX_NLG_F32
 **154**
 
 Set the per-lane condition code to 1 iff the first input is not less than or greater than the second input. Store the result into the EXEC mask.
@@ -15249,9 +15245,9 @@ EXEC.u64[laneId] = !(S0.f32 <> S1.f32);
 
 **Notes**
 
-Write only EXEC. SDST must be set to EXEC\_LO. Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
+Write only EXEC. SDST must be set to EXEC_LO. Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
 
-#### V\_CMPX\_NGT\_F32
+#### V_CMPX_NGT_F32
 **155**
 
 Set the per-lane condition code to 1 iff the first input is not greater than the second input. Store the result into the EXEC mask.
@@ -15263,9 +15259,9 @@ EXEC.u64[laneId] = !(S0.f32 > S1.f32);
 
 **Notes**
 
-Write only EXEC. SDST must be set to EXEC\_LO. Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
+Write only EXEC. SDST must be set to EXEC_LO. Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
 
-#### V\_CMPX\_NLE\_F32
+#### V_CMPX_NLE_F32
 **156**
 
 Set the per-lane condition code to 1 iff the first input is not less than or equal to the second input. Store the result into the EXEC mask.
@@ -15277,9 +15273,9 @@ EXEC.u64[laneId] = !(S0.f32 <= S1.f32);
 
 **Notes**
 
-Write only EXEC. SDST must be set to EXEC\_LO. Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
+Write only EXEC. SDST must be set to EXEC_LO. Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
 
-#### V\_CMPX\_NEQ\_F32
+#### V_CMPX_NEQ_F32
 **157**
 
 Set the per-lane condition code to 1 iff the first input is not equal to the second input. Store the result into the EXEC mask.
@@ -15291,9 +15287,9 @@ EXEC.u64[laneId] = !(S0.f32 == S1.f32);
 
 **Notes**
 
-Write only EXEC. SDST must be set to EXEC\_LO. Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
+Write only EXEC. SDST must be set to EXEC_LO. Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
 
-#### V\_CMPX\_NLT\_F32
+#### V_CMPX_NLT_F32
 **158**
 
 Set the per-lane condition code to 1 iff the first input is not less than the second input. Store the result into the EXEC mask.
@@ -15305,9 +15301,9 @@ EXEC.u64[laneId] = !(S0.f32 < S1.f32);
 
 **Notes**
 
-Write only EXEC. SDST must be set to EXEC\_LO. Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
+Write only EXEC. SDST must be set to EXEC_LO. Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
 
-#### V\_CMPX\_T\_F32
+#### V_CMPX_T_F32
 **159**
 
 Set the per-lane condition code to 1. Store the result into the EXEC mask.
@@ -15318,9 +15314,9 @@ EXEC.u64[laneId] = 1'1U
 
 **Notes**
 
-Write only EXEC. SDST must be set to EXEC\_LO. Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
+Write only EXEC. SDST must be set to EXEC_LO. Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
 
-#### V\_CMPX\_F\_F64
+#### V_CMPX_F_F64
 **160**
 
 Set the per-lane condition code to 0. Store the result into the EXEC mask.
@@ -15331,9 +15327,9 @@ EXEC.u64[laneId] = 1'0U
 
 **Notes**
 
-Write only EXEC. SDST must be set to EXEC\_LO. Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
+Write only EXEC. SDST must be set to EXEC_LO. Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
 
-#### V\_CMPX\_LT\_F64
+#### V_CMPX_LT_F64
 **161**
 
 Set the per-lane condition code to 1 iff the first input is less than the second input. Store the result into the EXEC mask.
@@ -15344,9 +15340,9 @@ EXEC.u64[laneId] = S0.f64 < S1.f64
 
 **Notes**
 
-Write only EXEC. SDST must be set to EXEC\_LO. Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
+Write only EXEC. SDST must be set to EXEC_LO. Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
 
-#### V\_CMPX\_EQ\_F64
+#### V_CMPX_EQ_F64
 **162**
 
 Set the per-lane condition code to 1 iff the first input is equal to the second input. Store the result into the EXEC mask.
@@ -15357,9 +15353,9 @@ EXEC.u64[laneId] = S0.f64 == S1.f64
 
 **Notes**
 
-Write only EXEC. SDST must be set to EXEC\_LO. Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
+Write only EXEC. SDST must be set to EXEC_LO. Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
 
-#### V\_CMPX\_LE\_F64
+#### V_CMPX_LE_F64
 **163**
 
 Set the per-lane condition code to 1 iff the first input is less than or equal to the second input. Store the result into the EXEC mask.
@@ -15370,9 +15366,9 @@ EXEC.u64[laneId] = S0.f64 <= S1.f64
 
 **Notes**
 
-Write only EXEC. SDST must be set to EXEC\_LO. Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
+Write only EXEC. SDST must be set to EXEC_LO. Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
 
-#### V\_CMPX\_GT\_F64
+#### V_CMPX_GT_F64
 **164**
 
 Set the per-lane condition code to 1 iff the first input is greater than the second input. Store the result into the EXEC mask.
@@ -15383,9 +15379,9 @@ EXEC.u64[laneId] = S0.f64 > S1.f64
 
 **Notes**
 
-Write only EXEC. SDST must be set to EXEC\_LO. Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
+Write only EXEC. SDST must be set to EXEC_LO. Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
 
-#### V\_CMPX\_LG\_F64
+#### V_CMPX_LG_F64
 **165**
 
 Set the per-lane condition code to 1 iff the first input is less than or greater than the second input. Store the result into the EXEC mask.
@@ -15396,9 +15392,9 @@ EXEC.u64[laneId] = S0.f64 <> S1.f64
 
 **Notes**
 
-Write only EXEC. SDST must be set to EXEC\_LO. Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
+Write only EXEC. SDST must be set to EXEC_LO. Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
 
-#### V\_CMPX\_GE\_F64
+#### V_CMPX_GE_F64
 **166**
 
 Set the per-lane condition code to 1 iff the first input is greater than or equal to the second input. Store the result into the EXEC mask.
@@ -15409,9 +15405,9 @@ EXEC.u64[laneId] = S0.f64 >= S1.f64
 
 **Notes**
 
-Write only EXEC. SDST must be set to EXEC\_LO. Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
+Write only EXEC. SDST must be set to EXEC_LO. Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
 
-#### V\_CMPX\_O\_F64
+#### V_CMPX_O_F64
 **167**
 
 Set the per-lane condition code to 1 iff the first input is orderable to the second input. Store the result into the EXEC mask.
@@ -15422,9 +15418,9 @@ EXEC.u64[laneId] = (!isNAN(S0.f64) && !isNAN(S1.f64))
 
 **Notes**
 
-Write only EXEC. SDST must be set to EXEC\_LO. Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
+Write only EXEC. SDST must be set to EXEC_LO. Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
 
-#### V\_CMPX\_U\_F64
+#### V_CMPX_U_F64
 **168**
 
 Set the per-lane condition code to 1 iff the first input is not orderable to the second input. Store the result into the EXEC mask.
@@ -15435,9 +15431,9 @@ EXEC.u64[laneId] = (isNAN(S0.f64) || isNAN(S1.f64))
 
 **Notes**
 
-Write only EXEC. SDST must be set to EXEC\_LO. Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
+Write only EXEC. SDST must be set to EXEC_LO. Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
 
-#### V\_CMPX\_NGE\_F64
+#### V_CMPX_NGE_F64
 **169**
 
 Set the per-lane condition code to 1 iff the first input is not greater than or equal to the second input. Store the result into the EXEC mask.
@@ -15449,9 +15445,9 @@ EXEC.u64[laneId] = !(S0.f64 >= S1.f64);
 
 **Notes**
 
-Write only EXEC. SDST must be set to EXEC\_LO. Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
+Write only EXEC. SDST must be set to EXEC_LO. Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
 
-#### V\_CMPX\_NLG\_F64
+#### V_CMPX_NLG_F64
 **170**
 
 Set the per-lane condition code to 1 iff the first input is not less than or greater than the second input. Store the result into the EXEC mask.
@@ -15463,9 +15459,9 @@ EXEC.u64[laneId] = !(S0.f64 <> S1.f64);
 
 **Notes**
 
-Write only EXEC. SDST must be set to EXEC\_LO. Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
+Write only EXEC. SDST must be set to EXEC_LO. Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
 
-#### V\_CMPX\_NGT\_F64
+#### V_CMPX_NGT_F64
 **171**
 
 Set the per-lane condition code to 1 iff the first input is not greater than the second input. Store the result into the EXEC mask.
@@ -15477,9 +15473,9 @@ EXEC.u64[laneId] = !(S0.f64 > S1.f64);
 
 **Notes**
 
-Write only EXEC. SDST must be set to EXEC\_LO. Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
+Write only EXEC. SDST must be set to EXEC_LO. Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
 
-#### V\_CMPX\_NLE\_F64
+#### V_CMPX_NLE_F64
 **172**
 
 Set the per-lane condition code to 1 iff the first input is not less than or equal to the second input. Store the result into the EXEC mask.
@@ -15491,9 +15487,9 @@ EXEC.u64[laneId] = !(S0.f64 <= S1.f64);
 
 **Notes**
 
-Write only EXEC. SDST must be set to EXEC\_LO. Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
+Write only EXEC. SDST must be set to EXEC_LO. Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
 
-#### V\_CMPX\_NEQ\_F64
+#### V_CMPX_NEQ_F64
 **173**
 
 Set the per-lane condition code to 1 iff the first input is not equal to the second input. Store the result into the EXEC mask.
@@ -15505,9 +15501,9 @@ EXEC.u64[laneId] = !(S0.f64 == S1.f64);
 
 **Notes**
 
-Write only EXEC. SDST must be set to EXEC\_LO. Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
+Write only EXEC. SDST must be set to EXEC_LO. Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
 
-#### V\_CMPX\_NLT\_F64
+#### V_CMPX_NLT_F64
 **174**
 
 Set the per-lane condition code to 1 iff the first input is not less than the second input. Store the result into the EXEC mask.
@@ -15519,9 +15515,9 @@ EXEC.u64[laneId] = !(S0.f64 < S1.f64);
 
 **Notes**
 
-Write only EXEC. SDST must be set to EXEC\_LO. Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
+Write only EXEC. SDST must be set to EXEC_LO. Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
 
-#### V\_CMPX\_T\_F64
+#### V_CMPX_T_F64
 **175**
 
 Set the per-lane condition code to 1. Store the result into the EXEC mask.
@@ -15532,9 +15528,9 @@ EXEC.u64[laneId] = 1'1U
 
 **Notes**
 
-Write only EXEC. SDST must be set to EXEC\_LO. Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
+Write only EXEC. SDST must be set to EXEC_LO. Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
 
-#### V\_CMPX\_LT\_I16
+#### V_CMPX_LT_I16
 **177**
 
 Set the per-lane condition code to 1 iff the first input is less than the second input. Store the result into the EXEC mask.
@@ -15545,9 +15541,9 @@ EXEC.u64[laneId] = S0.i16 < S1.i16
 
 **Notes**
 
-Write only EXEC. SDST must be set to EXEC\_LO. Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
+Write only EXEC. SDST must be set to EXEC_LO. Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
 
-#### V\_CMPX\_EQ\_I16
+#### V_CMPX_EQ_I16
 **178**
 
 Set the per-lane condition code to 1 iff the first input is equal to the second input. Store the result into the EXEC mask.
@@ -15558,9 +15554,9 @@ EXEC.u64[laneId] = S0.i16 == S1.i16
 
 **Notes**
 
-Write only EXEC. SDST must be set to EXEC\_LO. Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
+Write only EXEC. SDST must be set to EXEC_LO. Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
 
-#### V\_CMPX\_LE\_I16
+#### V_CMPX_LE_I16
 **179**
 
 Set the per-lane condition code to 1 iff the first input is less than or equal to the second input. Store the result into the EXEC mask.
@@ -15571,9 +15567,9 @@ EXEC.u64[laneId] = S0.i16 <= S1.i16
 
 **Notes**
 
-Write only EXEC. SDST must be set to EXEC\_LO. Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
+Write only EXEC. SDST must be set to EXEC_LO. Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
 
-#### V\_CMPX\_GT\_I16
+#### V_CMPX_GT_I16
 **180**
 
 Set the per-lane condition code to 1 iff the first input is greater than the second input. Store the result into the EXEC mask.
@@ -15584,9 +15580,9 @@ EXEC.u64[laneId] = S0.i16 > S1.i16
 
 **Notes**
 
-Write only EXEC. SDST must be set to EXEC\_LO. Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
+Write only EXEC. SDST must be set to EXEC_LO. Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
 
-#### V\_CMPX\_NE\_I16
+#### V_CMPX_NE_I16
 **181**
 
 Set the per-lane condition code to 1 iff the first input is not equal to the second input. Store the result into the EXEC mask.
@@ -15597,9 +15593,9 @@ EXEC.u64[laneId] = S0.i16 <> S1.i16
 
 **Notes**
 
-Write only EXEC. SDST must be set to EXEC\_LO. Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
+Write only EXEC. SDST must be set to EXEC_LO. Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
 
-#### V\_CMPX\_GE\_I16
+#### V_CMPX_GE_I16
 **182**
 
 Set the per-lane condition code to 1 iff the first input is greater than or equal to the second input. Store the result into the EXEC mask.
@@ -15610,9 +15606,9 @@ EXEC.u64[laneId] = S0.i16 >= S1.i16
 
 **Notes**
 
-Write only EXEC. SDST must be set to EXEC\_LO. Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
+Write only EXEC. SDST must be set to EXEC_LO. Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
 
-#### V\_CMPX\_LT\_U16
+#### V_CMPX_LT_U16
 **185**
 
 Set the per-lane condition code to 1 iff the first input is less than the second input. Store the result into the EXEC mask.
@@ -15623,9 +15619,9 @@ EXEC.u64[laneId] = S0.u16 < S1.u16
 
 **Notes**
 
-Write only EXEC. SDST must be set to EXEC\_LO. Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
+Write only EXEC. SDST must be set to EXEC_LO. Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
 
-#### V\_CMPX\_EQ\_U16
+#### V_CMPX_EQ_U16
 **186**
 
 Set the per-lane condition code to 1 iff the first input is equal to the second input. Store the result into the EXEC mask.
@@ -15636,9 +15632,9 @@ EXEC.u64[laneId] = S0.u16 == S1.u16
 
 **Notes**
 
-Write only EXEC. SDST must be set to EXEC\_LO. Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
+Write only EXEC. SDST must be set to EXEC_LO. Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
 
-#### V\_CMPX\_LE\_U16
+#### V_CMPX_LE_U16
 **187**
 
 Set the per-lane condition code to 1 iff the first input is less than or equal to the second input. Store the result into the EXEC mask.
@@ -15649,9 +15645,9 @@ EXEC.u64[laneId] = S0.u16 <= S1.u16
 
 **Notes**
 
-Write only EXEC. SDST must be set to EXEC\_LO. Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
+Write only EXEC. SDST must be set to EXEC_LO. Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
 
-#### V\_CMPX\_GT\_U16
+#### V_CMPX_GT_U16
 **188**
 
 Set the per-lane condition code to 1 iff the first input is greater than the second input. Store the result into the EXEC mask.
@@ -15662,9 +15658,9 @@ EXEC.u64[laneId] = S0.u16 > S1.u16
 
 **Notes**
 
-Write only EXEC. SDST must be set to EXEC\_LO. Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
+Write only EXEC. SDST must be set to EXEC_LO. Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
 
-#### V\_CMPX\_NE\_U16
+#### V_CMPX_NE_U16
 **189**
 
 Set the per-lane condition code to 1 iff the first input is not equal to the second input. Store the result into the EXEC mask.
@@ -15675,9 +15671,9 @@ EXEC.u64[laneId] = S0.u16 <> S1.u16
 
 **Notes**
 
-Write only EXEC. SDST must be set to EXEC\_LO. Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
+Write only EXEC. SDST must be set to EXEC_LO. Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
 
-#### V\_CMPX\_GE\_U16
+#### V_CMPX_GE_U16
 **190**
 
 Set the per-lane condition code to 1 iff the first input is greater than or equal to the second input. Store the result into the EXEC mask.
@@ -15688,9 +15684,9 @@ EXEC.u64[laneId] = S0.u16 >= S1.u16
 
 **Notes**
 
-Write only EXEC. SDST must be set to EXEC\_LO. Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
+Write only EXEC. SDST must be set to EXEC_LO. Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
 
-#### V\_CMPX\_F\_I32
+#### V_CMPX_F_I32
 **192**
 
 Set the per-lane condition code to 0. Store the result into the EXEC mask.
@@ -15701,9 +15697,9 @@ EXEC.u64[laneId] = 1'0U
 
 **Notes**
 
-Write only EXEC. SDST must be set to EXEC\_LO. Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
+Write only EXEC. SDST must be set to EXEC_LO. Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
 
-#### V\_CMPX\_LT\_I32
+#### V_CMPX_LT_I32
 **193**
 
 Set the per-lane condition code to 1 iff the first input is less than the second input. Store the result into the EXEC mask.
@@ -15714,9 +15710,9 @@ EXEC.u64[laneId] = S0.i32 < S1.i32
 
 **Notes**
 
-Write only EXEC. SDST must be set to EXEC\_LO. Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
+Write only EXEC. SDST must be set to EXEC_LO. Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
 
-#### V\_CMPX\_EQ\_I32
+#### V_CMPX_EQ_I32
 **194**
 
 Set the per-lane condition code to 1 iff the first input is equal to the second input. Store the result into the EXEC mask.
@@ -15727,9 +15723,9 @@ EXEC.u64[laneId] = S0.i32 == S1.i32
 
 **Notes**
 
-Write only EXEC. SDST must be set to EXEC\_LO. Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
+Write only EXEC. SDST must be set to EXEC_LO. Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
 
-#### V\_CMPX\_LE\_I32
+#### V_CMPX_LE_I32
 **195**
 
 Set the per-lane condition code to 1 iff the first input is less than or equal to the second input. Store the result into the EXEC mask.
@@ -15740,9 +15736,9 @@ EXEC.u64[laneId] = S0.i32 <= S1.i32
 
 **Notes**
 
-Write only EXEC. SDST must be set to EXEC\_LO. Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
+Write only EXEC. SDST must be set to EXEC_LO. Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
 
-#### V\_CMPX\_GT\_I32
+#### V_CMPX_GT_I32
 **196**
 
 Set the per-lane condition code to 1 iff the first input is greater than the second input. Store the result into the EXEC mask.
@@ -15753,9 +15749,9 @@ EXEC.u64[laneId] = S0.i32 > S1.i32
 
 **Notes**
 
-Write only EXEC. SDST must be set to EXEC\_LO. Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
+Write only EXEC. SDST must be set to EXEC_LO. Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
 
-#### V\_CMPX\_NE\_I32
+#### V_CMPX_NE_I32
 **197**
 
 Set the per-lane condition code to 1 iff the first input is not equal to the second input. Store the result into the EXEC mask.
@@ -15766,9 +15762,9 @@ EXEC.u64[laneId] = S0.i32 <> S1.i32
 
 **Notes**
 
-Write only EXEC. SDST must be set to EXEC\_LO. Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
+Write only EXEC. SDST must be set to EXEC_LO. Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
 
-#### V\_CMPX\_GE\_I32
+#### V_CMPX_GE_I32
 **198**
 
 Set the per-lane condition code to 1 iff the first input is greater than or equal to the second input. Store the result into the EXEC mask.
@@ -15779,9 +15775,9 @@ EXEC.u64[laneId] = S0.i32 >= S1.i32
 
 **Notes**
 
-Write only EXEC. SDST must be set to EXEC\_LO. Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
+Write only EXEC. SDST must be set to EXEC_LO. Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
 
-#### V\_CMPX\_T\_I32
+#### V_CMPX_T_I32
 **199**
 
 Set the per-lane condition code to 1. Store the result into the EXEC mask.
@@ -15792,9 +15788,9 @@ EXEC.u64[laneId] = 1'1U
 
 **Notes**
 
-Write only EXEC. SDST must be set to EXEC\_LO. Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
+Write only EXEC. SDST must be set to EXEC_LO. Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
 
-#### V\_CMPX\_F\_U32
+#### V_CMPX_F_U32
 **200**
 
 Set the per-lane condition code to 0. Store the result into the EXEC mask.
@@ -15805,9 +15801,9 @@ EXEC.u64[laneId] = 1'0U
 
 **Notes**
 
-Write only EXEC. SDST must be set to EXEC\_LO. Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
+Write only EXEC. SDST must be set to EXEC_LO. Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
 
-#### V\_CMPX\_LT\_U32
+#### V_CMPX_LT_U32
 **201**
 
 Set the per-lane condition code to 1 iff the first input is less than the second input. Store the result into the EXEC mask.
@@ -15818,9 +15814,9 @@ EXEC.u64[laneId] = S0.u32 < S1.u32
 
 **Notes**
 
-Write only EXEC. SDST must be set to EXEC\_LO. Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
+Write only EXEC. SDST must be set to EXEC_LO. Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
 
-#### V\_CMPX\_EQ\_U32
+#### V_CMPX_EQ_U32
 **202**
 
 Set the per-lane condition code to 1 iff the first input is equal to the second input. Store the result into the EXEC mask.
@@ -15831,9 +15827,9 @@ EXEC.u64[laneId] = S0.u32 == S1.u32
 
 **Notes**
 
-Write only EXEC. SDST must be set to EXEC\_LO. Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
+Write only EXEC. SDST must be set to EXEC_LO. Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
 
-#### V\_CMPX\_LE\_U32
+#### V_CMPX_LE_U32
 **203**
 
 Set the per-lane condition code to 1 iff the first input is less than or equal to the second input. Store the result into the EXEC mask.
@@ -15844,9 +15840,9 @@ EXEC.u64[laneId] = S0.u32 <= S1.u32
 
 **Notes**
 
-Write only EXEC. SDST must be set to EXEC\_LO. Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
+Write only EXEC. SDST must be set to EXEC_LO. Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
 
-#### V\_CMPX\_GT\_U32
+#### V_CMPX_GT_U32
 **204**
 
 Set the per-lane condition code to 1 iff the first input is greater than the second input. Store the result into the EXEC mask.
@@ -15857,9 +15853,9 @@ EXEC.u64[laneId] = S0.u32 > S1.u32
 
 **Notes**
 
-Write only EXEC. SDST must be set to EXEC\_LO. Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
+Write only EXEC. SDST must be set to EXEC_LO. Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
 
-#### V\_CMPX\_NE\_U32
+#### V_CMPX_NE_U32
 **205**
 
 Set the per-lane condition code to 1 iff the first input is not equal to the second input. Store the result into the EXEC mask.
@@ -15870,9 +15866,9 @@ EXEC.u64[laneId] = S0.u32 <> S1.u32
 
 **Notes**
 
-Write only EXEC. SDST must be set to EXEC\_LO. Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
+Write only EXEC. SDST must be set to EXEC_LO. Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
 
-#### V\_CMPX\_GE\_U32
+#### V_CMPX_GE_U32
 **206**
 
 Set the per-lane condition code to 1 iff the first input is greater than or equal to the second input. Store the result into the EXEC mask.
@@ -15883,9 +15879,9 @@ EXEC.u64[laneId] = S0.u32 >= S1.u32
 
 **Notes**
 
-Write only EXEC. SDST must be set to EXEC\_LO. Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
+Write only EXEC. SDST must be set to EXEC_LO. Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
 
-#### V\_CMPX\_T\_U32
+#### V_CMPX_T_U32
 **207**
 
 Set the per-lane condition code to 1. Store the result into the EXEC mask.
@@ -15896,9 +15892,9 @@ EXEC.u64[laneId] = 1'1U
 
 **Notes**
 
-Write only EXEC. SDST must be set to EXEC\_LO. Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
+Write only EXEC. SDST must be set to EXEC_LO. Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
 
-#### V\_CMPX\_F\_I64
+#### V_CMPX_F_I64
 **208**
 
 Set the per-lane condition code to 0. Store the result into the EXEC mask.
@@ -15909,9 +15905,9 @@ EXEC.u64[laneId] = 1'0U
 
 **Notes**
 
-Write only EXEC. SDST must be set to EXEC\_LO. Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
+Write only EXEC. SDST must be set to EXEC_LO. Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
 
-#### V\_CMPX\_LT\_I64
+#### V_CMPX_LT_I64
 **209**
 
 Set the per-lane condition code to 1 iff the first input is less than the second input. Store the result into the EXEC mask.
@@ -15922,9 +15918,9 @@ EXEC.u64[laneId] = S0.i64 < S1.i64
 
 **Notes**
 
-Write only EXEC. SDST must be set to EXEC\_LO. Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
+Write only EXEC. SDST must be set to EXEC_LO. Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
 
-#### V\_CMPX\_EQ\_I64
+#### V_CMPX_EQ_I64
 **210**
 
 Set the per-lane condition code to 1 iff the first input is equal to the second input. Store the result into the EXEC mask.
@@ -15935,9 +15931,9 @@ EXEC.u64[laneId] = S0.i64 == S1.i64
 
 **Notes**
 
-Write only EXEC. SDST must be set to EXEC\_LO. Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
+Write only EXEC. SDST must be set to EXEC_LO. Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
 
-#### V\_CMPX\_LE\_I64
+#### V_CMPX_LE_I64
 **211**
 
 Set the per-lane condition code to 1 iff the first input is less than or equal to the second input. Store the result into the EXEC mask.
@@ -15948,9 +15944,9 @@ EXEC.u64[laneId] = S0.i64 <= S1.i64
 
 **Notes**
 
-Write only EXEC. SDST must be set to EXEC\_LO. Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
+Write only EXEC. SDST must be set to EXEC_LO. Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
 
-#### V\_CMPX\_GT\_I64
+#### V_CMPX_GT_I64
 **212**
 
 Set the per-lane condition code to 1 iff the first input is greater than the second input. Store the result into the EXEC mask.
@@ -15961,9 +15957,9 @@ EXEC.u64[laneId] = S0.i64 > S1.i64
 
 **Notes**
 
-Write only EXEC. SDST must be set to EXEC\_LO. Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
+Write only EXEC. SDST must be set to EXEC_LO. Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
 
-#### V\_CMPX\_NE\_I64
+#### V_CMPX_NE_I64
 **213**
 
 Set the per-lane condition code to 1 iff the first input is not equal to the second input. Store the result into the EXEC mask.
@@ -15974,9 +15970,9 @@ EXEC.u64[laneId] = S0.i64 <> S1.i64
 
 **Notes**
 
-Write only EXEC. SDST must be set to EXEC\_LO. Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
+Write only EXEC. SDST must be set to EXEC_LO. Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
 
-#### V\_CMPX\_GE\_I64
+#### V_CMPX_GE_I64
 **214**
 
 Set the per-lane condition code to 1 iff the first input is greater than or equal to the second input. Store the result into the EXEC mask.
@@ -15987,9 +15983,9 @@ EXEC.u64[laneId] = S0.i64 >= S1.i64
 
 **Notes**
 
-Write only EXEC. SDST must be set to EXEC\_LO. Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
+Write only EXEC. SDST must be set to EXEC_LO. Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
 
-#### V\_CMPX\_T\_I64
+#### V_CMPX_T_I64
 **215**
 
 Set the per-lane condition code to 1. Store the result into the EXEC mask.
@@ -16000,9 +15996,9 @@ EXEC.u64[laneId] = 1'1U
 
 **Notes**
 
-Write only EXEC. SDST must be set to EXEC\_LO. Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
+Write only EXEC. SDST must be set to EXEC_LO. Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
 
-#### V\_CMPX\_F\_U64
+#### V_CMPX_F_U64
 **216**
 
 Set the per-lane condition code to 0. Store the result into the EXEC mask.
@@ -16013,9 +16009,9 @@ EXEC.u64[laneId] = 1'0U
 
 **Notes**
 
-Write only EXEC. SDST must be set to EXEC\_LO. Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
+Write only EXEC. SDST must be set to EXEC_LO. Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
 
-#### V\_CMPX\_LT\_U64
+#### V_CMPX_LT_U64
 **217**
 
 Set the per-lane condition code to 1 iff the first input is less than the second input. Store the result into the EXEC mask.
@@ -16026,9 +16022,9 @@ EXEC.u64[laneId] = S0.u64 < S1.u64
 
 **Notes**
 
-Write only EXEC. SDST must be set to EXEC\_LO. Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
+Write only EXEC. SDST must be set to EXEC_LO. Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
 
-#### V\_CMPX\_EQ\_U64
+#### V_CMPX_EQ_U64
 **218**
 
 Set the per-lane condition code to 1 iff the first input is equal to the second input. Store the result into the EXEC mask.
@@ -16039,9 +16035,9 @@ EXEC.u64[laneId] = S0.u64 == S1.u64
 
 **Notes**
 
-Write only EXEC. SDST must be set to EXEC\_LO. Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
+Write only EXEC. SDST must be set to EXEC_LO. Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
 
-#### V\_CMPX\_LE\_U64
+#### V_CMPX_LE_U64
 **219**
 
 Set the per-lane condition code to 1 iff the first input is less than or equal to the second input. Store the result into the EXEC mask.
@@ -16052,9 +16048,9 @@ EXEC.u64[laneId] = S0.u64 <= S1.u64
 
 **Notes**
 
-Write only EXEC. SDST must be set to EXEC\_LO. Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
+Write only EXEC. SDST must be set to EXEC_LO. Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
 
-#### V\_CMPX\_GT\_U64
+#### V_CMPX_GT_U64
 **220**
 
 Set the per-lane condition code to 1 iff the first input is greater than the second input. Store the result into the EXEC mask.
@@ -16065,9 +16061,9 @@ EXEC.u64[laneId] = S0.u64 > S1.u64
 
 **Notes**
 
-Write only EXEC. SDST must be set to EXEC\_LO. Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
+Write only EXEC. SDST must be set to EXEC_LO. Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
 
-#### V\_CMPX\_NE\_U64
+#### V_CMPX_NE_U64
 **221**
 
 Set the per-lane condition code to 1 iff the first input is not equal to the second input. Store the result into the EXEC mask.
@@ -16078,9 +16074,9 @@ EXEC.u64[laneId] = S0.u64 <> S1.u64
 
 **Notes**
 
-Write only EXEC. SDST must be set to EXEC\_LO. Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
+Write only EXEC. SDST must be set to EXEC_LO. Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
 
-#### V\_CMPX\_GE\_U64
+#### V_CMPX_GE_U64
 **222**
 
 Set the per-lane condition code to 1 iff the first input is greater than or equal to the second input. Store the result into the EXEC mask.
@@ -16091,9 +16087,9 @@ EXEC.u64[laneId] = S0.u64 >= S1.u64
 
 **Notes**
 
-Write only EXEC. SDST must be set to EXEC\_LO. Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
+Write only EXEC. SDST must be set to EXEC_LO. Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
 
-#### V\_CMPX\_T\_U64
+#### V_CMPX_T_U64
 **223**
 
 Set the per-lane condition code to 1. Store the result into the EXEC mask.
@@ -16104,9 +16100,9 @@ EXEC.u64[laneId] = 1'1U
 
 **Notes**
 
-Write only EXEC. SDST must be set to EXEC\_LO. Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
+Write only EXEC. SDST must be set to EXEC_LO. Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
 
-#### V\_CMPX\_CLASS\_F16
+#### V_CMPX_CLASS_F16
 **253**
 
 Evaluate the IEEE numeric class function specified as a 10 bit mask in the second input on the first input, a half-precision float, and set the per-lane condition code to the result. Store the result into the EXEC mask.
@@ -16148,9 +16144,9 @@ EXEC.u64[laneId] = result
 
 **Notes**
 
-Write only EXEC. SDST must be set to EXEC\_LO. Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
+Write only EXEC. SDST must be set to EXEC_LO. Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
 
-#### V\_CMPX\_CLASS\_F32
+#### V_CMPX_CLASS_F32
 **254**
 
 Evaluate the IEEE numeric class function specified as a 10 bit mask in the second input on the first input, a single-precision float, and set the per-lane condition code to the result. Store the result into the EXEC mask.
@@ -16192,9 +16188,9 @@ EXEC.u64[laneId] = result
 
 **Notes**
 
-Write only EXEC. SDST must be set to EXEC\_LO. Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
+Write only EXEC. SDST must be set to EXEC_LO. Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
 
-#### V\_CMPX\_CLASS\_F64
+#### V_CMPX_CLASS_F64
 **255**
 
 Evaluate the IEEE numeric class function specified as a 10 bit mask in the second input on the first input, a double-precision float, and set the per-lane condition code to the result. Store the result into the EXEC mask.
@@ -16236,7 +16232,7 @@ EXEC.u64[laneId] = result
 
 **Notes**
 
-Write only EXEC. SDST must be set to EXEC\_LO. Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
+Write only EXEC. SDST must be set to EXEC_LO. Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
 
 ### 16.9.1. VOPC using VOP3 encoding
 
@@ -16282,7 +16278,7 @@ VOP3P instruction format diagram showing a 32-bit register layout from bit 31 to
 | VOP3P | NEG | OPSLH |   |   | SRC2 <sub>9</sub> |   |   |   |  |    | SRC1 <sub>9</sub> |        | SRC0 <sub>9</sub> |                     |                   |    |
 | 63    |     |       |   |   |                   |   |   |   |  |    |                   |        |                   |                     |                   | 32 |
 
-### V\_PK\_MAD\_I16
+### V_PK_MAD_I16
 
 0
 
@@ -16294,7 +16290,7 @@ tmp[15 : 0].i16 = S0[15 : 0].i16 * S1[15 : 0].i16 + S2[15 : 0].i16;
 D0.b32 = tmp.b32
 ```
 
-### V\_PK\_MUL\_LO\_U16
+### V_PK_MUL_LO_U16
 
 1
 
@@ -16306,7 +16302,7 @@ tmp[15 : 0].u16 = S0[15 : 0].u16 * S1[15 : 0].u16;
 D0.b32 = tmp.b32
 ```
 
-### V\_PK\_ADD\_I16
+### V_PK_ADD_I16
 
 2
 
@@ -16318,7 +16314,7 @@ tmp[15 : 0].i16 = S0[15 : 0].i16 + S1[15 : 0].i16;
 D0.b32 = tmp.b32
 ```
 
-### V\_PK\_SUB\_I16
+### V_PK_SUB_I16
 
 3
 
@@ -16333,7 +16329,7 @@ tmp[15 : 0].i16 = S0[15 : 0].i16 - S1[15 : 0].i16;
 D0.b32 = tmp.b32
 ```
 
-#### V\_PK\_LSHLREV\_B16
+#### V_PK_LSHLREV_B16
 
 4
 
@@ -16345,7 +16341,7 @@ tmp[15 : 0].u16 = (S1[15 : 0].u16 << S0.u32[3 : 0].u32);
 D0.b32 = tmp.b32
 ```
 
-#### V\_PK\_LSHRREV\_B16
+#### V_PK_LSHRREV_B16
 
 5
 
@@ -16357,7 +16353,7 @@ tmp[15 : 0].u16 = (S1[15 : 0].u16 >> S0.u32[3 : 0].u32);
 D0.b32 = tmp.b32
 ```
 
-#### V\_PK\_ASHRREV\_I16
+#### V_PK_ASHRREV_I16
 
 6
 
@@ -16369,7 +16365,7 @@ tmp[15 : 0].i16 = (S1[15 : 0].i16 >> S0.u32[3 : 0].u32);
 D0.b32 = tmp.b32
 ```
 
-#### V\_PK\_MAX\_I16
+#### V_PK_MAX_I16
 
 7
 
@@ -16381,7 +16377,7 @@ tmp[15 : 0].i16 = S0[15 : 0].i16 >= S1[15 : 0].i16 ? S0[15 : 0].i16 : S1[15 : 0]
 D0.b32 = tmp.b32
 ```
 
-**V\_PK\_MIN\_I16**
+**V_PK_MIN_I16**
 
 8
 
@@ -16393,7 +16389,7 @@ tmp[15 : 0].i16 = S0[15 : 0].i16 < S1[15 : 0].i16 ? S0[15 : 0].i16 : S1[15 : 0].
 D0.b32 = tmp.b32
 ```
 
-**V\_PK\_MAD\_U16**
+**V_PK_MAD_U16**
 
 9
 
@@ -16405,7 +16401,7 @@ tmp[15 : 0].u16 = S0[15 : 0].u16 * S1[15 : 0].u16 + S2[15 : 0].u16;
 D0.b32 = tmp.b32
 ```
 
-**V\_PK\_ADD\_U16**
+**V_PK_ADD_U16**
 
 10
 
@@ -16417,7 +16413,7 @@ tmp[15 : 0].u16 = S0[15 : 0].u16 + S1[15 : 0].u16;
 D0.b32 = tmp.b32
 ```
 
-**V\_PK\_SUB\_U16**
+**V_PK_SUB_U16**
 
 11
 
@@ -16429,7 +16425,7 @@ tmp[15 : 0].u16 = S0[15 : 0].u16 - S1[15 : 0].u16;
 D0.b32 = tmp.b32
 ```
 
-**V\_PK\_MAX\_U16**
+**V_PK_MAX_U16**
 
 12
 
@@ -16443,7 +16439,7 @@ tmp[15 : 0].u16 = S0[15 : 0].u16 >= S1[15 : 0].u16 ? S0[15 : 0].u16 : S1[15 : 0]
 D0.b32 = tmp.b32
 ```
 
-### V\_PK\_MIN\_U16
+### V_PK_MIN_U16
 
 13
 
@@ -16455,7 +16451,7 @@ tmp[15 : 0].u16 = S0[15 : 0].u16 < S1[15 : 0].u16 ? S0[15 : 0].u16 : S1[15 : 0].
 D0.b32 = tmp.b32
 ```
 
-### V\_PK\_FMA\_F16
+### V_PK_FMA_F16
 
 14
 
@@ -16468,7 +16464,7 @@ tmp[15 : 0].f16 = fma(S0[15 : 0].f16, S1[15 : 0].f16, S2[15 : 0].f16);
 D0.b32 = tmp
 ```
 
-### V\_PK\_ADD\_F16
+### V_PK_ADD_F16
 
 15
 
@@ -16480,7 +16476,7 @@ tmp[15 : 0].f16 = S0[15 : 0].f16 + S1[15 : 0].f16;
 D0.b32 = tmp.b32
 ```
 
-### V\_PK\_MUL\_F16
+### V_PK_MUL_F16
 
 16
 
@@ -16495,7 +16491,7 @@ tmp[15 : 0].f16 = S0[15 : 0].f16 * S1[15 : 0].f16;
 D0.b32 = tmp.b32
 ```
 
-**V\_PK\_MIN\_F16****17**
+**V_PK_MIN_F16****17**
 
 Select the component-wise minimum of two packed half-precision float inputs and store the result into a vector register.
 
@@ -16505,7 +16501,7 @@ tmp[15 : 0].f16 = v_min_f16(S0[15 : 0].f16, S1[15 : 0].f16);
 D0.b32 = tmp.b32
 ```
 
-**V\_PK\_MAX\_F16****18**
+**V_PK_MAX_F16****18**
 
 Select the component-wise maximum of two packed half-precision float inputs and store the result into a vector register.
 
@@ -16515,7 +16511,7 @@ tmp[15 : 0].f16 = v_max_f16(S0[15 : 0].f16, S1[15 : 0].f16);
 D0.b32 = tmp.b32
 ```
 
-**V\_DOT2\_F32\_F16****19**
+**V_DOT2_F32_F16****19**
 
 Compute the dot product of two packed 2-D half-precision float inputs in the single-precision float domain, add a single-precision float value from the third input and store the result into a vector register.
 
@@ -16526,7 +16522,7 @@ tmp += f16_to_f32(S0[31 : 16].f16) * f16_to_f32(S1[31 : 16].f16);
 D0.f32 = tmp
 ```
 
-**V\_DOT4\_I32\_IU8****22**
+**V_DOT4_I32_IU8****22**
 
 Compute the dot product of two packed 4-D unsigned 8-bit integer inputs in the signed 32-bit integer domain, add a signed 32-bit integer value from the third input and store the result into a vector register.
 
@@ -16561,7 +16557,7 @@ D0.i32 = tmp
 
 This opcode does not depend on the inference or deep learning features being enabled.
 
-### V\_DOT4\_U32\_U8
+### V_DOT4_U32_U8
 
 23
 
@@ -16582,7 +16578,7 @@ D0.u32 = tmp
 
 This opcode does not depend on the inference or deep learning features being enabled.
 
-### V\_DOT8\_I32\_IU4
+### V_DOT8_I32_IU4
 
 24
 
@@ -16621,7 +16617,7 @@ D0.i32 = tmp
 
 ```
 
-**V\_DOT8\_U32\_U4**
+**V_DOT8_U32_U4**
 
 25
 
@@ -16642,7 +16638,7 @@ D0.u32 = tmp
 
 ```
 
-**V\_DOT2\_F32\_BF16**
+**V_DOT2_F32_BF16**
 
 26
 
@@ -16657,13 +16653,13 @@ D0.f32 = tmp
 
 ```
 
-**V\_FMA\_MIX\_F32**
+**V_FMA_MIX_F32**
 
 32
 
 Multiply two inputs and add a third input using fused multiply add where the inputs are a mix of half-precision float and single-precision float values. Store the result into a vector register.
 
-Size and location of the three inputs are controlled by { OPSEL\_HI[i], OPSEL[i] }: 0=src[31:0], 1=src[31:0], 2=src[15:0], 3=src[31:16]. For MIX opcodes the NEG\_HI instruction field acts as an absolute-value modifier for the three inputs.
+Size and location of the three inputs are controlled by { OPSEL_HI[i], OPSEL[i] }: 0=src[31:0], 1=src[31:0], 2=src[15:0], 3=src[31:16]. For MIX opcodes the NEG_HI instruction field acts as an absolute-value modifier for the three inputs.
 
 ```
 declare in : 32'F[3];
@@ -16680,13 +16676,13 @@ endfor;
 D0[31 : 0].f32 = fma(in[0], in[1], in[2])
 ```
 
-## V\_FMA\_MIXLO\_F16
+## V_FMA_MIXLO_F16
 
 33
 
 Multiply two inputs and add a third input using fused multiply add where the inputs are a mix of half-precision float and single-precision float values. Convert the result to a half-precision float. Store the result into the low bits of a vector register.
 
-Size and location of the three inputs are controlled by { OPSEL\_HI[i], OPSEL[i] }: 0=src[31:0], 1=src[31:0], 2=src[15:0], 3=src[31:16]. For MIX opcodes the NEG\_HI instruction field acts as an absolute-value modifier for the three inputs.
+Size and location of the three inputs are controlled by { OPSEL_HI[i], OPSEL[i] }: 0=src[31:0], 1=src[31:0], 2=src[15:0], 3=src[31:16]. For MIX opcodes the NEG_HI instruction field acts as an absolute-value modifier for the three inputs.
 
 ```
 declare in : 32'F[3];
@@ -16703,13 +16699,13 @@ endfor;
 D0[15 : 0].f16 = f32_to_f16(fma(in[0], in[1], in[2]))
 ```
 
-## V\_FMA\_MIXHI\_F16
+## V_FMA_MIXHI_F16
 
 34
 
 Multiply two inputs and add a third input using fused multiply add where the inputs are a mix of half-precision float and single-precision float values. Convert the result to a half-precision float. Store the result into the high bits of a vector register.
 
-Size and location of the three inputs are controlled by { OPSEL\_HI[i], OPSEL[i] } : 0=src[31:0], 1=src[31:0], 2=src[15:0], 3=src[31:16]. For MIX opcodes the NEG\_HI instruction field acts as an absolute-value modifier for the three inputs.
+Size and location of the three inputs are controlled by { OPSEL_HI[i], OPSEL[i] } : 0=src[31:0], 1=src[31:0], 2=src[15:0], 3=src[31:16]. For MIX opcodes the NEG_HI instruction field acts as an absolute-value modifier for the three inputs.
 
 ```
 declare in : 32'F[3];
@@ -16726,7 +16722,7 @@ endfor;
 D0[31 : 16].f16 = f32_to_f16(fma(in[0], in[1], in[2]))
 ```
 
-## V\_WMMA\_F32\_16X16X16\_F16
+## V_WMMA_F32_16X16X16_F16
 
 64
 
@@ -16745,7 +16741,7 @@ eval "D0.f32(16x16) = S0.f16(16x16) * S1.f16(16x16) + S2.f32(16x16)";
 EXEC = saved_exec
 ```
 
-## V\_WMMA\_F32\_16X16X16\_BF16
+## V_WMMA_F32_16X16X16_BF16
 
 65
 
@@ -16766,7 +16762,7 @@ eval "D0.f32(16x16) = S0.bf16(16x16) * S1.bf16(16x16) + S2.f32(16x16)";
 EXEC = saved_exec
 ```
 
-## V\_WMMA\_F16\_16X16X16\_F16
+## V_WMMA_F16_16X16X16_F16
 
 66
 
@@ -16787,7 +16783,7 @@ eval "D0.f16(16x16) = S0.f16(16x16) * S1.f16(16x16) + S2.f16(16x16)";
 EXEC = saved_exec
 ```
 
-## V\_WMMA\_BF16\_16X16X16\_BF16
+## V_WMMA_BF16_16X16X16_BF16
 
 67
 
@@ -16811,7 +16807,7 @@ eval "D0.bf16(16x16) = S0.bf16(16x16) * S1.bf16(16x16) + S2.bf16(16x16)";
 EXEC = saved_exec
 ```
 
-## V\_WMMA\_I32\_16X16X16\_IU8
+## V_WMMA_I32_16X16X16_IU8
 
 68
 
@@ -16832,7 +16828,7 @@ eval "D0.i32(16x16) = S0.iu8(16x16) * S1.iu8(16x16) + S2.i32(16x16)";
 EXEC = saved_exec
 ```
 
-## V\_WMMA\_I32\_16X16X16\_IU4
+## V_WMMA_I32_16X16X16_IU4
 
 69
 
@@ -16866,43 +16862,43 @@ For instruction definitions, refer to the VOP1, VOP2 and VOP3 sections.
 
 ### 16.11.1. VOPD X-Instructions
 
-#### V\_DUAL\_FMAC\_F32
+#### V_DUAL_FMAC_F32
 
 0
 
 Multiply two floating point inputs and accumulate the result into the destination register using fused multiply add.
 
-#### V\_DUAL\_FMAAK\_F32
+#### V_DUAL_FMAAK_F32
 
 1
 
 Multiply two single-precision float inputs and add a literal constant using fused multiply add, and store the result into a vector register.
 
-#### V\_DUAL\_FMAMK\_F32
+#### V_DUAL_FMAMK_F32
 
 2
 
 Multiply a single-precision float input with a literal constant and add a second single-precision float input using fused multiply add, and store the result into a vector register.
 
-#### V\_DUAL\_MUL\_F32
+#### V_DUAL_MUL_F32
 
 3
 
 Multiply two floating point inputs and store the result into a vector register.
 
-#### V\_DUAL\_ADD\_F32
+#### V_DUAL_ADD_F32
 
 4
 
 Add two floating point inputs and store the result into a vector register.
 
-#### V\_DUAL\_SUB\_F32
+#### V_DUAL_SUB_F32
 
 5
 
 Subtract the second floating point input from the first input and store the result into a vector register.
 
-**V\_DUAL\_SUBREV\_F32**
+**V_DUAL_SUBREV_F32**
 
 6
 
@@ -16910,7 +16906,7 @@ Subtract the *first* floating point input from the *second* input and store the 
 
 ---
 
-**V\_DUAL\_MUL\_DX9\_ZERO\_F32**
+**V_DUAL_MUL_DX9_ZERO_F32**
 
 7
 
@@ -16918,7 +16914,7 @@ Multiply two floating point inputs and store the result into a vector register. 
 
 ---
 
-**V\_DUAL\_MOV\_B32**
+**V_DUAL_MOV_B32**
 
 8
 
@@ -16926,7 +16922,7 @@ Move 32-bit data from a vector input into a vector register.
 
 ---
 
-**V\_DUAL\_CNDMASK\_B32**
+**V_DUAL_CNDMASK_B32**
 
 9
 
@@ -16934,7 +16930,7 @@ Copy data from one of two inputs based on the per-lane condition code and store 
 
 ---
 
-**V\_DUAL\_MAX\_F32**
+**V_DUAL_MAX_F32**
 
 10
 
@@ -16942,7 +16938,7 @@ Select the maximum of two single-precision float inputs and store the result int
 
 ---
 
-**V\_DUAL\_MIN\_F32**
+**V_DUAL_MIN_F32**
 
 11
 
@@ -16950,7 +16946,7 @@ Select the minimum of two single-precision float inputs and store the result int
 
 ---
 
-**V\_DUAL\_DOT2ACC\_F32\_F16**
+**V_DUAL_DOT2ACC_F32_F16**
 
 12
 
@@ -16958,7 +16954,7 @@ Compute the dot product of two packed 2-D half-precision float inputs in the sin
 
 ---
 
-**V\_DUAL\_DOT2ACC\_F32\_BF16**
+**V_DUAL_DOT2ACC_F32_BF16**
 
 13
 
@@ -16968,55 +16964,55 @@ Dot product of packed brain-float values, accumulate with destination. The initi
 
 ## 16.11.2. VOPD Y-Instructions
 
-### V\_DUAL\_FMAC\_F32
+### V_DUAL_FMAC_F32
 
 0
 
 Multiply two floating point inputs and accumulate the result into the destination register using fused multiply add.
 
-### V\_DUAL\_FMAAK\_F32
+### V_DUAL_FMAAK_F32
 
 1
 
 Multiply two single-precision float inputs and add a literal constant using fused multiply add, and store the result into a vector register.
 
-### V\_DUAL\_FMAMK\_F32
+### V_DUAL_FMAMK_F32
 
 2
 
 Multiply a single-precision float input with a literal constant and add a second single-precision float input using fused multiply add, and store the result into a vector register.
 
-### V\_DUAL\_MUL\_F32
+### V_DUAL_MUL_F32
 
 3
 
 Multiply two floating point inputs and store the result into a vector register.
 
-### V\_DUAL\_ADD\_F32
+### V_DUAL_ADD_F32
 
 4
 
 Add two floating point inputs and store the result into a vector register.
 
-### V\_DUAL\_SUB\_F32
+### V_DUAL_SUB_F32
 
 5
 
 Subtract the second floating point input from the first input and store the result into a vector register.
 
-### V\_DUAL\_SUBREV\_F32
+### V_DUAL_SUBREV_F32
 
 6
 
 Subtract the *first* floating point input from the *second* input and store the result into a vector register.
 
-### V\_DUAL\_MUL\_DX9\_ZERO\_F32
+### V_DUAL_MUL_DX9_ZERO_F32
 
 7
 
 Multiply two floating point inputs and store the result into a vector register. Follows DX9 rules where 0.0 times anything produces 0.0 (this differs from other APIs when the other input is infinity or NaN).
 
-**V\_DUAL\_MOV\_B32**
+**V_DUAL_MOV_B32**
 
 8
 
@@ -17024,7 +17020,7 @@ Move 32-bit data from a vector input into a vector register.
 
 ---
 
-**V\_DUAL\_CNDMASK\_B32**
+**V_DUAL_CNDMASK_B32**
 
 9
 
@@ -17032,7 +17028,7 @@ Copy data from one of two inputs based on the per-lane condition code and store 
 
 ---
 
-**V\_DUAL\_MAX\_F32**
+**V_DUAL_MAX_F32**
 
 10
 
@@ -17040,7 +17036,7 @@ Select the maximum of two single-precision float inputs and store the result int
 
 ---
 
-**V\_DUAL\_MIN\_F32**
+**V_DUAL_MIN_F32**
 
 11
 
@@ -17048,7 +17044,7 @@ Select the minimum of two single-precision float inputs and store the result int
 
 ---
 
-**V\_DUAL\_DOT2ACC\_F32\_F16**
+**V_DUAL_DOT2ACC_F32_F16**
 
 12
 
@@ -17056,7 +17052,7 @@ Compute the dot product of two packed 2-D half-precision float inputs in the sin
 
 ---
 
-**V\_DUAL\_DOT2ACC\_F32\_BF16**
+**V_DUAL_DOT2ACC_F32_BF16**
 
 13
 
@@ -17064,7 +17060,7 @@ Dot product of packed brain-float values, accumulate with destination. The initi
 
 ---
 
-**V\_DUAL\_ADD\_NC\_U32**
+**V_DUAL_ADD_NC_U32**
 
 16
 
@@ -17072,7 +17068,7 @@ Add two unsigned 32-bit integer inputs and store the result into a vector regist
 
 ---
 
-**V\_DUAL\_LSHLREV\_B32**
+**V_DUAL_LSHLREV_B32**
 
 17
 
@@ -17082,7 +17078,7 @@ Given a shift count in the *first* vector input, calculate the logical shift lef
 
 ---
 
-**V\_DUAL\_AND\_B32**
+**V_DUAL_AND_B32**
 
 **18**
 
@@ -17100,26 +17096,26 @@ Diagram showing the bit-level encoding for VOP3 and VOP3SD instructions. Both en
 
 **VOP3SD** this encoding allows specifying a unique scalar destination, and is used only for:
 
-- V\_ADD\_CO\_U32
-- V\_SUB\_CO\_U32
-- V\_SUBREV\_CO\_U32
-- V\_ADDC\_CO\_U32
-- V\_SUBB\_CO\_U32
-- V\_SUBBREV\_CO\_U32
-- V\_DIV\_SCALE\_F32
-- V\_DIV\_SCALE\_F64
-- V\_MAD\_U64\_U32
-- V\_MAD\_I64\_I32
+- V_ADD_CO_U32
+- V_SUB_CO_U32
+- V_SUBREV_CO_U32
+- V_ADDC_CO_U32
+- V_SUBB_CO_U32
+- V_SUBBREV_CO_U32
+- V_DIV_SCALE_F32
+- V_DIV_SCALE_F64
+- V_MAD_U64_U32
+- V_MAD_I64_I32
 
 **VOP3** all other VALU instructions use this encoding
 
-### V\_NOP
+### V_NOP
 
 384
 
 Do nothing.
 
-### V\_MOV\_B32
+### V_MOV_B32
 
 385
 
@@ -17141,7 +17137,7 @@ v_mov_b32 v0, -v1   // Set v0 to the negation of v1
 v_mov_b32 v0, abs(v1) // Set v0 to the absolute value of v1
 ```
 
-**V\_READFIRSTLANE\_B32**
+**V_READFIRSTLANE_B32**
 
 386
 
@@ -17175,7 +17171,7 @@ D0.b32 = VGPR[lane][SRC0.u32]
 
 Overrides EXEC mask for the VGPR read. Input and output modifiers not supported; this is an untyped operation.
 
-**V\_CVT\_I32\_F64**
+**V_CVT_I32_F64**
 
 387
 
@@ -17191,7 +17187,7 @@ D0.i32 = f64_to_i32(S0.f64)
 
 Generation of the INEXACT exception is controlled by the CLAMP bit. INEXACT exceptions are enabled for this conversion iff CLAMP == 1.
 
-**V\_CVT\_F64\_I32**
+**V_CVT_F64_I32**
 
 388
 
@@ -17205,7 +17201,7 @@ D0.f64 = i32_to_f64(S0.i32)
 
 0ULP accuracy.
 
-### V\_CVT\_F32\_I32
+### V_CVT_F32_I32
 
 389
 
@@ -17219,7 +17215,7 @@ D0.f32 = i32_to_f32(S0.i32)
 
 0.5ULP accuracy.
 
-### V\_CVT\_F32\_U32
+### V_CVT_F32_U32
 
 390
 
@@ -17233,7 +17229,7 @@ D0.f32 = u32_to_f32(S0.u32)
 
 0.5ULP accuracy.
 
-### V\_CVT\_U32\_F32
+### V_CVT_U32_F32
 
 391
 
@@ -17249,7 +17245,7 @@ D0.u32 = f32_to_u32(S0.f32)
 
 Generation of the INEXACT exception is controlled by the CLAMP bit. INEXACT exceptions are enabled for this conversion iff CLAMP == 1.
 
-### V\_CVT\_I32\_F32
+### V_CVT_I32_F32
 
 **392**
 
@@ -17265,7 +17261,7 @@ D0.i32 = f32_to_i32(S0.f32)
 
 Generation of the INEXACT exception is controlled by the CLAMP bit. INEXACT exceptions are enabled for this conversion iff CLAMP == 1.
 
-### V\_CVT\_F16\_F32
+### V_CVT_F16_F32
 
 **394**
 
@@ -17279,7 +17275,7 @@ D0.f16 = f32_to_f16(S0.f32)
 
 0.5ULP accuracy, supports input modifiers and creates FP16 denormals when appropriate. Flush denorms on output if specified based on DP denorm mode. Output rounding based on DP rounding mode.
 
-### V\_CVT\_F32\_F16
+### V_CVT_F32_F16
 
 **395**
 
@@ -17293,7 +17289,7 @@ D0.f32 = f16_to_f32(S0.f16)
 
 0ULP accuracy, FP16 denormal inputs are accepted. Flush denorms on input if specified based on DP denorm mode.
 
-**V\_CVT\_NEAREST\_I32\_F32**
+**V_CVT_NEAREST_I32_F32**
 
 396
 
@@ -17307,7 +17303,7 @@ D0.i32 = f32_to_i32(floor(S0.f32 + 0.5F))
 
 0.5ULP accuracy, denormals are supported.
 
-**V\_CVT\_FLOOR\_I32\_F32**
+**V_CVT_FLOOR_I32_F32**
 
 397
 
@@ -17321,7 +17317,7 @@ D0.i32 = f32_to_i32(floor(S0.f32))
 
 1ULP accuracy, denormals are supported.
 
-**V\_CVT\_OFF\_F32\_I4**
+**V_CVT_OFF_F32_I4**
 
 398
 
@@ -17356,7 +17352,7 @@ declare CVT_OFF_TABLE : 32'F[16];
 D0.f32 = CVT_OFF_TABLE[S0.u32[3 : 0]]
 ```
 
-**V\_CVT\_F32\_F64**
+**V_CVT_F32_F64**
 
 399
 
@@ -17370,7 +17366,7 @@ D0.f32 = f64_to_f32(S0.f64)
 
 0.5ULP accuracy, denormals are supported.
 
-**V\_CVT\_F64\_F32**
+**V_CVT_F64_F32**
 
 400
 
@@ -17384,7 +17380,7 @@ D0.f64 = f32_to_f64(S0.f32)
 
 0ULP accuracy, denormals are supported.
 
-**V\_CVT\_F32\_UBYTE0**
+**V_CVT_F32_UBYTE0**
 
 401
 
@@ -17394,7 +17390,7 @@ Convert an unsigned byte in byte 0 of the input to a single-precision float valu
 D0.f32 = u32_to_f32(S0[7 : 0].u32)
 ```
 
-**V\_CVT\_F32\_UBYTE1**
+**V_CVT_F32_UBYTE1**
 
 402
 
@@ -17404,7 +17400,7 @@ Convert an unsigned byte in byte 1 of the input to a single-precision float valu
 D0.f32 = u32_to_f32(S0[15 : 8].u32)
 ```
 
-**V\_CVT\_F32\_UBYTE2****403**
+**V_CVT_F32_UBYTE2****403**
 
 Convert an unsigned byte in byte 2 of the input to a single-precision float value and store the result into a vector register.
 
@@ -17412,7 +17408,7 @@ Convert an unsigned byte in byte 2 of the input to a single-precision float valu
 D0.f32 = u32_to_f32(S0[23 : 16].u32)
 ```
 
-**V\_CVT\_F32\_UBYTE3****404**
+**V_CVT_F32_UBYTE3****404**
 
 Convert an unsigned byte in byte 3 of the input to a single-precision float value and store the result into a vector register.
 
@@ -17420,7 +17416,7 @@ Convert an unsigned byte in byte 3 of the input to a single-precision float valu
 D0.f32 = u32_to_f32(S0[31 : 24].u32)
 ```
 
-**V\_CVT\_U32\_F64****405**
+**V_CVT_U32_F64****405**
 
 Convert from a double-precision float input to an unsigned 32-bit integer value and store the result into a vector register.
 
@@ -17434,7 +17430,7 @@ D0.u32 = f64_to_u32(S0.f64)
 
 Generation of the INEXACT exception is controlled by the CLAMP bit. INEXACT exceptions are enabled for this conversion iff CLAMP == 1.
 
-**V\_CVT\_F64\_U32****406**
+**V_CVT_F64_U32****406**
 
 Convert from an unsigned 32-bit integer input to a double-precision float value and store the result into a vector register.
 
@@ -17446,7 +17442,7 @@ D0.f64 = u32_to_f64(S0.u32)
 
 0ULP accuracy.
 
-**V\_TRUNC\_F64****407**
+**V_TRUNC_F64****407**
 
 Compute the integer part of a double-precision float input using round toward zero semantics and store the result in floating point format into a vector register.
 
@@ -17454,7 +17450,7 @@ Compute the integer part of a double-precision float input using round toward ze
 D0.f64 = trunc(S0.f64)
 ```
 
-**V\_CEIL\_F64****408**
+**V_CEIL_F64****408**
 
 Round the double-precision float input up to next integer and store the result in floating point format into a vector register.
 
@@ -17465,7 +17461,7 @@ if ((S0.f64 > 0.0) && (S0.f64 != D0.f64)) then
 endif
 ```
 
-**V\_RNDNE\_F64****409**
+**V_RNDNE_F64****409**
 
 Round the double-precision float input to the nearest even integer and store the result in floating point format into a vector register.
 
@@ -17476,7 +17472,7 @@ if (isEven(floor(S0.f64)) && (fract(S0.f64) == 0.5)) then
 endif
 ```
 
-**V\_FLOOR\_F64****410**
+**V_FLOOR_F64****410**
 
 Round the double-precision float input down to previous integer and store the result in floating point format into a vector register.
 
@@ -17487,13 +17483,13 @@ if ((S0.f64 < 0.0) && (S0.f64 != D0.f64)) then
 endif
 ```
 
-**V\_PIPEFLUSH**
+**V_PIPEFLUSH**
 
 411
 
 Flush the vector ALU pipeline through the destination cache.
 
-**V\_MOV\_B16**
+**V_MOV_B16**
 
 412
 
@@ -17507,7 +17503,7 @@ D0.b16 = S0.b16
 
 Floating-point modifiers are valid for this instruction if S0 is a 16-bit floating point value. This instruction is suitable for negating or taking the absolute value of a floating-point value.
 
-**V\_FRACT\_F32**
+**V_FRACT_F32**
 
 416
 
@@ -17525,7 +17521,7 @@ This is intended to comply with the DX specification of `fract` where the functi
 
 Obey round mode, result clamped to 0x3f7fffff.
 
-**V\_TRUNC\_F32**
+**V_TRUNC_F32**
 
 417
 
@@ -17535,7 +17531,7 @@ Compute the integer part of a single-precision float input using round toward ze
 D0.f32 = trunc(S0.f32)
 ```
 
-**V\_CEIL\_F32**
+**V_CEIL_F32**
 
 418
 
@@ -17548,7 +17544,7 @@ if ((S0.f32 > 0.0F) && (S0.f32 != D0.f32)) then
 endif
 ```
 
-**V\_RNDNE\_F32**
+**V_RNDNE_F32**
 
 419
 
@@ -17561,7 +17557,7 @@ if (isEven(64'F(floor(S0.f32))) && (fract(S0.f32) == 0.5F)) then
 endif
 ```
 
-**V\_FLOOR\_F32**
+**V_FLOOR_F32**
 
 420
 
@@ -17574,7 +17570,7 @@ if ((S0.f32 < 0.0F) && (S0.f32 != D0.f32)) then
 endif
 ```
 
-**V\_EXP\_F32**
+**V_EXP_F32**
 
 421
 
@@ -17598,7 +17594,7 @@ V_EXP_F32(0x7f800000) => 0x7f800000    // exp(+INF) = +INF
 
 ```
 
-**V\_LOG\_F32**
+**V_LOG_F32**
 
 423
 
@@ -17625,7 +17621,7 @@ V_LOG_F32(0x7f800000) => 0x7f800000    // log(+INF) = +INF
 
 ```
 
-**V\_RCP\_F32**
+**V_RCP_F32**
 
 426
 
@@ -17651,7 +17647,7 @@ V_RCP_F32(0x7f800000) => 0x00000000    // rcp(+INF) = +0
 
 ```
 
-**V\_RCP\_IFLAG\_F32**
+**V_RCP_IFLAG_F32**
 
 427
 
@@ -17664,7 +17660,7 @@ D0.f32 = 1.0F / S0.f32;
 
 **Notes**
 
-Can raise integer DIV\_BY\_ZERO exception but cannot raise floating-point exceptions. To be used in an integer reciprocal macro by the compiler with one of the sequences listed below (depending on signed or unsigned operation).
+Can raise integer DIV_BY_ZERO exception but cannot raise floating-point exceptions. To be used in an integer reciprocal macro by the compiler with one of the sequences listed below (depending on signed or unsigned operation).
 
 Unsigned usage:
 
@@ -17684,7 +17680,7 @@ MUL_F32 (2**31 - 1)
 CVT_I32_F32
 ```
 
-**V\_RSQ\_F32**
+**V_RSQ_F32**
 
 430
 
@@ -17708,7 +17704,7 @@ V_RSQ_F32(0x40800000) => 0x3f000000    // rsq(+4.0) = +0.5
 V_RSQ_F32(0x7f800000) => 0x00000000    // rsq(+INF) = +0
 ```
 
-**V\_RCP\_F64**
+**V_RCP_F64**
 
 431
 
@@ -17722,7 +17718,7 @@ D0.f64 = 1.0 / S0.f64
 
 This opcode has  $(2^{29})$ ULP accuracy and supports denormals.
 
-**V\_RSQ\_F64**
+**V_RSQ_F64**
 
 433
 
@@ -17736,7 +17732,7 @@ D0.f64 = 1.0 / sqrt(S0.f64)
 
 This opcode has  $(2^{29})$ ULP accuracy and supports denormals.
 
-**V\_SQRT\_F32**
+**V_SQRT_F32**
 
 435
 
@@ -17760,7 +17756,7 @@ V_SQRT_F32(0x40800000) => 0x40000000    // sqrt(+4.0) = +2.0
 V_SQRT_F32(0x7f800000) => 0x7f800000    // sqrt(+INF) = +INF
 ```
 
-**V\_SQRT\_F64**
+**V_SQRT_F64**
 
 436
 
@@ -17774,7 +17770,7 @@ D0.f64 = sqrt(S0.f64)
 
 This opcode has  $(2^{29})$ ULP accuracy and supports denormals.
 
-**V\_SIN\_F32**
+**V_SIN_F32**
 
 437
 
@@ -17798,7 +17794,7 @@ V_SIN_F32(0x3e800000) => 0x3f800000    // sin(0.25) = 1
 V_SIN_F32(0x7f800000) => 0xffc00000    // sin(+INF) = NAN
 ```
 
-**V\_COS\_F32**
+**V_COS_F32**
 
 438
 
@@ -17824,7 +17820,7 @@ V_COS_F32(0x7f800000) => 0xffc00000    // cos(+INF) = NAN
 
 ```
 
-**V\_NOT\_B32**
+**V_NOT_B32**
 
 439
 
@@ -17838,7 +17834,7 @@ D0.u32 = ~S0.u32
 
 Input and output modifiers not supported.
 
-**V\_BFREV\_B32**
+**V_BFREV_B32**
 
 440
 
@@ -17852,7 +17848,7 @@ D0.u32[31 : 0] = S0.u32[0 : 31]
 
 Input and output modifiers not supported.
 
-**V\_CLZ\_I32\_U32**
+**V_CLZ_I32_U32**
 
 441
 
@@ -17874,7 +17870,7 @@ endfor
 
 **Notes**
 
-Compare with S\_CLZ\_I32\_U32, which performs the equivalent operation in the scalar ALU.
+Compare with S_CLZ_I32_U32, which performs the equivalent operation in the scalar ALU.
 
 Functional examples:
 
@@ -17886,7 +17882,7 @@ V_CLZ_I32_U32(0x0000ffff) => 16
 V_CLZ_I32_U32(0x00000001) => 31
 ```
 
-## V\_CTZ\_I32\_B32
+## V_CTZ_I32_B32
 
 442
 
@@ -17906,7 +17902,7 @@ endfor
 
 ## Notes
 
-Compare with S\_CTZ\_I32\_B32, which performs the equivalent operation in the scalar ALU.
+Compare with S_CTZ_I32_B32, which performs the equivalent operation in the scalar ALU.
 
 Functional examples:
 
@@ -17918,7 +17914,7 @@ V_CTZ_I32_B32(0xffff0000) => 16
 V_CTZ_I32_B32(0x80000000) => 31
 ```
 
-## V\_CLS\_I32
+## V_CLS_I32
 
 443
 
@@ -17943,7 +17939,7 @@ endfor
 
 ### Notes
 
-Compare with S\_CLS\_I32, which performs the equivalent operation in the scalar ALU.
+Compare with S_CLS_I32, which performs the equivalent operation in the scalar ALU.
 
 Functional examples:
 
@@ -17959,7 +17955,7 @@ V_CLS_I32(0xffffffff) => 0xffffffff
 
 ```
 
-## V\_FREXP\_EXP\_I32\_F64
+## V_FREXP_EXP_I32_F64
 
 444
 
@@ -17977,9 +17973,9 @@ endif
 
 ### Notes
 
-This operation satisfies the invariant  $S0.f64 = \text{significand} \times (2^{\text{exponent}})$ . See also V\_FREXP\_MANT\_F64, which returns the significand. See the C library function `frexp()` for more information.
+This operation satisfies the invariant  $S0.f64 = \text{significand} \times (2^{\text{exponent}})$ . See also V_FREXP_MANT_F64, which returns the significand. See the C library function `frexp()` for more information.
 
-## V\_FREXP\_MANT\_F64
+## V_FREXP_MANT_F64
 
 445
 
@@ -18002,7 +17998,7 @@ endif
 
 This operation satisfies the invariant  $S0.f64 = \text{significand} * (2^{\text{exponent}})$ . Result range is in  $(-1.0, -0.5] \cup [0.5, 1.0)$  in normal cases. See also `V_FREXP_EXP_I32_F64`, which returns integer exponent. See the C library function `frexp()` for more information.
 
-## V\_FRACT\_F64
+## V_FRACT_F64
 
 446
 
@@ -18020,7 +18016,7 @@ This is intended to comply with the DX specification of `fract` where the functi
 
 Obeys round mode, result clamped to `0x3fefffffffffff`.
 
-## V\_FREXP\_EXP\_I32\_F32
+## V_FREXP_EXP_I32_F32
 
 447
 
@@ -18038,7 +18034,7 @@ endif
 
 This operation satisfies the invariant  $S0.f32 = \text{significand} * (2^{\text{exponent}})$ . See also `V_FREXP_MANT_F32`, which returns the significand. See the C library function `frexp()` for more information.
 
-## V\_FREXP\_MANT\_F32
+## V_FREXP_MANT_F32
 
 448
 
@@ -18058,7 +18054,7 @@ endif
 
 This operation satisfies the invariant  $S0.f32 = \text{significand} \times (2^{\text{exponent}})$ . Result range is in  $(-1.0, -0.5] \cup [0.5, 1.0)$  in normal cases. See also `V_FREXP_EXP_I32_F32`, which returns integer exponent. See the C library function `frexp()` for more information.
 
-### V\_MOVRELD\_B32
+### V_MOVRELD_B32
 
 450
 
@@ -18080,7 +18076,7 @@ s_mov_b32 m0, 10
 v_movrel_d_b32 v5, v7
 ```
 
-### V\_MOVRELS\_B32
+### V_MOVRELS_B32
 
 451
 
@@ -18102,7 +18098,7 @@ s_mov_b32 m0, 10
 v_movrels_b32 v5, v7
 ```
 
-**V\_MOVRELSD\_B32**
+**V_MOVRELSD_B32**
 
 452
 
@@ -18127,7 +18123,7 @@ s_mov_b32 m0, 10
 v_movrelsd_b32 v5, v7
 ```
 
-**V\_MOVRELSD\_2\_B32**
+**V_MOVRELSD_2_B32**
 
 456
 
@@ -18152,7 +18148,7 @@ s_mov_b32 m0, ((20 << 16) | 10)
 v_movrelsd_2_b32 v5, v7
 ```
 
-**V\_CVT\_F16\_U16**
+**V_CVT_F16_U16**
 
 464
 
@@ -18168,7 +18164,7 @@ D0.f16 = u16_to_f16(S0.u16)
 
 ---
 
-**V\_CVT\_F16\_I16**
+**V_CVT_F16_I16**
 
 465
 
@@ -18184,7 +18180,7 @@ D0.f16 = i16_to_f16(S0.i16)
 
 ---
 
-**V\_CVT\_U16\_F16**
+**V_CVT_U16_F16**
 
 466
 
@@ -18202,7 +18198,7 @@ Generation of the INEXACT exception is controlled by the CLAMP bit. INEXACT exce
 
 ---
 
-**V\_CVT\_I16\_F16**
+**V_CVT_I16_F16**
 
 467
 
@@ -18218,7 +18214,7 @@ D0.i16 = f16_to_i16(S0.f16)
 
 Generation of the INEXACT exception is controlled by the CLAMP bit. INEXACT exceptions are enabled for this conversion iff CLAMP == 1.
 
-## V\_RCP\_F16
+## V_RCP_F16
 
 468
 
@@ -18242,7 +18238,7 @@ V_RCP_F16(0x0000) => 0x7c00    // rcp(+0.0) = +INF
 V_RCP_F16(0x7c00) => 0x0000    // rcp(+INF) = +0
 ```
 
-## V\_SQRT\_F16
+## V_SQRT_F16
 
 469
 
@@ -18271,7 +18267,7 @@ V_SQRT_F16(0x7c00) => 0x7c00    // sqrt(+INF) = +INF
 
 ```
 
-**V\_RSQ\_F16**
+**V_RSQ_F16**
 
 470
 
@@ -18297,7 +18293,7 @@ V_RSQ_F16(0x7c00) => 0x0000    // rsq(+INF) = +0
 
 ```
 
-**V\_LOG\_F16**
+**V_LOG_F16**
 
 471
 
@@ -18324,7 +18320,7 @@ V_LOG_F16(0x7c00) => 0x7c00    // log(+INF) = +INF
 
 ```
 
-**V\_EXP\_F16**
+**V_EXP_F16**
 
 472
 
@@ -18346,7 +18342,7 @@ V_EXP_F16(0x8000) => 0x3c00    // exp(-0.0) = 1
 V_EXP_F16(0x7c00) => 0x7c00    // exp(+INF) = +INF
 ```
 
-**V\_FREXP\_MANT\_F16**
+**V_FREXP_MANT_F16**
 
 473
 
@@ -18362,9 +18358,9 @@ endif
 
 **Notes**
 
-This operation satisfies the invariant  $S0.f16 = \text{significand} \times (2^{\text{exponent}})$ . Result range is in  $(-1.0, -0.5] \cup [0.5, 1.0)$  in normal cases. See also **V\_FREXP\_EXP\_I16\_F16**, which returns integer exponent. See the C library function `frexp()` for more information.
+This operation satisfies the invariant  $S0.f16 = \text{significand} \times (2^{\text{exponent}})$ . Result range is in  $(-1.0, -0.5] \cup [0.5, 1.0)$  in normal cases. See also **V_FREXP_EXP_I16_F16**, which returns integer exponent. See the C library function `frexp()` for more information.
 
-**V\_FREXP\_EXP\_I16\_F16**
+**V_FREXP_EXP_I16_F16**
 
 474
 
@@ -18382,7 +18378,7 @@ endif
 
 This operation satisfies the invariant  $S0.f16 = \text{significand} \times (2^{\text{exponent}})$ . See also `V_FREXP_MANT_F16`, which returns the significand. See the C library function `frexp()` for more information.
 
-**V\_FLOOR\_F16**
+**V_FLOOR_F16**
 
 475
 
@@ -18395,7 +18391,7 @@ if ((S0.f16 < 16'0.0) && (S0.f16 != D0.f16)) then
 endif
 ```
 
-**V\_CEIL\_F16**
+**V_CEIL_F16**
 
 476
 
@@ -18408,7 +18404,7 @@ if ((S0.f16 > 16'0.0) && (S0.f16 != D0.f16)) then
 endif
 ```
 
-**V\_TRUNC\_F16**
+**V_TRUNC_F16**
 
 477
 
@@ -18418,7 +18414,7 @@ Compute the integer part of a half-precision float input using round toward zero
 D0.f16 = trunc(S0.f16)
 ```
 
-**V\_RNDNE\_F16**
+**V_RNDNE_F16**
 
 478
 
@@ -18434,7 +18430,7 @@ if (isEven(64'F(floor(S0.f16))) && (fract(S0.f16) == 16'0.5)) then
 endif
 ```
 
-## V\_FRACT\_F16
+## V_FRACT_F16
 
 479
 
@@ -18448,7 +18444,7 @@ $$D0.f16 = S0.f16 + -\text{floor}(S0.f16)$$
 
 This is intended to comply with the DX specification of `fract` where the function behaves like an extension of integer modulus; be aware this may differ from how `fract()` is defined in other domains. For example: `fract(-1.2) = 0.8` in DX.
 
-## V\_SIN\_F16
+## V_SIN_F16
 
 480
 
@@ -18471,7 +18467,7 @@ V_SIN_F16(0x7bff) => 0x0000    // Most positive finite FP16
 V_SIN_F16(0x7c00) => 0xfe00    // sin(+INF) = NAN
 ```
 
-## V\_COS\_F16
+## V_COS_F16
 
 481
 
@@ -18496,7 +18492,7 @@ V_COS_F16(0x7bfff) => 0x3c00   // Most positive finite FP16
 V_COS_F16(0x7c00) => 0xfe00    // cos(+INF) = NAN
 ```
 
-## V\_SAT\_PK\_U8\_I16
+## V_SAT_PK_U8_I16
 
 482
 
@@ -18518,7 +18514,7 @@ D0.b16 = { SAT8(S0[31 : 16].i16), SAT8(S0[15 : 0].i16) }
 
 Used for 4x16bit data packed as 4x8bit data.
 
-## V\_CVT\_NORM\_I16\_F16
+## V_CVT_NORM_I16_F16
 
 483
 
@@ -18532,7 +18528,7 @@ D0.i16 = f16_to_snorm(S0.f16)
 
 0.5ULP accuracy, supports rounding, exception flags and saturation, denormals are supported.
 
-**V\_CVT\_NORM\_U16\_F16**
+**V_CVT_NORM_U16_F16**
 
 484
 
@@ -18546,7 +18542,7 @@ D0.u16 = f16_to_unorm(S0.f16)
 
 0.5ULP accuracy, supports rounding, exception flags and saturation, denormals are supported.
 
-**V\_NOT\_B16**
+**V_NOT_B16**
 
 489
 
@@ -18560,7 +18556,7 @@ D0.u16 = ~S0.u16
 
 Input and output modifiers not supported.
 
-**V\_CVT\_I32\_I16**
+**V_CVT_I32_I16**
 
 490
 
@@ -18572,9 +18568,9 @@ D0.i32 = 32'I(signext(S0.i16))
 
 **Notes**
 
-To convert in the other direction (from 32-bit to 16-bit integer) use V\_MOV\_B16.
+To convert in the other direction (from 32-bit to 16-bit integer) use V_MOV_B16.
 
-**V\_CVT\_U32\_U16**
+**V_CVT_U32_U16**
 
 491
 
@@ -18588,7 +18584,7 @@ D0 = { 16'0, S0.u16 }
 
 To convert in the other direction (from 32-bit to 16-bit integer) use `V_MOV_B16`.
 
-**V\_CNDMASK\_B32****257**
+**V_CNDMASK_B32****257**
 
 Copy data from one of two inputs based on the per-lane condition code and store the result into a vector register.
 
@@ -18602,7 +18598,7 @@ In VOP3 the VCC source may be a scalar GPR specified in S2.
 
 Floating-point modifiers are valid for this instruction if S0 and S1 are 32-bit floating point values. This instruction is suitable for negating or taking the absolute value of a floating-point value.
 
-**V\_ADD\_F32****259**
+**V_ADD_F32****259**
 
 Add two floating point inputs and store the result into a vector register.
 
@@ -18614,7 +18610,7 @@ D0.f32 = S0.f32 + S1.f32
 
 0.5ULP precision, denormals are supported.
 
-**V\_SUB\_F32****260**
+**V_SUB_F32****260**
 
 Subtract the second floating point input from the first input and store the result into a vector register.
 
@@ -18626,7 +18622,7 @@ D0.f32 = S0.f32 - S1.f32
 
 0.5ULP precision, denormals are supported.
 
-**V\_SUBREV\_F32****261**
+**V_SUBREV_F32****261**
 
 Subtract the *first* floating point input from the *second* input and store the result into a vector register.
 
@@ -18638,7 +18634,7 @@ D0.f32 = S1.f32 - S0.f32
 
 0.5ULP precision, denormals are supported.
 
-## V\_FMAC\_DX9\_ZERO\_F32
+## V_FMAC_DX9_ZERO_F32
 
 262
 
@@ -18653,7 +18649,7 @@ else
 endif
 ```
 
-## V\_MUL\_DX9\_ZERO\_F32
+## V_MUL_DX9_ZERO_F32
 
 263
 
@@ -18668,7 +18664,7 @@ else
 endif
 ```
 
-## V\_MUL\_F32
+## V_MUL_F32
 
 264
 
@@ -18682,7 +18678,7 @@ D0.f32 = S0.f32 * S1.f32
 
 0.5ULP precision, denormals are supported.
 
-**V\_MUL\_I32\_I24**
+**V_MUL_I32_I24**
 
 265
 
@@ -18692,9 +18688,9 @@ $$D0.i32 = 32'I(S0.i24) * 32'I(S1.i24)$$
 
 **Notes**
 
-This opcode is expected to be as efficient as basic single-precision opcodes since it utilizes the single-precision floating point multiplier. See also V\_MUL\_HI\_I32\_I24.
+This opcode is expected to be as efficient as basic single-precision opcodes since it utilizes the single-precision floating point multiplier. See also V_MUL_HI_I32_I24.
 
-**V\_MUL\_HI\_I32\_I24**
+**V_MUL_HI_I32_I24**
 
 266
 
@@ -18704,9 +18700,9 @@ $$D0.i32 = 32'I((64'I(S0.i24) * 64'I(S1.i24)) >> 32U)$$
 
 **Notes**
 
-See also V\_MUL\_I32\_I24.
+See also V_MUL_I32_I24.
 
-**V\_MUL\_U32\_U24**
+**V_MUL_U32_U24**
 
 267
 
@@ -18716,9 +18712,9 @@ $$D0.u32 = 32'U(S0.u24) * 32'U(S1.u24)$$
 
 **Notes**
 
-This opcode is expected to be as efficient as basic single-precision opcodes since it utilizes the single-precision floating point multiplier. See also V\_MUL\_HI\_U32\_U24.
+This opcode is expected to be as efficient as basic single-precision opcodes since it utilizes the single-precision floating point multiplier. See also V_MUL_HI_U32_U24.
 
-**V\_MUL\_HI\_U32\_U24**
+**V_MUL_HI_U32_U24**
 
 268
 
@@ -18728,9 +18724,9 @@ $$D0.u32 = 32'U((64'U(S0.u24) * 64'U(S1.u24)) >> 32U)$$
 
 **Notes**
 
-See also V\_MUL\_U32\_U24.
+See also V_MUL_U32_U24.
 
-**V\_MIN\_F32**
+**V_MIN_F32**
 
 271
 
@@ -18777,7 +18773,7 @@ IEEE compliant. Supports denormals, round mode, exception flags, saturation.
 
 Denorm flushing for this operation is effectively controlled by the input denorm mode control: If input denorm mode is disabling denorm, the internal result of a min/max operation cannot be a denorm value, so output denorm mode is irrelevant. If input denorm mode is *enabling* denorm, the internal min/max result can be a denorm and this operation outputs as a denorm regardless of output denorm mode.
 
-**V\_MAX\_F32**
+**V_MAX_F32**
 
 272
 
@@ -18824,7 +18820,7 @@ IEEE compliant. Supports denormals, round mode, exception flags, saturation.
 
 Denorm flushing for this operation is effectively controlled by the input denorm mode control: If input denorm mode is disabling denorm, the internal result of a min/max operation cannot be a denorm value, so output denorm mode is irrelevant. If input denorm mode is *enabling* denorm, the internal min/max result can be a denorm and this operation outputs as a denorm regardless of output denorm mode.
 
-**V\_MIN\_I32**
+**V_MIN_I32**
 
 273
 
@@ -18834,7 +18830,7 @@ Select the minimum of two signed 32-bit integer inputs and store the selected va
 D0.i32 = S0.i32 < S1.i32 ? S0.i32 : S1.i32
 ```
 
-**V\_MAX\_I32**
+**V_MAX_I32**
 
 274
 
@@ -18844,7 +18840,7 @@ Select the maximum of two signed 32-bit integer inputs and store the selected va
 D0.i32 = S0.i32 >= S1.i32 ? S0.i32 : S1.i32
 ```
 
-**V\_MIN\_U32**
+**V_MIN_U32**
 
 275
 
@@ -18854,7 +18850,7 @@ Select the minimum of two unsigned 32-bit integer inputs and store the selected 
 D0.u32 = S0.u32 < S1.u32 ? S0.u32 : S1.u32
 ```
 
-**V\_MAX\_U32**
+**V_MAX_U32**
 
 276
 
@@ -18864,7 +18860,7 @@ Select the maximum of two unsigned 32-bit integer inputs and store the selected 
 D0.u32 = S0.u32 >= S1.u32 ? S0.u32 : S1.u32
 ```
 
-**V\_LSHLREV\_B32**
+**V_LSHLREV_B32**
 
 280
 
@@ -18878,7 +18874,7 @@ D0.u32 = (S1.u32 << S0[4 : 0].u32)
 
 DPP operates on the shift count, not the data being shifted.
 
-**V\_LSHRREV\_B32**
+**V_LSHRREV_B32**
 
 281
 
@@ -18894,7 +18890,7 @@ DPP operates on the shift count, not the data being shifted.
 
 ---
 
-**V\_ASHRREV\_I32****282**
+**V_ASHRREV_I32****282**
 
 Given a shift count in the *first* vector input, calculate the arithmetic shift right (preserving sign bit) of the *second* vector input and store the result into a vector register.
 
@@ -18908,7 +18904,7 @@ DPP operates on the shift count, not the data being shifted.
 
 ---
 
-**V\_AND\_B32****283**
+**V_AND_B32****283**
 
 Calculate bitwise AND on two vector inputs and store the result into a vector register.
 
@@ -18922,7 +18918,7 @@ Input and output modifiers not supported.
 
 ---
 
-**V\_OR\_B32****284**
+**V_OR_B32****284**
 
 Calculate bitwise OR on two vector inputs and store the result into a vector register.
 
@@ -18936,7 +18932,7 @@ Input and output modifiers not supported.
 
 ---
 
-**V\_XOR\_B32****285**
+**V_XOR_B32****285**
 
 Calculate bitwise XOR on two vector inputs and store the result into a vector register.
 
@@ -18948,7 +18944,7 @@ D0.u32 = (S0.u32 ^ S1.u32)
 
 Input and output modifiers not supported.
 
-### V\_XNOR\_B32
+### V_XNOR_B32
 
 286
 
@@ -18962,7 +18958,7 @@ D0.u32 = ~(S0.u32 ^ S1.u32)
 
 Input and output modifiers not supported.
 
-### V\_ADD\_CO\_CI\_U32
+### V_ADD_CO_CI_U32
 
 288
 
@@ -18981,7 +18977,7 @@ In VOP3 the VCC destination may be an arbitrary SGPR-pair, and the VCC source co
 
 Supports saturation (unsigned 32-bit integer domain).
 
-### V\_SUB\_CO\_CI\_U32
+### V_SUB_CO_CI_U32
 
 289
 
@@ -19000,7 +18996,7 @@ In VOP3 the VCC destination may be an arbitrary SGPR-pair, and the VCC source co
 
 Supports saturation (unsigned 32-bit integer domain).
 
-**V\_SUBREV\_CO\_CI\_U32****290**
+**V_SUBREV_CO_CI_U32****290**
 
 Subtract the *first* unsigned 32-bit integer input from the *second* input, subtract a bit from the carry-in mask, store the result into a vector register and store the carry-out mask into a scalar register.
 
@@ -19017,7 +19013,7 @@ In VOP3 the VCC destination may be an arbitrary SGPR-pair, and the VCC source co
 
 Supports saturation (unsigned 32-bit integer domain).
 
-**V\_ADD\_NC\_U32****293**
+**V_ADD_NC_U32****293**
 
 Add two unsigned 32-bit integer inputs and store the result into a vector register. No carry-in or carry-out support.
 
@@ -19029,7 +19025,7 @@ D0.u32 = S0.u32 + S1.u32
 
 Supports saturation (unsigned 32-bit integer domain).
 
-**V\_SUB\_NC\_U32****294**
+**V_SUB_NC_U32****294**
 
 Subtract the second unsigned 32-bit integer input from the first input and store the result into a vector register. No carry-in or carry-out support.
 
@@ -19041,7 +19037,7 @@ D0.u32 = S0.u32 - S1.u32
 
 Supports saturation (unsigned 32-bit integer domain).
 
-**V\_SUBREV\_NC\_U32****295**
+**V_SUBREV_NC_U32****295**
 
 Subtract the *first* unsigned 32-bit integer input from the *second* input and store the result into a vector register. No carry-in or carry-out support.
 
@@ -19053,7 +19049,7 @@ D0.u32 = S1.u32 - S0.u32
 
 Supports saturation (unsigned 32-bit integer domain).
 
-**V\_FMAC\_F32****299**
+**V_FMAC_F32****299**
 
 Multiply two floating point inputs and accumulate the result into the destination register using fused multiply add.
 
@@ -19061,7 +19057,7 @@ Multiply two floating point inputs and accumulate the result into the destinatio
 D0.f32 = fma(S0.f32, S1.f32, D0.f32)
 ```
 
-**V\_CVT\_PK\_RTZ\_F16\_F32****303**
+**V_CVT_PK_RTZ_F16_F32****303**
 
 Convert two single-precision float inputs to a packed half-precision float value using round toward zero semantics (ignore the current rounding mode), and store the result into a vector register.
 
@@ -19075,7 +19071,7 @@ ROUND_MODE = prev_mode;
 // Round-toward-zero regardless of current round mode setting in hardware.
 ```
 
-**Notes****V\_ADD\_F16****306**
+**Notes****V_ADD_F16****306**
 
 Add two floating point inputs and store the result into a vector register.
 
@@ -19087,7 +19083,7 @@ D0.f16 = S0.f16 + S1.f16
 
 0.5ULP precision. Supports denormals, round mode, exception flags and saturation.
 
-**V\_SUB\_F16****307**
+**V_SUB_F16****307**
 
 Subtract the second floating point input from the first input and store the result into a vector register.
 
@@ -19097,7 +19093,7 @@ $$D0.f16 = S0.f16 - S1.f16$$
 
 0.5ULP precision. Supports denormals, round mode, exception flags and saturation.
 
-**V\_SUBREV\_F16****308**
+**V_SUBREV_F16****308**
 
 Subtract the *first* floating point input from the *second* input and store the result into a vector register.
 
@@ -19107,7 +19103,7 @@ $$D0.f16 = S1.f16 - S0.f16$$
 
 0.5ULP precision. Supports denormals, round mode, exception flags and saturation.
 
-**V\_MUL\_F16****309**
+**V_MUL_F16****309**
 
 Multiply two floating point inputs and store the result into a vector register.
 
@@ -19117,7 +19113,7 @@ $$D0.f16 = S0.f16 * S1.f16$$
 
 0.5ULP precision. Supports denormals, round mode, exception flags and saturation.
 
-**V\_FMAC\_F16****310**
+**V_FMAC_F16****310**
 
 Multiply two floating point inputs and accumulate the result into the destination register using fused multiply add.
 
@@ -19129,7 +19125,7 @@ D0.f16 = fma(S0.f16, S1.f16, D0.f16)
 
 0.5ULP precision. Supports denormals, round mode, exception flags and saturation.
 
-## V\_MAX\_F16
+## V_MAX_F16
 
 313
 
@@ -19176,7 +19172,7 @@ IEEE compliant. Supports denormals, round mode, exception flags, saturation.
 
 Denorm flushing for this operation is effectively controlled by the input denorm mode control: If input denorm mode is disabling denorm, the internal result of a min/max operation cannot be a denorm value, so output denorm mode is irrelevant. If input denorm mode is *enabling* denorm, the internal min/max result can be a denorm and this operation outputs as a denorm regardless of output denorm mode.
 
-**V\_MIN\_F16**
+**V_MIN_F16**
 
 314
 
@@ -19223,7 +19219,7 @@ IEEE compliant. Supports denormals, round mode, exception flags, saturation.
 
 Denorm flushing for this operation is effectively controlled by the input denorm mode control: If input denorm mode is disabling denorm, the internal result of a min/max operation cannot be a denorm value, so output denorm mode is irrelevant. If input denorm mode is *enabling* denorm, the internal min/max result can be a denorm and this operation outputs as a denorm regardless of output denorm mode.
 
-**V\_LDEXP\_F16**
+**V_LDEXP_F16**
 
 315
 
@@ -19237,7 +19233,7 @@ D0.f16 = S0.f16 * 16'F(2.0F ** 32'I(S1.i16))
 
 Compare with the `ldexp()` function in C.
 
-### V\_FMA\_DX9\_ZERO\_F32
+### V_FMA_DX9_ZERO_F32
 
 521
 
@@ -19252,7 +19248,7 @@ else
 endif
 ```
 
-### V\_MAD\_I32\_I24
+### V_MAD_I32_I24
 
 522
 
@@ -19266,7 +19262,7 @@ D0.i32 = 32'I(S0.i24) * 32'I(S1.i24) + S2.i32
 
 This opcode is expected to be as efficient as basic single-precision opcodes since it utilizes the single-precision floating point multiplier.
 
-### V\_MAD\_U32\_U24
+### V_MAD_U32_U24
 
 523
 
@@ -19280,7 +19276,7 @@ D0.u32 = 32'U(S0.u24) * 32'U(S1.u24) + S2.u32
 
 This opcode is expected to be as efficient as basic single-precision opcodes since it utilizes the single-precision floating point multiplier.
 
-**V\_CUBEID\_F32**
+**V_CUBEID_F32**
 
 524
 
@@ -19313,7 +19309,7 @@ else
 endif
 ```
 
-**V\_CUBESC\_F32**
+**V_CUBESC_F32**
 
 525
 
@@ -19348,7 +19344,7 @@ endif
 
 ```
 
-**V\_CUBETC\_F32**
+**V_CUBETC_F32**
 
 526
 
@@ -19375,7 +19371,7 @@ endif
 
 ```
 
-**V\_CUBEMA\_F32**
+**V_CUBEMA_F32**
 
 527
 
@@ -19398,7 +19394,7 @@ endif
 
 ```
 
-**V\_BFE\_U32**
+**V_BFE_U32**
 
 528
 
@@ -19408,7 +19404,7 @@ Extract an unsigned bitfield from the first input using field offset from the se
 D0.u32 = ((S0.u32 >> S1[4 : 0].u32) & ((1U << S2[4 : 0].u32) - 1U))
 ```
 
-### V\_BFE\_I32
+### V_BFE_I32
 
 529
 
@@ -19419,7 +19415,7 @@ tmp.i32 = ((S0.i32 >> S1[4 : 0].u32) & ((1 << S2[4 : 0].u32) - 1));
 D0.i32 = signext_from_bit(tmp.i32, S2[4 : 0].u32)
 ```
 
-### V\_BFI\_B32
+### V_BFI_B32
 
 530
 
@@ -19429,7 +19425,7 @@ Overwrite a bitfield in the third input with a bitfield from the second input us
 D0.u32 = ((S0.u32 & S1.u32) | (~S0.u32 & S2.u32))
 ```
 
-### V\_FMA\_F32
+### V_FMA_F32
 
 531
 
@@ -19443,7 +19439,7 @@ D0.f32 = fma(S0.f32, S1.f32, S2.f32)
 
 0.5ULP accuracy, denormals are supported.
 
-### V\_FMA\_F64
+### V_FMA_F64
 
 532
 
@@ -19457,7 +19453,7 @@ D0.f64 = fma(S0.f64, S1.f64, S2.f64)
 
 0.5ULP accuracy, denormals are supported.
 
-**V\_LERP\_U8**
+**V_LERP_U8**
 
 533
 
@@ -19471,7 +19467,7 @@ tmp += ((S0.u32[7 : 0] + S1.u32[7 : 0] + S2.u32[0].u8) >> 1U);
 D0.u32 = tmp.u32
 ```
 
-**V\_ALIGNBIT\_B32**
+**V_ALIGNBIT_B32**
 
 534
 
@@ -19487,7 +19483,7 @@ Yellow exclamation mark icon indicating a note or warning.
 
 S0 carries the MSBs and S1 carries the LSBs of the value being aligned.
 
-**V\_ALIGNBYTE\_B32**
+**V_ALIGNBYTE_B32**
 
 535
 
@@ -19503,7 +19499,7 @@ Yellow exclamation mark icon indicating a note or warning.
 
 S0 carries the MSBs and S1 carries the LSBs of the value being aligned.
 
-**V\_MULLIT\_F32**
+**V_MULLIT_F32**
 
 536
 
@@ -19520,7 +19516,7 @@ endif
 
 ## Notes
 
-### V\_MIN3\_F32
+### V_MIN3_F32
 
 537
 
@@ -19530,7 +19526,7 @@ Select the minimum of three single-precision float inputs and store the selected
 D0.f32 = v_min_f32(v_min_f32(S0.f32, S1.f32), S2.f32)
 ```
 
-### V\_MIN3\_I32
+### V_MIN3_I32
 
 538
 
@@ -19540,7 +19536,7 @@ Select the minimum of three signed 32-bit integer inputs and store the selected 
 D0.i32 = v_min_i32(v_min_i32(S0.i32, S1.i32), S2.i32)
 ```
 
-### V\_MIN3\_U32
+### V_MIN3_U32
 
 539
 
@@ -19550,7 +19546,7 @@ Select the minimum of three unsigned 32-bit integer inputs and store the selecte
 D0.u32 = v_min_u32(v_min_u32(S0.u32, S1.u32), S2.u32)
 ```
 
-### V\_MAX3\_F32
+### V_MAX3_F32
 
 540
 
@@ -19560,7 +19556,7 @@ Select the maximum of three single-precision float inputs and store the selected
 D0.f32 = v_max_f32(v_max_f32(S0.f32, S1.f32), S2.f32)
 ```
 
-**V\_MAX3\_I32**
+**V_MAX3_I32**
 
 541
 
@@ -19570,7 +19566,7 @@ Select the maximum of three signed 32-bit integer inputs and store the selected 
 D0.i32 = v_max_i32(v_max_i32(S0.i32, S1.i32), S2.i32)
 ```
 
-**V\_MAX3\_U32**
+**V_MAX3_U32**
 
 542
 
@@ -19580,7 +19576,7 @@ Select the maximum of three unsigned 32-bit integer inputs and store the selecte
 D0.u32 = v_max_u32(v_max_u32(S0.u32, S1.u32), S2.u32)
 ```
 
-**V\_MED3\_F32**
+**V_MED3_F32**
 
 543
 
@@ -19598,7 +19594,7 @@ else
 endif
 ```
 
-**V\_MED3\_I32**
+**V_MED3_I32**
 
 544
 
@@ -19614,7 +19610,7 @@ else
 endif
 ```
 
-**V\_MED3\_U32**
+**V_MED3_U32**
 
 545
 
@@ -19630,7 +19626,7 @@ else
 endif
 ```
 
-## V\_SAD\_U8
+## V_SAD_U8
 
 546
 
@@ -19652,7 +19648,7 @@ D0.u32 = tmp
 
 Overflow into the upper bits is allowed.
 
-## V\_SAD\_HI\_U8
+## V_SAD_HI_U8
 
 547
 
@@ -19666,7 +19662,7 @@ D0.u32 = (32'U(v_sad_u8(S0, S1, 0U)) << 16U) + S2.u32
 
 Overflow into the upper bits is allowed.
 
-## V\_SAD\_U16
+## V_SAD_U16
 
 548
 
@@ -19684,7 +19680,7 @@ tmp += ABSDIFF(S0[31 : 16].u16, S1[31 : 16].u16);
 D0.u32 = tmp
 ```
 
-## V\_SAD\_U32
+## V_SAD_U32
 
 549
 
@@ -19697,7 +19693,7 @@ ABSDIFF = lambda(x, y) (
 D0.u32 = ABSDIFF(S0.u32, S1.u32) + S2.u32
 ```
 
-## V\_CVT\_PK\_U8\_F32
+## V_CVT_PK_U8_F32
 
 550
 
@@ -19709,7 +19705,7 @@ tmp = (tmp | ((32'U(f32_to_u8(S0.f32)) & 255U) << (S1.u32[1 : 0].u32 * 8U)));
 D0.u32 = tmp
 ```
 
-## V\_DIV\_FIXUP\_F32
+## V_DIV_FIXUP_F32
 
 551
 
@@ -19753,7 +19749,7 @@ endif
 
 This operation is the final step of a high precision division macro and handles all exceptional cases of division.
 
-## V\_DIV\_FIXUP\_F64
+## V_DIV_FIXUP_F64
 
 552
 
@@ -19799,13 +19795,13 @@ endif
 
 This operation is the final step of a high precision division macro and handles all exceptional cases of division.
 
-### V\_DIV\_FMAS\_F32
+### V_DIV_FMAS_F32
 
 567
 
 Multiply two single-precision float inputs and add a third input using fused multiply add, then scale the exponent of the result by a fixed factor if the vector condition code is set. Store the result into a vector register.
 
-This operation is designed for use in floating point division macros and relies on V\_DIV\_SCALE\_F32 to set the vector condition code iff the quotient requires post-scaling.
+This operation is designed for use in floating point division macros and relies on V_DIV_SCALE_F32 to set the vector condition code iff the quotient requires post-scaling.
 
 ```
 
@@ -19821,15 +19817,15 @@ endif
 
 Input denormals are not flushed but output flushing is allowed.
 
-V\_DIV\_SCALE\_F32, V\_DIV\_FMAS\_F32 and V\_DIV\_FIXUP\_F32 are all designed for use in a high precision division macro that utilizes V\_RCP\_F32 and V\_MUL\_F32 to compute the approximate result and then applies two steps of the Newton-Raphson method to converge to the quotient. If subnormal terms appear during this calculation then a loss of precision occurs. This loss of precision can be avoided by scaling the inputs and then post-scaling the quotient after Newton-Raphson is applied.
+V_DIV_SCALE_F32, V_DIV_FMAS_F32 and V_DIV_FIXUP_F32 are all designed for use in a high precision division macro that utilizes V_RCP_F32 and V_MUL_F32 to compute the approximate result and then applies two steps of the Newton-Raphson method to converge to the quotient. If subnormal terms appear during this calculation then a loss of precision occurs. This loss of precision can be avoided by scaling the inputs and then post-scaling the quotient after Newton-Raphson is applied.
 
-### V\_DIV\_FMAS\_F64
+### V_DIV_FMAS_F64
 
 568
 
 Multiply two double-precision float inputs and add a third input using fused multiply add, then scale the exponent of the result by a fixed factor if the vector condition code is set. Store the result into a vector register.
 
-This operation is designed for use in floating point division macros and relies on V\_DIV\_SCALE\_F64 to set the vector condition code iff the quotient requires post-scaling.
+This operation is designed for use in floating point division macros and relies on V_DIV_SCALE_F64 to set the vector condition code iff the quotient requires post-scaling.
 
 ```
 
@@ -19848,9 +19844,9 @@ endif
 
 Input denormals are not flushed but output flushing is allowed.
 
-V\_DIV\_SCALE\_F64, V\_DIV\_FMAS\_F64 and V\_DIV\_FIXUP\_F64 are all designed for use in a high precision division macro that utilizes V\_RCP\_F64 and V\_MUL\_F64 to compute the approximate result and then applies two steps of the Newton-Raphson method to converge to the quotient. If subnormal terms appear during this calculation then a loss of precision occurs. This loss of precision can be avoided by scaling the inputs and then post-scaling the quotient after Newton-Raphson is applied.
+V_DIV_SCALE_F64, V_DIV_FMAS_F64 and V_DIV_FIXUP_F64 are all designed for use in a high precision division macro that utilizes V_RCP_F64 and V_MUL_F64 to compute the approximate result and then applies two steps of the Newton-Raphson method to converge to the quotient. If subnormal terms appear during this calculation then a loss of precision occurs. This loss of precision can be avoided by scaling the inputs and then post-scaling the quotient after Newton-Raphson is applied.
 
-## V\_MSAD\_U8
+## V_MSAD_U8
 
 569
 
@@ -19872,11 +19868,11 @@ D0.u32 = tmp
 
 Overflow into the upper bits is allowed.
 
-## V\_QSAD\_PK\_U16\_U8
+## V_QSAD_PK_U16_U8
 
 570
 
-Perform the V\_SAD\_U8 operation four times using different slices of the first array, all entries of the second array and each entry of the third array. Truncate each result to 16 bits, pack the values into a 4-entry array and store the array into a vector register. The first input is an 8-entry array of unsigned 8-bit integers, the second input is a 4-entry array of unsigned 8-bit integers and the third input is a 4-entry array of unsigned 16-bit integers.
+Perform the V_SAD_U8 operation four times using different slices of the first array, all entries of the second array and each entry of the third array. Truncate each result to 16 bits, pack the values into a 4-entry array and store the array into a vector register. The first input is an 8-entry array of unsigned 8-bit integers, the second input is a 4-entry array of unsigned 8-bit integers and the third input is a 4-entry array of unsigned 16-bit integers.
 
 ```
 tmp[63 : 48] = 16'B(v_sad_u8(S0[55 : 24], S1[31 : 0], S2[63 : 48].u32));
@@ -19889,11 +19885,11 @@ tmp[15 : 0] = 16'B(v_sad_u8(S0[31 : 0], S1[31 : 0], S2[15 : 0].u32));
 D0.b64 = tmp.b64
 ```
 
-### V\_MQ\$AD\_PK\_U16\_U8
+### V_MQ\$AD_PK_U16_U8
 
 571
 
-Perform the V\_MSAD\_U8 operation four times using different slices of the first array, all entries of the second array and each entry of the third array. Truncate each result to 16 bits, pack the values into a 4-entry array and store the array into a vector register. The first input is an 8-entry array of unsigned 8-bit integers, the second input is a 4-entry array of unsigned 8-bit integers and the third input is a 4-entry array of unsigned 16-bit integers.
+Perform the V_MSAD_U8 operation four times using different slices of the first array, all entries of the second array and each entry of the third array. Truncate each result to 16 bits, pack the values into a 4-entry array and store the array into a vector register. The first input is an 8-entry array of unsigned 8-bit integers, the second input is a 4-entry array of unsigned 8-bit integers and the third input is a 4-entry array of unsigned 16-bit integers.
 
 ```
 tmp[63 : 48] = 16'B(v_msad_u8(S0[55 : 24], S1[31 : 0], S2[63 : 48].u32));
@@ -19903,11 +19899,11 @@ tmp[15 : 0] = 16'B(v_msad_u8(S0[31 : 0], S1[31 : 0], S2[15 : 0].u32));
 D0.b64 = tmp.b64
 ```
 
-### V\_MQ\$AD\_U32\_U8
+### V_MQ\$AD_U32_U8
 
 573
 
-Perform the V\_MSAD\_U8 operation four times using different slices of the first array, all entries of the second array and each entry of the third array. Pack each 32-bit value into a 4-entry array and store the array into a vector register. The first input is an 8-entry array of unsigned 8-bit integers, the second input is a 4-entry array of unsigned 8-bit integers and the third input is a 4-entry array of unsigned 32-bit integers.
+Perform the V_MSAD_U8 operation four times using different slices of the first array, all entries of the second array and each entry of the third array. Pack each 32-bit value into a 4-entry array and store the array into a vector register. The first input is an 8-entry array of unsigned 8-bit integers, the second input is a 4-entry array of unsigned 8-bit integers and the third input is a 4-entry array of unsigned 32-bit integers.
 
 ```
 tmp[127 : 96] = 32'B(v_msad_u8(S0[55 : 24], S1[31 : 0], S2[127 : 96].u32));
@@ -19917,7 +19913,7 @@ tmp[31 : 0] = 32'B(v_msad_u8(S0[31 : 0], S1[31 : 0], S2[31 : 0].u32));
 D0.b128 = tmp.b128
 ```
 
-### V\_XOR3\_B32
+### V_XOR3_B32
 
 576
 
@@ -19931,7 +19927,7 @@ D0.u32 = (S0.u32 ^ S1.u32 ^ S2.u32)
 
 Input and output modifiers not supported.
 
-### V\_MAD\_U16
+### V_MAD_U16
 
 577
 
@@ -19945,7 +19941,7 @@ D0.u16 = S0.u16 * S1.u16 + S2.u16
 
 Supports saturation (unsigned 16-bit integer domain).
 
-## V\_PERM\_B32
+## V_PERM_B32
 
 580
 
@@ -19990,7 +19986,7 @@ Note the MSBs of the 64-bit value being selected are stored in S0. This is count
 
 architecture.
 
-### V\_XAD\_U32
+### V_XAD_U32
 
 581
 
@@ -20002,7 +19998,7 @@ $$D0.u32 = (S0.u32 \oplus S1.u32) + S2.u32$$
 
 No carryin/carryout and no saturation. This opcode is designed to help accelerate the SHA256 hash algorithm.
 
-### V\_LSHL\_ADD\_U32
+### V_LSHL_ADD_U32
 
 582
 
@@ -20010,7 +20006,7 @@ Given a shift count in the second input, calculate the logical shift left of the
 
 $$D0.u32 = (S0.u32 \ll S1.u32[4 : 0].u32) + S2.u32$$
 
-### V\_ADD\_LSHL\_U32
+### V_ADD_LSHL_U32
 
 583
 
@@ -20018,7 +20014,7 @@ Add the first two integer inputs, then given a shift count in the third input, c
 
 $$D0.u32 = ((S0.u32 + S1.u32) \ll S2.u32[4 : 0].u32)$$
 
-### V\_FMA\_F16
+### V_FMA_F16
 
 584
 
@@ -20030,7 +20026,7 @@ $$D0.f16 = fma(S0.f16, S1.f16, S2.f16)$$
 
 0.5ULP accuracy, denormals are supported.
 
-**V\_MIN3\_F16**
+**V_MIN3_F16**
 
 585
 
@@ -20040,7 +20036,7 @@ Select the minimum of three half-precision float inputs and store the selected v
 D0.f16 = v_min_f16(v_min_f16(S0.f16, S1.f16), S2.f16)
 ```
 
-**V\_MIN3\_I16**
+**V_MIN3_I16**
 
 586
 
@@ -20050,7 +20046,7 @@ Select the minimum of three signed 16-bit integer inputs and store the selected 
 D0.i16 = v_min_i16(v_min_i16(S0.i16, S1.i16), S2.i16)
 ```
 
-**V\_MIN3\_U16**
+**V_MIN3_U16**
 
 587
 
@@ -20060,7 +20056,7 @@ Select the minimum of three unsigned 16-bit integer inputs and store the selecte
 D0.u16 = v_min_u16(v_min_u16(S0.u16, S1.u16), S2.u16)
 ```
 
-**V\_MAX3\_F16**
+**V_MAX3_F16**
 
 588
 
@@ -20070,7 +20066,7 @@ Select the maximum of three half-precision float inputs and store the selected v
 D0.f16 = v_max_f16(v_max_f16(S0.f16, S1.f16), S2.f16)
 ```
 
-**V\_MAX3\_I16**
+**V_MAX3_I16**
 
 589
 
@@ -20080,7 +20076,7 @@ Select the maximum of three signed 16-bit integer inputs and store the selected 
 D0.i16 = v_max_i16(v_max_i16(S0.i16, S1.i16), S2.i16)
 ```
 
-**V\_MAX3\_U16**
+**V_MAX3_U16**
 
 590
 
@@ -20090,7 +20086,7 @@ Select the maximum of three unsigned 16-bit integer inputs and store the selecte
 D0.u16 = v_max_u16(v_max_u16(S0.u16, S1.u16), S2.u16)
 ```
 
-### V\_MED3\_F16
+### V_MED3_F16
 
 591
 
@@ -20108,7 +20104,7 @@ else
 endif
 ```
 
-### V\_MED3\_I16
+### V_MED3_I16
 
 592
 
@@ -20124,7 +20120,7 @@ else
 endif
 ```
 
-### V\_MED3\_U16
+### V_MED3_U16
 
 593
 
@@ -20140,7 +20136,7 @@ else
 endif
 ```
 
-### V\_MAD\_I16
+### V_MAD_I16
 
 595
 
@@ -20154,7 +20150,7 @@ D0.i16 = S0.i16 * S1.i16 + S2.i16
 
 Supports saturation (signed 16-bit integer domain).
 
-## V\_DIV\_FIXUP\_F16
+## V_DIV_FIXUP_F16
 
 596
 
@@ -20189,7 +20185,7 @@ endif
 
 This operation is the final step of a high precision division macro and handles all exceptional cases of division.
 
-## V\_ADD3\_U32
+## V_ADD3_U32
 
 597
 
@@ -20199,7 +20195,7 @@ Add three unsigned inputs and store the result into a vector register. No carry-
 D0.u32 = S0.u32 + S1.u32 + S2.u32
 ```
 
-### V\_LSHL\_OR\_B32
+### V_LSHL_OR_B32
 
 598
 
@@ -20209,7 +20205,7 @@ Given a shift count in the second input, calculate the logical shift left of the
 D0.u32 = ((S0.u32 << S1.u32[4 : 0].u32) | S2.u32)
 ```
 
-### V\_AND\_OR\_B32
+### V_AND_OR_B32
 
 599
 
@@ -20223,7 +20219,7 @@ D0.u32 = ((S0.u32 & S1.u32) | S2.u32)
 
 Input and output modifiers not supported.
 
-### V\_OR3\_B32
+### V_OR3_B32
 
 600
 
@@ -20237,7 +20233,7 @@ D0.u32 = (S0.u32 | S1.u32 | S2.u32)
 
 Input and output modifiers not supported.
 
-### V\_MAD\_U32\_U16
+### V_MAD_U32_U16
 
 601
 
@@ -20247,7 +20243,7 @@ Multiply two unsigned 16-bit integer inputs in the unsigned 32-bit integer domai
 D0.u32 = 32'U(S0.u16) * 32'U(S1.u16) + S2.u32
 ```
 
-**V\_MAD\_I32\_I16**
+**V_MAD_I32_I16**
 
 602
 
@@ -20257,7 +20253,7 @@ Multiply two signed 16-bit integer inputs in the signed 32-bit integer domain, a
 D0.i32 = 32'I(S0.i16) * 32'I(S1.i16) + S2.i32
 ```
 
-**V\_PERMLANE16\_B32**
+**V_PERMLANE16_B32**
 
 603
 
@@ -20265,9 +20261,9 @@ Perform arbitrary gather-style operation within a row (16 contiguous lanes).
 
 The first source must be a VGPR and the second and third sources must be scalar values; the second and third source are combined into a single 64-bit value representing lane selects used to swizzle within each row.
 
-OPSEL is not used in its typical manner for this instruction. For this instruction OPSEL[0] is overloaded to represent the DPP 'FI' (Fetch Inactive) bit and OPSEL[1] is overloaded to represent the DPP 'BOUND\_CTRL' bit. The remaining OPSEL bits are reserved for this instruction.
+OPSEL is not used in its typical manner for this instruction. For this instruction OPSEL[0] is overloaded to represent the DPP 'FI' (Fetch Inactive) bit and OPSEL[1] is overloaded to represent the DPP 'BOUND_CTRL' bit. The remaining OPSEL bits are reserved for this instruction.
 
-Compare with V\_PERMLANEX16\_B32.
+Compare with V_PERMLANEX16_B32.
 
 ```
 declare tmp : 32'B[64];
@@ -20317,7 +20313,7 @@ v_permlane16_b32 v1, v0, s0, s1;
 
 ```
 
-**V\_PERMLANEX16\_B32**
+**V_PERMLANEX16_B32**
 
 604
 
@@ -20325,9 +20321,9 @@ Perform arbitrary gather-style operation across two rows (each row is 16 contigu
 
 The first source must be a VGPR and the second and third sources must be scalar values; the second and third source are combined into a single 64-bit value representing lane selects used to swizzle within each row.
 
-OPSEL is not used in its typical manner for this instruction. For this instruction OPSEL[0] is overloaded to represent the DPP 'FI' (Fetch Inactive) bit and OPSEL[1] is overloaded to represent the DPP 'BOUND\_CTRL' bit. The remaining OPSEL bits are reserved for this instruction.
+OPSEL is not used in its typical manner for this instruction. For this instruction OPSEL[0] is overloaded to represent the DPP 'FI' (Fetch Inactive) bit and OPSEL[1] is overloaded to represent the DPP 'BOUND_CTRL' bit. The remaining OPSEL bits are reserved for this instruction.
 
-Compare with V\_PERMLANE16\_B32.
+Compare with V_PERMLANE16_B32.
 
 ```
 
@@ -20394,7 +20390,7 @@ v_permlanex16_b32 v1, v0, s0, s1 fi; // FI bit needed for lanes 15 and 31
 
 ```
 
-## V\_CNDMASK\_B16
+## V_CNDMASK_B16
 
 605
 
@@ -20410,7 +20406,7 @@ In VOP3 the VCC source may be a scalar GPR specified in S2.
 
 Floating-point modifiers are valid for this instruction if S0 and S1 are 16-bit floating point values. This instruction is suitable for negating or taking the absolute value of a floating-point value.
 
-## V\_MAXMIN\_F32
+## V_MAXMIN_F32
 
 606
 
@@ -20424,7 +20420,7 @@ D0.f32 = v_min_f32(v_max_f32(S0.f32, S1.f32), S2.f32)
 
 Support input denorm control, allow output denorm value. Exceptions are supported. Note: +0.0 > -0.0 is true.
 
-### V\_MINMAX\_F32
+### V_MINMAX_F32
 
 607
 
@@ -20438,7 +20434,7 @@ D0.f32 = v_max_f32(v_min_f32(S0.f32, S1.f32), S2.f32)
 
 Support input denorm control, allow output denorm value. Exceptions are supported. Note: +0.0 > -0.0 is true.
 
-### V\_MAXMIN\_F16
+### V_MAXMIN_F16
 
 608
 
@@ -20452,7 +20448,7 @@ D0.f16 = v_min_f16(v_max_f16(S0.f16, S1.f16), S2.f16)
 
 Support input denorm control, allow output denorm value. Exceptions are supported. Note: +0.0 > -0.0 is true.
 
-### V\_MINMAX\_F16
+### V_MINMAX_F16
 
 609
 
@@ -20466,7 +20462,7 @@ D0.f16 = v_max_f16(v_min_f16(S0.f16, S1.f16), S2.f16)
 
 Support input denorm control, allow output denorm value. Exceptions are supported. Note: +0.0 > -0.0 is true.
 
-### V\_MAXMIN\_U32
+### V_MAXMIN_U32
 
 610
 
@@ -20476,7 +20472,7 @@ Select the maximum of the first two unsigned 32-bit integer inputs and then sele
 D0.u32 = v_min_u32(v_max_u32(S0.u32, S1.u32), S2.u32)
 ```
 
-### V\_MINMAX\_U32
+### V_MINMAX_U32
 
 611
 
@@ -20486,7 +20482,7 @@ Select the minimum of the first two unsigned 32-bit integer inputs and then sele
 D0.u32 = v_max_u32(v_min_u32(S0.u32, S1.u32), S2.u32)
 ```
 
-### V\_MAXMIN\_I32
+### V_MAXMIN_I32
 
 612
 
@@ -20496,7 +20492,7 @@ Select the maximum of the first two signed 32-bit integer inputs and then select
 D0.i32 = v_min_i32(v_max_i32(S0.i32, S1.i32), S2.i32)
 ```
 
-### V\_MINMAX\_I32
+### V_MINMAX_I32
 
 613
 
@@ -20506,7 +20502,7 @@ Select the minimum of the first two signed 32-bit integer inputs and then select
 D0.i32 = v_max_i32(v_min_i32(S0.i32, S1.i32), S2.i32)
 ```
 
-### V\_DOT2\_F16\_F16
+### V_DOT2_F16_F16
 
 614
 
@@ -20523,7 +20519,7 @@ D0.f16 = tmp
 
 OPSEL[2] controls which half of S2 is read and OPSEL[3] controls which half of D is written; OPSEL[1:0] are ignored.
 
-**V\_DOT2\_BF16\_BF16**
+**V_DOT2_BF16_BF16**
 
 615
 
@@ -20540,13 +20536,13 @@ D0.bf16 = tmp
 
 OPSEL[2] controls which half of S2 is read and OPSEL[3] controls which half of D is written; OPSEL[1:0] are ignored.
 
-**V\_DIV\_SCALE\_F32**
+**V_DIV_SCALE_F32**
 
 764
 
 Given a single-precision float value to scale in the first input, a denominator in the second input and a numerator in the third input, scale the first input for division if required to avoid subnormal terms appearing during application of the Newton-Raphson correction method. Store the scaled result into a vector register and set the vector condition code iff post-scaling is required.
 
-This operation is designed for use in a high precision division macro. The first input should be the same value as either the second or third input; other scale values produce predictable results but may not be mathematically useful. The vector condition code is used by V\_DIV\_FMAS\_F32 to determine if the quotient requires post-scaling.
+This operation is designed for use in a high precision division macro. The first input should be the same value as either the second or third input; other scale values produce predictable results but may not be mathematically useful. The vector condition code is used by V_DIV_FMAS_F32 to determine if the quotient requires post-scaling.
 
 ```
 VCC = 0x0LL;
@@ -20588,15 +20584,15 @@ elseif S2.f32 / S1.f32 == DENORM.f32 then
 
 ## Notes
 
-V\_DIV\_SCALE\_F32, V\_DIV\_FMAS\_F32 and V\_DIV\_FIXUP\_F32 are all designed for use in a high precision division macro that utilizes V\_RCP\_F32 and V\_MUL\_F32 to compute the approximate result and then applies two steps of the Newton-Raphson method to converge to the quotient. If subnormal terms appear during this calculation then a loss of precision occurs. This loss of precision can be avoided by scaling the inputs and then post-scaling the quotient after Newton-Raphson is applied.
+V_DIV_SCALE_F32, V_DIV_FMAS_F32 and V_DIV_FIXUP_F32 are all designed for use in a high precision division macro that utilizes V_RCP_F32 and V_MUL_F32 to compute the approximate result and then applies two steps of the Newton-Raphson method to converge to the quotient. If subnormal terms appear during this calculation then a loss of precision occurs. This loss of precision can be avoided by scaling the inputs and then post-scaling the quotient after Newton-Raphson is applied.
 
-## V\_DIV\_SCALE\_F64
+## V_DIV_SCALE_F64
 
 765
 
 Given a double-precision float value to scale in the first input, a denominator in the second input and a numerator in the third input, scale the first input for division if required to avoid subnormal terms appearing during application of the Newton-Raphson correction method. Store the scaled result into a vector register and set the vector condition code iff post-scaling is required.
 
-This operation is designed for use in a high precision division macro. The first input should be the same value as either the second or third input; other scale values produce predictable results but may not be mathematically useful. The vector condition code is used by V\_DIV\_FMAS\_F64 to determine if the quotient requires post-scaling.
+This operation is designed for use in a high precision division macro. The first input should be the same value as either the second or third input; other scale values produce predictable results but may not be mathematically useful. The vector condition code is used by V_DIV_FMAS_F64 to determine if the quotient requires post-scaling.
 
 ```
 
@@ -20640,9 +20636,9 @@ elseif S2.f64 / S1.f64 == DENORM.f64 then
 
 **Notes**
 
-V\_DIV\_SCALE\_F64, V\_DIV\_FMAS\_F64 and V\_DIV\_FIXUP\_F64 are all designed for use in a high precision division macro that utilizes V\_RCP\_F64 and V\_MUL\_F64 to compute the approximate result and then applies two steps of the Newton-Raphson method to converge to the quotient. If subnormal terms appear during this calculation then a loss of precision occurs. This loss of precision can be avoided by scaling the inputs and then post-scaling the quotient after Newton-Raphson is applied.
+V_DIV_SCALE_F64, V_DIV_FMAS_F64 and V_DIV_FIXUP_F64 are all designed for use in a high precision division macro that utilizes V_RCP_F64 and V_MUL_F64 to compute the approximate result and then applies two steps of the Newton-Raphson method to converge to the quotient. If subnormal terms appear during this calculation then a loss of precision occurs. This loss of precision can be avoided by scaling the inputs and then post-scaling the quotient after Newton-Raphson is applied.
 
-**V\_MAD\_U64\_U32**
+**V_MAD_U64_U32**
 
 766
 
@@ -20656,7 +20652,7 @@ Multiply two unsigned integer inputs, add a third unsigned integer input, store 
 
 In VOP3 the VCC destination may be an arbitrary SGPR-pair.
 
-**V\_MAD\_I64\_I32**
+**V_MAD_I64_I32**
 
 767
 
@@ -20670,7 +20666,7 @@ Multiply two signed integer inputs, add a third signed integer input, store the 
 
 In VOP3 the VCC destination may be an arbitrary SGPR-pair.
 
-**V\_ADD\_CO\_U32**
+**V_ADD_CO_U32**
 
 768
 
@@ -20692,7 +20688,7 @@ In VOP3 the VCC destination may be an arbitrary SGPR-pair.
 
 Supports saturation (unsigned 32-bit integer domain).
 
-**V\_SUB\_CO\_U32**
+**V_SUB_CO_U32**
 
 769
 
@@ -20711,7 +20707,7 @@ In VOP3 the VCC destination may be an arbitrary SGPR-pair.
 
 Supports saturation (unsigned 32-bit integer domain).
 
-**V\_SUBREV\_CO\_U32**
+**V_SUBREV_CO_U32**
 
 770
 
@@ -20730,7 +20726,7 @@ In VOP3 the VCC destination may be an arbitrary SGPR-pair.
 
 Supports saturation (unsigned 32-bit integer domain).
 
-**V\_ADD\_NC\_U16**
+**V_ADD_NC_U16**
 
 771
 
@@ -20744,7 +20740,7 @@ D0.u16 = S0.u16 + S1.u16
 
 Supports saturation (unsigned 16-bit integer domain).
 
-### V\_SUB\_NC\_U16
+### V_SUB_NC_U16
 
 772
 
@@ -20758,7 +20754,7 @@ D0.u16 = S0.u16 - S1.u16
 
 Supports saturation (unsigned 16-bit integer domain).
 
-### V\_MUL\_LO\_U16
+### V_MUL_LO_U16
 
 773
 
@@ -20772,7 +20768,7 @@ D0.u16 = S0.u16 * S1.u16
 
 Supports saturation (unsigned 16-bit integer domain).
 
-### V\_CVT\_PK\_I16\_F32
+### V_CVT_PK_I16_F32
 
 774
 
@@ -20785,7 +20781,7 @@ tmp[15 : 0] = 16'B(v_cvt_i16_f32(S0.f32));
 D0 = tmp.b32
 ```
 
-**V\_CVT\_PK\_U16\_F32**
+**V_CVT_PK_U16_F32**
 
 775
 
@@ -20798,7 +20794,7 @@ tmp[15 : 0] = 16'B(v_cvt_u16_f32(S0.f32));
 D0 = tmp.b32
 ```
 
-**V\_MAX\_U16**
+**V_MAX_U16**
 
 777
 
@@ -20808,7 +20804,7 @@ Select the maximum of two unsigned 16-bit integer inputs and store the selected 
 D0.u16 = S0.u16 >= S1.u16 ? S0.u16 : S1.u16
 ```
 
-**V\_MAX\_I16**
+**V_MAX_I16**
 
 778
 
@@ -20818,7 +20814,7 @@ Select the maximum of two signed 16-bit integer inputs and store the selected va
 D0.i16 = S0.i16 >= S1.i16 ? S0.i16 : S1.i16
 ```
 
-**V\_MIN\_U16**
+**V_MIN_U16**
 
 779
 
@@ -20828,7 +20824,7 @@ Select the minimum of two unsigned 16-bit integer inputs and store the selected 
 D0.u16 = S0.u16 < S1.u16 ? S0.u16 : S1.u16
 ```
 
-**V\_MIN\_I16**
+**V_MIN_I16**
 
 780
 
@@ -20838,7 +20834,7 @@ Select the minimum of two signed 16-bit integer inputs and store the selected va
 D0.i16 = S0.i16 < S1.i16 ? S0.i16 : S1.i16
 ```
 
-**V\_ADD\_NC\_I16**
+**V_ADD_NC_I16**
 
 781
 
@@ -20854,7 +20850,7 @@ Supports saturation (signed 16-bit integer domain).
 
 ---
 
-### V\_SUB\_NC\_I16
+### V_SUB_NC_I16
 
 782
 
@@ -20870,7 +20866,7 @@ Supports saturation (signed 16-bit integer domain).
 
 ---
 
-### V\_PACK\_B32\_F16
+### V_PACK_B32_F16
 
 785
 
@@ -20883,7 +20879,7 @@ D0[15 : 0].f16 = S0.f16
 
 ---
 
-### V\_CVT\_PK\_NORM\_I16\_F16
+### V_CVT_PK_NORM_I16_F16
 
 786
 
@@ -20898,7 +20894,7 @@ D0 = tmp.b32
 
 ---
 
-### V\_CVT\_PK\_NORM\_U16\_F16
+### V_CVT_PK_NORM_U16_F16
 
 787
 
@@ -20913,7 +20909,7 @@ tmp[31 : 16].u16 = f16_to_unorm(S1.f16);
 D0 = tmp.b32
 ```
 
-## V\_LDEXP\_F32
+## V_LDEXP_F32
 
 796
 
@@ -20927,7 +20923,7 @@ D0.f32 = S0.f32 * 2.0F ** S1.i32
 
 Compare with the `ldexp()` function in C.
 
-## V\_BFM\_B32
+## V_BFM_B32
 
 797
 
@@ -20937,7 +20933,7 @@ Calculate a bitfield mask given a field offset and size and store the result int
 D0.u32 = (((1U << S0[4 : 0].u32) - 1U) << S1[4 : 0].u32)
 ```
 
-## V\_BCNT\_U32\_B32
+## V_BCNT_U32_B32
 
 798
 
@@ -20952,13 +20948,13 @@ endfor;
 D0.u32 = tmp
 ```
 
-## V\_MBCNT\_LO\_U32\_B32
+## V_MBCNT_LO_U32_B32
 
 799
 
 For each lane  $0 \le N < 32$ , examine the  $N$  least significant bits of the first input and count how many of those bits are "1". For each lane  $32 \le N < 64$ , all "1" bits in the first input are counted. Add this count to the value in the second input and store the result into a vector register.
 
-In conjunction with V\_MBCNT\_HI\_U32\_B32 and with a vector condition code as input, this counts the number of lanes at or below the current lane number that have set their vector condition code bit.
+In conjunction with V_MBCNT_HI_U32_B32 and with a vector condition code as input, this counts the number of lanes at or below the current lane number that have set their vector condition code bit.
 
 ```
 ThreadMask = (1LL << laneId.u32) - 1LL;
@@ -20972,15 +20968,15 @@ D0.u32 = tmp
 
 ## Notes
 
-See also V\_MBCNT\_HI\_U32\_B32.
+See also V_MBCNT_HI_U32_B32.
 
-## V\_MBCNT\_HI\_U32\_B32
+## V_MBCNT_HI_U32_B32
 
 800
 
 For each lane  $32 \le N < 64$ , examine the  $N$  least significant bits of the first input and count how many of those bits are "1". For lane positions  $0 \le N < 32$  no bits are examined and the count is zero. Add this count to the value in the second input and store the result into a vector register.
 
-In conjunction with V\_MBCNT\_LO\_U32\_B32 and with a vector condition code as input, this counts the number of lanes at or below the current lane number that have set their vector condition code bit.
+In conjunction with V_MBCNT_LO_U32_B32 and with a vector condition code as input, this counts the number of lanes at or below the current lane number that have set their vector condition code bit.
 
 ```
 ThreadMask = (1LL << laneId.u32) - 1LL;
@@ -21010,11 +21006,11 @@ v_mbcnt_hi_u32_b32 v0, vcc_hi, v0 // Note vcc_hi is passed in for second instruc
 // v0 now contains position among lanes with VCC=1
 ```
 
-See also V\_MBCNT\_LO\_U32\_B32.
+See also V_MBCNT_LO_U32_B32.
 
 ---
 
-#### V\_CVT\_PK\_NORM\_I16\_F32
+#### V_CVT_PK_NORM_I16_F32
 
 **801**
 
@@ -21029,7 +21025,7 @@ D0 = tmp.b32
 
 ---
 
-#### V\_CVT\_PK\_NORM\_U16\_F32
+#### V_CVT_PK_NORM_U16_F32
 
 **802**
 
@@ -21044,7 +21040,7 @@ D0 = tmp.b32
 
 ---
 
-#### V\_CVT\_PK\_U16\_U32
+#### V_CVT_PK_U16_U32
 
 **803**
 
@@ -21059,7 +21055,7 @@ D0 = tmp.b32
 
 ---
 
-#### V\_CVT\_PK\_I16\_I32
+#### V_CVT_PK_I16_I32
 
 **804**
 
@@ -21075,7 +21071,7 @@ tmp[31 : 16].i16 = i32_to_i16(S1.i32);
 D0 = tmp.b32
 ```
 
-**V\_SUB\_NC\_I32****805**
+**V_SUB_NC_I32****805**
 
 Subtract the second signed 32-bit integer input from the first input and store the result into a vector register. No carry-in or carry-out support.
 
@@ -21087,7 +21083,7 @@ D0.i32 = S0.i32 - S1.i32
 
 Supports saturation (signed 32-bit integer domain).
 
-**V\_ADD\_NC\_I32****806**
+**V_ADD_NC_I32****806**
 
 Add two signed 32-bit integer inputs and store the result into a vector register. No carry-in or carry-out support.
 
@@ -21099,7 +21095,7 @@ D0.i32 = S0.i32 + S1.i32
 
 Supports saturation (signed 32-bit integer domain).
 
-**V\_ADD\_F64****807**
+**V_ADD_F64****807**
 
 Add two floating point inputs and store the result into a vector register.
 
@@ -21111,7 +21107,7 @@ D0.f64 = S0.f64 + S1.f64
 
 0.5ULP precision, denormals are supported.
 
-**V\_MUL\_F64****808**
+**V_MUL_F64****808**
 
 Multiply two floating point inputs and store the result into a vector register.
 
@@ -21123,7 +21119,7 @@ D0.f64 = S0.f64 * S1.f64
 
 0.5ULP precision, denormals are supported.
 
-**V\_MIN\_F64****809**
+**V_MIN_F64****809**
 
 Select the minimum of two double-precision float inputs and store the result into a vector register.
 
@@ -21168,7 +21164,7 @@ IEEE compliant. Supports denormals, round mode, exception flags, saturation.
 
 Denorm flushing for this operation is effectively controlled by the input denorm mode control: If input denorm mode is disabling denorm, the internal result of a min/max operation cannot be a denorm value, so output denorm mode is irrelevant. If input denorm mode is *enabling* denorm, the internal min/max result can be a denorm and this operation outputs as a denorm regardless of output denorm mode.
 
-**V\_MAX\_F64**
+**V_MAX_F64**
 
 810
 
@@ -21215,7 +21211,7 @@ IEEE compliant. Supports denormals, round mode, exception flags, saturation.
 
 Denorm flushing for this operation is effectively controlled by the input denorm mode control: If input denorm mode is disabling denorm, the internal result of a min/max operation cannot be a denorm value, so output denorm mode is irrelevant. If input denorm mode is *enabling* denorm, the internal min/max result can be a denorm and this operation outputs as a denorm regardless of output denorm mode.
 
-**V\_LDEXP\_F64**
+**V_LDEXP_F64**
 
 811
 
@@ -21229,7 +21225,7 @@ D0.f64 = S0.f64 * 2.0 ** S1.i32
 
 Compare with the `ldexp()` function in C.
 
-## V\_MUL\_LO\_U32
+## V_MUL_LO_U32
 
 812
 
@@ -21243,7 +21239,7 @@ D0.u32 = S0.u32 * S1.u32
 
 To multiply integers with small magnitudes consider `V_MUL_U32_U24`, which is intended to be a more efficient implementation.
 
-## V\_MUL\_HI\_U32
+## V_MUL_HI_U32
 
 813
 
@@ -21257,7 +21253,7 @@ D0.u32 = 32'U((64'U(S0.u32) * 64'U(S1.u32)) >> 32U)
 
 To multiply integers with small magnitudes consider `V_MUL_HI_U32_U24`, which is intended to be a more efficient implementation.
 
-## V\_MUL\_HI\_I32
+## V_MUL_HI_I32
 
 814
 
@@ -21271,7 +21267,7 @@ D0.i32 = 32'I((64'I(S0.i32) * 64'I(S1.i32)) >> 32U)
 
 To multiply integers with small magnitudes consider `V_MUL_HI_I32_I24`, which is intended to be a more efficient implementation.
 
-**V\_TRIG\_PREOP\_F64**
+**V_TRIG_PREOP_F64**
 
 815
 
@@ -21301,7 +21297,7 @@ D0.f64 = ldexp(result, scale)
 
 For a more complete treatment of trigonometric argument reduction refer to *Argument Reduction for Huge Arguments: Good to the Last Bit*, K. C. Ng et.al., March 1992, available online.
 
-**V\_LSHLREV\_B16**
+**V_LSHLREV_B16**
 
 824
 
@@ -21315,7 +21311,7 @@ D0.u16 = (S1.u16 << S0[3 : 0].u32)
 
 DPP operates on the shift count, not the data being shifted.
 
-**V\_LSHRREV\_B16**
+**V_LSHRREV_B16**
 
 825
 
@@ -21329,7 +21325,7 @@ D0.u16 = (S1.u16 >> S0[3 : 0].u32)
 
 DPP operates on the shift count, not the data being shifted.
 
-### V\_ASHRREV\_I16
+### V_ASHRREV_I16
 
 826
 
@@ -21343,7 +21339,7 @@ D0.i16 = (S1.i16 >> S0[3 : 0].u32)
 
 DPP operates on the shift count, not the data being shifted.
 
-### V\_LSHLREV\_B64
+### V_LSHLREV_B64
 
 828
 
@@ -21357,7 +21353,7 @@ D0.u64 = (S1.u64 << S0[5 : 0].u32)
 
 DPP operates on the shift count, not the data being shifted. Only one scalar broadcast constant is allowed.
 
-### V\_LSHRREV\_B64
+### V_LSHRREV_B64
 
 829
 
@@ -21371,7 +21367,7 @@ D0.u64 = (S1.u64 >> S0[5 : 0].u32)
 
 DPP operates on the shift count, not the data being shifted. Only one scalar broadcast constant is allowed.
 
-**V\_ASHRREV\_I64**
+**V_ASHRREV_I64**
 
 830
 
@@ -21385,7 +21381,7 @@ D0.i64 = (S1.i64 >> S0[5 : 0].u32)
 
 DPP operates on the shift count, not the data being shifted. Only one scalar broadcast constant is allowed.
 
-**V\_READLANE\_B32**
+**V_READLANE_B32**
 
 864
 
@@ -21407,7 +21403,7 @@ D0.b32 = VGPR[lane][SRC0.u32]
 
 Overrides EXEC mask for the VGPR read. Input and output modifiers not supported; this is an untyped operation.
 
-**V\_WRITELANE\_B32**
+**V_WRITELANE_B32**
 
 865
 
@@ -21431,7 +21427,7 @@ Overrides EXEC mask for the VGPR write. Input and output modifiers not supported
 
 ---
 
-**V\_AND\_B16**
+**V_AND_B16**
 
 866
 
@@ -21447,7 +21443,7 @@ Input and output modifiers not supported.
 
 ---
 
-**V\_OR\_B16**
+**V_OR_B16**
 
 867
 
@@ -21463,7 +21459,7 @@ Input and output modifiers not supported.
 
 ---
 
-**V\_XOR\_B16**
+**V_XOR_B16**
 
 868
 
@@ -21479,7 +21475,7 @@ Input and output modifiers not supported.
 
 ---
 
-**V\_CMP\_F\_F16**
+**V_CMP_F_F16**
 
 0
 
@@ -21497,7 +21493,7 @@ D0.u64[laneId] = 1'0U;
 
 Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
 
-### V\_CMP\_LT\_F16
+### V_CMP_LT_F16
 
 1
 
@@ -21512,7 +21508,7 @@ D0.u64[laneId] = S0.f16 < S1.f16;
 
 Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
 
-### V\_CMP\_EQ\_F16
+### V_CMP_EQ_F16
 
 2
 
@@ -21527,7 +21523,7 @@ D0.u64[laneId] = S0.f16 == S1.f16;
 
 Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
 
-### V\_CMP\_LE\_F16
+### V_CMP_LE_F16
 
 3
 
@@ -21542,7 +21538,7 @@ D0.u64[laneId] = S0.f16 <= S1.f16;
 
 Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
 
-**V\_CMP\_GT\_F16**
+**V_CMP_GT_F16**
 
 4
 
@@ -21557,7 +21553,7 @@ D0.u64[laneId] = S0.f16 > S1.f16;
 
 Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
 
-**V\_CMP\_LG\_F16**
+**V_CMP_LG_F16**
 
 5
 
@@ -21572,7 +21568,7 @@ D0.u64[laneId] = S0.f16 <> S1.f16;
 
 Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
 
-**V\_CMP\_GE\_F16**
+**V_CMP_GE_F16**
 
 6
 
@@ -21587,7 +21583,7 @@ D0.u64[laneId] = S0.f16 >= S1.f16;
 
 Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
 
-**V\_CMP\_O\_F16**
+**V_CMP_O_F16**
 
 7
 
@@ -21602,7 +21598,7 @@ D0.u64[laneId] = (!isNAN(64'F(S0.f16)) && !isNAN(64'F(S1.f16)));
 
 Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
 
-**V\_CMP\_U\_F16****8**
+**V_CMP_U_F16****8**
 
 Set the per-lane condition code to 1 iff the first input is not orderable to the second input. Store the result into VCC or a scalar register.
 
@@ -21615,7 +21611,7 @@ D0.u64[laneId] = (isNAN(64'F(S0.f16)) || isNAN(64'F(S1.f16)));
 
 Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
 
-**V\_CMP\_NGE\_F16****9**
+**V_CMP_NGE_F16****9**
 
 Set the per-lane condition code to 1 iff the first input is not greater than or equal to the second input. Store the result into VCC or a scalar register.
 
@@ -21629,7 +21625,7 @@ D0.u64[laneId] = !(S0.f16 >= S1.f16);
 
 Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
 
-**V\_CMP\_NLG\_F16****10**
+**V_CMP_NLG_F16****10**
 
 Set the per-lane condition code to 1 iff the first input is not less than or greater than the second input. Store the result into VCC or a scalar register.
 
@@ -21643,7 +21639,7 @@ D0.u64[laneId] = !(S0.f16 <> S1.f16);
 
 Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
 
-**V\_CMP\_NGT\_F16****11**
+**V_CMP_NGT_F16****11**
 
 Set the per-lane condition code to 1 iff the first input is not greater than the second input. Store the result into VCC or a scalar register.
 
@@ -21657,7 +21653,7 @@ D0.u64[laneId] = !(S0.f16 > S1.f16);
 
 Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
 
-**V\_CMP\_NLE\_F16****12**
+**V_CMP_NLE_F16****12**
 
 Set the per-lane condition code to 1 iff the first input is not less than or equal to the second input. Store the result into VCC or a scalar register.
 
@@ -21671,7 +21667,7 @@ D0.u64[laneId] = !(S0.f16 <= S1.f16);
 
 Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
 
-**V\_CMP\_NEQ\_F16****13**
+**V_CMP_NEQ_F16****13**
 
 Set the per-lane condition code to 1 iff the first input is not equal to the second input. Store the result into VCC or a scalar register.
 
@@ -21685,7 +21681,7 @@ D0.u64[laneId] = !(S0.f16 == S1.f16);
 
 Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
 
-**V\_CMP\_NLT\_F16****14**
+**V_CMP_NLT_F16****14**
 
 Set the per-lane condition code to 1 iff the first input is not less than the second input. Store the result into VCC or a scalar register.
 
@@ -21701,7 +21697,7 @@ Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
 
 ---
 
-**V\_CMP\_T\_F16****15**
+**V_CMP_T_F16****15**
 
 Set the per-lane condition code to 1. Store the result into VCC or a scalar register.
 
@@ -21716,7 +21712,7 @@ Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
 
 ---
 
-**V\_CMP\_F\_F32****16**
+**V_CMP_F_F32****16**
 
 Set the per-lane condition code to 0. Store the result into VCC or a scalar register.
 
@@ -21731,7 +21727,7 @@ Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
 
 ---
 
-**V\_CMP\_LT\_F32****17**
+**V_CMP_LT_F32****17**
 
 Set the per-lane condition code to 1 iff the first input is less than the second input. Store the result into VCC or a scalar register.
 
@@ -21747,7 +21743,7 @@ D0.u64[laneId] = S0.f32 < S1.f32;
 
 Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
 
-**V\_CMP\_EQ\_F32****18**
+**V_CMP_EQ_F32****18**
 
 Set the per-lane condition code to 1 iff the first input is equal to the second input. Store the result into VCC or a scalar register.
 
@@ -21760,7 +21756,7 @@ D0.u64[laneId] = S0.f32 == S1.f32;
 
 Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
 
-**V\_CMP\_LE\_F32****19**
+**V_CMP_LE_F32****19**
 
 Set the per-lane condition code to 1 iff the first input is less than or equal to the second input. Store the result into VCC or a scalar register.
 
@@ -21773,7 +21769,7 @@ D0.u64[laneId] = S0.f32 <= S1.f32;
 
 Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
 
-**V\_CMP\_GT\_F32****20**
+**V_CMP_GT_F32****20**
 
 Set the per-lane condition code to 1 iff the first input is greater than the second input. Store the result into VCC or a scalar register.
 
@@ -21786,7 +21782,7 @@ D0.u64[laneId] = S0.f32 > S1.f32;
 
 Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
 
-**V\_CMP\_LG\_F32****21**
+**V_CMP_LG_F32****21**
 
 Set the per-lane condition code to 1 iff the first input is less than or greater than the second input. Store the result into VCC or a scalar register.
 
@@ -21801,7 +21797,7 @@ Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
 
 ---
 
-**V\_CMP\_GE\_F32****22**
+**V_CMP_GE_F32****22**
 
 Set the per-lane condition code to 1 iff the first input is greater than or equal to the second input. Store the result into VCC or a scalar register.
 
@@ -21816,7 +21812,7 @@ Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
 
 ---
 
-**V\_CMP\_O\_F32****23**
+**V_CMP_O_F32****23**
 
 Set the per-lane condition code to 1 iff the first input is orderable to the second input. Store the result into VCC or a scalar register.
 
@@ -21831,7 +21827,7 @@ Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
 
 ---
 
-**V\_CMP\_U\_F32****24**
+**V_CMP_U_F32****24**
 
 Set the per-lane condition code to 1 iff the first input is not orderable to the second input. Store the result into VCC or a scalar register.
 
@@ -21844,7 +21840,7 @@ D0.u64[laneId] = (isNAN(64'F(S0.f32))) || isNAN(64'F(S1.f32)));
 
 Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
 
-**V\_CMP\_NGE\_F32****25**
+**V_CMP_NGE_F32****25**
 
 Set the per-lane condition code to 1 iff the first input is not greater than or equal to the second input. Store the result into VCC or a scalar register.
 
@@ -21858,7 +21854,7 @@ D0.u64[laneId] = !(S0.f32 >= S1.f32);
 
 Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
 
-**V\_CMP\_NLG\_F32****26**
+**V_CMP_NLG_F32****26**
 
 Set the per-lane condition code to 1 iff the first input is not less than or greater than the second input. Store the result into VCC or a scalar register.
 
@@ -21872,7 +21868,7 @@ D0.u64[laneId] = !(S0.f32 <> S1.f32);
 
 Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
 
-**V\_CMP\_NGT\_F32****27**
+**V_CMP_NGT_F32****27**
 
 Set the per-lane condition code to 1 iff the first input is not greater than the second input. Store the result into VCC or a scalar register.
 
@@ -21886,7 +21882,7 @@ D0.u64[laneId] = !(S0.f32 > S1.f32);
 
 Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
 
-**V\_CMP\_NLE\_F32****28**
+**V_CMP_NLE_F32****28**
 
 Set the per-lane condition code to 1 iff the first input is not less than or equal to the second input. Store the result into VCC or a scalar register.
 
@@ -21900,7 +21896,7 @@ D0.u64[laneId] = !(S0.f32 <= S1.f32);
 
 Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
 
-**V\_CMP\_NEQ\_F32****29**
+**V_CMP_NEQ_F32****29**
 
 Set the per-lane condition code to 1 iff the first input is not equal to the second input. Store the result into VCC or a scalar register.
 
@@ -21914,7 +21910,7 @@ D0.u64[laneId] = !(S0.f32 == S1.f32);
 
 Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
 
-**V\_CMP\_NLT\_F32****30**
+**V_CMP_NLT_F32****30**
 
 Set the per-lane condition code to 1 iff the first input is not less than the second input. Store the result into VCC or a scalar register.
 
@@ -21928,7 +21924,7 @@ D0.u64[laneId] = !(S0.f32 < S1.f32);
 
 Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
 
-**V\_CMP\_T\_F32****31**
+**V_CMP_T_F32****31**
 
 Set the per-lane condition code to 1. Store the result into VCC or a scalar register.
 
@@ -21943,7 +21939,7 @@ Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
 
 ---
 
-**V\_CMP\_F\_F64****32**
+**V_CMP_F_F64****32**
 
 Set the per-lane condition code to 0. Store the result into VCC or a scalar register.
 
@@ -21958,7 +21954,7 @@ Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
 
 ---
 
-**V\_CMP\_LT\_F64****33**
+**V_CMP_LT_F64****33**
 
 Set the per-lane condition code to 1 iff the first input is less than the second input. Store the result into VCC or a scalar register.
 
@@ -21973,7 +21969,7 @@ Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
 
 ---
 
-**V\_CMP\_EQ\_F64****34**
+**V_CMP_EQ_F64****34**
 
 Set the per-lane condition code to 1 iff the first input is equal to the second input. Store the result into VCC or a scalar register.
 
@@ -21989,7 +21985,7 @@ D0.u64[laneId] = S0.f64 == S1.f64;
 
 Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
 
-### V\_CMP\_LE\_F64
+### V_CMP_LE_F64
 
 **35**
 
@@ -22004,7 +22000,7 @@ D0.u64[laneId] = S0.f64 <= S1.f64;
 
 Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
 
-### V\_CMP\_GT\_F64
+### V_CMP_GT_F64
 
 **36**
 
@@ -22019,7 +22015,7 @@ D0.u64[laneId] = S0.f64 > S1.f64;
 
 Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
 
-### V\_CMP\_LG\_F64
+### V_CMP_LG_F64
 
 **37**
 
@@ -22034,7 +22030,7 @@ D0.u64[laneId] = S0.f64 <> S1.f64;
 
 Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
 
-**V\_CMP\_GE\_F64****38**
+**V_CMP_GE_F64****38**
 
 Set the per-lane condition code to 1 iff the first input is greater than or equal to the second input. Store the result into VCC or a scalar register.
 
@@ -22047,7 +22043,7 @@ D0.u64[laneId] = S0.f64 >= S1.f64;
 
 Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
 
-**V\_CMP\_O\_F64****39**
+**V_CMP_O_F64****39**
 
 Set the per-lane condition code to 1 iff the first input is orderable to the second input. Store the result into VCC or a scalar register.
 
@@ -22060,7 +22056,7 @@ D0.u64[laneId] = (!isNAN(S0.f64) && !isNAN(S1.f64));
 
 Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
 
-**V\_CMP\_U\_F64****40**
+**V_CMP_U_F64****40**
 
 Set the per-lane condition code to 1 iff the first input is not orderable to the second input. Store the result into VCC or a scalar register.
 
@@ -22073,7 +22069,7 @@ D0.u64[laneId] = (isNAN(S0.f64) || isNAN(S1.f64));
 
 Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
 
-**V\_CMP\_NGE\_F64****41**
+**V_CMP_NGE_F64****41**
 
 Set the per-lane condition code to 1 iff the first input is not greater than or equal to the second input. Store the result into VCC or a scalar register.
 
@@ -22087,7 +22083,7 @@ D0.u64[laneId] = !(S0.f64 >= S1.f64);
 
 Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
 
-**V\_CMP\_NLG\_F64****42**
+**V_CMP_NLG_F64****42**
 
 Set the per-lane condition code to 1 iff the first input is not less than or greater than the second input. Store the result into VCC or a scalar register.
 
@@ -22101,7 +22097,7 @@ D0.u64[laneId] = !(S0.f64 <> S1.f64);
 
 Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
 
-**V\_CMP\_NGT\_F64****43**
+**V_CMP_NGT_F64****43**
 
 Set the per-lane condition code to 1 iff the first input is not greater than the second input. Store the result into VCC or a scalar register.
 
@@ -22115,7 +22111,7 @@ D0.u64[laneId] = !(S0.f64 > S1.f64);
 
 Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
 
-**V\_CMP\_NLE\_F64****44**
+**V_CMP_NLE_F64****44**
 
 Set the per-lane condition code to 1 iff the first input is not less than or equal to the second input. Store the result into VCC or a scalar register.
 
@@ -22129,7 +22125,7 @@ D0.u64[laneId] = !(S0.f64 <= S1.f64);
 
 Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
 
-**V\_CMP\_NEQ\_F64****45**
+**V_CMP_NEQ_F64****45**
 
 Set the per-lane condition code to 1 iff the first input is not equal to the second input. Store the result into VCC or a scalar register.
 
@@ -22143,7 +22139,7 @@ D0.u64[laneId] = !(S0.f64 == S1.f64);
 
 Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
 
-**V\_CMP\_NLT\_F64****46**
+**V_CMP_NLT_F64****46**
 
 Set the per-lane condition code to 1 iff the first input is not less than the second input. Store the result into VCC or a scalar register.
 
@@ -22157,7 +22153,7 @@ D0.u64[laneId] = !(S0.f64 < S1.f64);
 
 Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
 
-**V\_CMP\_T\_F64****47**
+**V_CMP_T_F64****47**
 
 Set the per-lane condition code to 1. Store the result into VCC or a scalar register.
 
@@ -22170,7 +22166,7 @@ D0.u64[laneId] = 1'1U;
 
 Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
 
-**V\_CMP\_LT\_I16**
+**V_CMP_LT_I16**
 
 49
 
@@ -22185,7 +22181,7 @@ D0.u64[laneId] = S0.i16 < S1.i16;
 
 Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
 
-**V\_CMP\_EQ\_I16**
+**V_CMP_EQ_I16**
 
 50
 
@@ -22200,7 +22196,7 @@ D0.u64[laneId] = S0.i16 == S1.i16;
 
 Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
 
-**V\_CMP\_LE\_I16**
+**V_CMP_LE_I16**
 
 51
 
@@ -22215,7 +22211,7 @@ D0.u64[laneId] = S0.i16 <= S1.i16;
 
 Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
 
-**V\_CMP\_GT\_I16**
+**V_CMP_GT_I16**
 
 52
 
@@ -22233,7 +22229,7 @@ D0.u64[laneId] = S0.i16 > S1.i16;
 
 Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
 
-**V\_CMP\_NE\_I16**
+**V_CMP_NE_I16**
 
 53
 
@@ -22248,7 +22244,7 @@ D0.u64[laneId] = S0.i16 <> S1.i16;
 
 Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
 
-**V\_CMP\_GE\_I16**
+**V_CMP_GE_I16**
 
 54
 
@@ -22263,7 +22259,7 @@ D0.u64[laneId] = S0.i16 >= S1.i16;
 
 Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
 
-**V\_CMP\_LT\_U16**
+**V_CMP_LT_U16**
 
 57
 
@@ -22278,7 +22274,7 @@ D0.u64[laneId] = S0.u16 < S1.u16;
 
 Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
 
-**V\_CMP\_EQ\_U16**
+**V_CMP_EQ_U16**
 
 58
 
@@ -22293,7 +22289,7 @@ D0.u64[laneId] = S0.u16 == S1.u16;
 
 Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
 
-**V\_CMP\_LE\_U16**
+**V_CMP_LE_U16**
 
 59
 
@@ -22308,7 +22304,7 @@ D0.u64[laneId] = S0.u16 <= S1.u16;
 
 Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
 
-**V\_CMP\_GT\_U16**
+**V_CMP_GT_U16**
 
 60
 
@@ -22323,7 +22319,7 @@ D0.u64[laneId] = S0.u16 > S1.u16;
 
 Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
 
-**V\_CMP\_NE\_U16**
+**V_CMP_NE_U16**
 
 61
 
@@ -22338,7 +22334,7 @@ D0.u64[laneId] = S0.u16 <= S1.u16;
 
 Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
 
-### V\_CMP\_GE\_U16
+### V_CMP_GE_U16
 
 **62**
 
@@ -22353,7 +22349,7 @@ D0.u64[laneId] = S0.u16 >= S1.u16;
 
 Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
 
-### V\_CMP\_F\_I32
+### V_CMP_F_I32
 
 **64**
 
@@ -22368,7 +22364,7 @@ D0.u64[laneId] = 1'b0;
 
 Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
 
-### V\_CMP\_LT\_I32
+### V_CMP_LT_I32
 
 **65**
 
@@ -22383,7 +22379,7 @@ D0.u64[laneId] = S0.i32 < S1.i32;
 
 Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
 
-**V\_CMP\_EQ\_I32**
+**V_CMP_EQ_I32**
 
 66
 
@@ -22398,7 +22394,7 @@ D0.u64[laneId] = S0.i32 == S1.i32;
 
 Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
 
-**V\_CMP\_LE\_I32**
+**V_CMP_LE_I32**
 
 67
 
@@ -22413,7 +22409,7 @@ D0.u64[laneId] = S0.i32 <= S1.i32;
 
 Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
 
-**V\_CMP\_GT\_I32**
+**V_CMP_GT_I32**
 
 68
 
@@ -22428,7 +22424,7 @@ D0.u64[laneId] = S0.i32 > S1.i32;
 
 Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
 
-**V\_CMP\_NE\_I32**
+**V_CMP_NE_I32**
 
 69
 
@@ -22443,7 +22439,7 @@ D0.u64[laneId] = S0.i32 <= S1.i32;
 
 Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
 
-### V\_CMP\_GE\_I32
+### V_CMP_GE_I32
 
 **70**
 
@@ -22458,7 +22454,7 @@ D0.u64[laneId] = S0.i32 >= S1.i32;
 
 Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
 
-### V\_CMP\_T\_I32
+### V_CMP_T_I32
 
 **71**
 
@@ -22473,7 +22469,7 @@ D0.u64[laneId] = 1'1U;
 
 Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
 
-### V\_CMP\_F\_U32
+### V_CMP_F_U32
 
 **72**
 
@@ -22488,7 +22484,7 @@ D0.u64[laneId] = 1'0U;
 
 Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
 
-**V\_CMP\_LT\_U32**
+**V_CMP_LT_U32**
 
 73
 
@@ -22503,7 +22499,7 @@ D0.u64[laneId] = S0.u32 < S1.u32;
 
 Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
 
-**V\_CMP\_EQ\_U32**
+**V_CMP_EQ_U32**
 
 74
 
@@ -22518,7 +22514,7 @@ D0.u64[laneId] = S0.u32 == S1.u32;
 
 Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
 
-**V\_CMP\_LE\_U32**
+**V_CMP_LE_U32**
 
 75
 
@@ -22533,7 +22529,7 @@ D0.u64[laneId] = S0.u32 <= S1.u32;
 
 Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
 
-**V\_CMP\_GT\_U32**
+**V_CMP_GT_U32**
 
 76
 
@@ -22551,7 +22547,7 @@ D0.u64[laneId] = S0.u32 > S1.u32;
 
 Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
 
-### V\_CMP\_NE\_U32
+### V_CMP_NE_U32
 
 **77**
 
@@ -22566,7 +22562,7 @@ D0.u64[laneId] = S0.u32 <> S1.u32;
 
 Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
 
-### V\_CMP\_GE\_U32
+### V_CMP_GE_U32
 
 **78**
 
@@ -22581,7 +22577,7 @@ D0.u64[laneId] = S0.u32 >= S1.u32;
 
 Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
 
-### V\_CMP\_T\_U32
+### V_CMP_T_U32
 
 **79**
 
@@ -22596,7 +22592,7 @@ D0.u64[laneId] = 1'1U;
 
 Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
 
-**V\_CMP\_F\_I64**
+**V_CMP_F_I64**
 
 80
 
@@ -22613,7 +22609,7 @@ Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
 
 ---
 
-**V\_CMP\_LT\_I64**
+**V_CMP_LT_I64**
 
 81
 
@@ -22630,7 +22626,7 @@ Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
 
 ---
 
-**V\_CMP\_EQ\_I64**
+**V_CMP_EQ_I64**
 
 82
 
@@ -22647,7 +22643,7 @@ Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
 
 ---
 
-**V\_CMP\_LE\_I64**
+**V_CMP_LE_I64**
 
 83
 
@@ -22665,7 +22661,7 @@ D0.u64[laneId] = S0.i64 <= S1.i64;
 
 Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
 
-### V\_CMP\_GT\_I64
+### V_CMP_GT_I64
 
 **84**
 
@@ -22680,7 +22676,7 @@ D0.u64[laneId] = S0.i64 > S1.i64;
 
 Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
 
-### V\_CMP\_NE\_I64
+### V_CMP_NE_I64
 
 **85**
 
@@ -22695,7 +22691,7 @@ D0.u64[laneId] = S0.i64 <> S1.i64;
 
 Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
 
-### V\_CMP\_GE\_I64
+### V_CMP_GE_I64
 
 **86**
 
@@ -22710,7 +22706,7 @@ D0.u64[laneId] = S0.i64 >= S1.i64;
 
 Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
 
-**V\_CMP\_T\_I64****87**
+**V_CMP_T_I64****87**
 
 Set the per-lane condition code to 1. Store the result into VCC or a scalar register.
 
@@ -22725,7 +22721,7 @@ Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
 
 ---
 
-**V\_CMP\_F\_U64****88**
+**V_CMP_F_U64****88**
 
 Set the per-lane condition code to 0. Store the result into VCC or a scalar register.
 
@@ -22740,7 +22736,7 @@ Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
 
 ---
 
-**V\_CMP\_LT\_U64****89**
+**V_CMP_LT_U64****89**
 
 Set the per-lane condition code to 1 iff the first input is less than the second input. Store the result into VCC or a scalar register.
 
@@ -22755,7 +22751,7 @@ Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
 
 ---
 
-**V\_CMP\_EQ\_U64****90**
+**V_CMP_EQ_U64****90**
 
 Set the per-lane condition code to 1 iff the first input is equal to the second input. Store the result into VCC or a scalar register.
 
@@ -22771,7 +22767,7 @@ D0.u64[laneId] = S0.u64 == S1.u64;
 
 Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
 
-### V\_CMP\_LE\_U64
+### V_CMP_LE_U64
 
 **91**
 
@@ -22786,7 +22782,7 @@ D0.u64[laneId] = S0.u64 <= S1.u64;
 
 Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
 
-### V\_CMP\_GT\_U64
+### V_CMP_GT_U64
 
 **92**
 
@@ -22801,7 +22797,7 @@ D0.u64[laneId] = S0.u64 > S1.u64;
 
 Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
 
-### V\_CMP\_NE\_U64
+### V_CMP_NE_U64
 
 **93**
 
@@ -22816,7 +22812,7 @@ D0.u64[laneId] = S0.u64 <> S1.u64;
 
 Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
 
-**V\_CMP\_GE\_U64**
+**V_CMP_GE_U64**
 
 94
 
@@ -22831,7 +22827,7 @@ D0.u64[laneId] = S0.u64 >= S1.u64;
 
 Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
 
-**V\_CMP\_T\_U64**
+**V_CMP_T_U64**
 
 95
 
@@ -22846,7 +22842,7 @@ D0.u64[laneId] = 1'1U;
 
 Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
 
-**V\_CMP\_CLASS\_F16**
+**V_CMP_CLASS_F16**
 
 125
 
@@ -22897,7 +22893,7 @@ D0.u64[laneId] = result;
 
 Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
 
-## V\_CMP\_CLASS\_F32
+## V_CMP_CLASS_F32
 
 126
 
@@ -22950,7 +22946,7 @@ D0.u64[laneId] = result;
 
 Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
 
-## V\_CMP\_CLASS\_F64
+## V_CMP_CLASS_F64
 
 127
 
@@ -23003,7 +22999,7 @@ D0.u64[laneId] = result;
 
 Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
 
-**V\_CMPX\_F\_F16****128**
+**V_CMPX_F_F16****128**
 
 Set the per-lane condition code to 0. Store the result into the EXEC mask.
 
@@ -23013,9 +23009,9 @@ EXEC.u64[laneId] = 1'0U
 
 **Notes**
 
-Write only EXEC. SDST must be set to EXEC\_LO. Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
+Write only EXEC. SDST must be set to EXEC_LO. Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
 
-**V\_CMPX\_LT\_F16****129**
+**V_CMPX_LT_F16****129**
 
 Set the per-lane condition code to 1 iff the first input is less than the second input. Store the result into the EXEC mask.
 
@@ -23025,9 +23021,9 @@ EXEC.u64[laneId] = S0.f16 < S1.f16
 
 **Notes**
 
-Write only EXEC. SDST must be set to EXEC\_LO. Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
+Write only EXEC. SDST must be set to EXEC_LO. Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
 
-**V\_CMPX\_EQ\_F16****130**
+**V_CMPX_EQ_F16****130**
 
 Set the per-lane condition code to 1 iff the first input is equal to the second input. Store the result into the EXEC mask.
 
@@ -23037,9 +23033,9 @@ EXEC.u64[laneId] = S0.f16 == S1.f16
 
 **Notes**
 
-Write only EXEC. SDST must be set to EXEC\_LO. Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
+Write only EXEC. SDST must be set to EXEC_LO. Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
 
-### V\_CMPX\_LE\_F16
+### V_CMPX_LE_F16
 
 131
 
@@ -23051,9 +23047,9 @@ EXEC.u64[laneId] = S0.f16 <= S1.f16
 
 #### Notes
 
-Write only EXEC. SDST must be set to EXEC\_LO. Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
+Write only EXEC. SDST must be set to EXEC_LO. Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
 
-### V\_CMPX\_GT\_F16
+### V_CMPX_GT_F16
 
 132
 
@@ -23065,9 +23061,9 @@ EXEC.u64[laneId] = S0.f16 > S1.f16
 
 #### Notes
 
-Write only EXEC. SDST must be set to EXEC\_LO. Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
+Write only EXEC. SDST must be set to EXEC_LO. Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
 
-### V\_CMPX\_LG\_F16
+### V_CMPX_LG_F16
 
 133
 
@@ -23079,9 +23075,9 @@ EXEC.u64[laneId] = S0.f16 <> S1.f16
 
 #### Notes
 
-Write only EXEC. SDST must be set to EXEC\_LO. Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
+Write only EXEC. SDST must be set to EXEC_LO. Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
 
-### V\_CMPX\_GE\_F16
+### V_CMPX_GE_F16
 
 134
 
@@ -23093,9 +23089,9 @@ EXEC.u64[laneId] = S0.f16 >= S1.f16
 
 #### Notes
 
-Write only EXEC. SDST must be set to EXEC\_LO. Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
+Write only EXEC. SDST must be set to EXEC_LO. Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
 
-### V\_CMPX\_O\_F16
+### V_CMPX_O_F16
 
 **135**
 
@@ -23107,9 +23103,9 @@ EXEC.u64[laneId] = (!isNAN(64'F(S0.f16)) && !isNAN(64'F(S1.f16)))
 
 #### Notes
 
-Write only EXEC. SDST must be set to EXEC\_LO. Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
+Write only EXEC. SDST must be set to EXEC_LO. Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
 
-### V\_CMPX\_U\_F16
+### V_CMPX_U_F16
 
 **136**
 
@@ -23121,9 +23117,9 @@ EXEC.u64[laneId] = (isNAN(64'F(S0.f16)) || isNAN(64'F(S1.f16)))
 
 #### Notes
 
-Write only EXEC. SDST must be set to EXEC\_LO. Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
+Write only EXEC. SDST must be set to EXEC_LO. Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
 
-### V\_CMPX\_NGE\_F16
+### V_CMPX_NGE_F16
 
 **137**
 
@@ -23136,9 +23132,9 @@ EXEC.u64[laneId] = !(S0.f16 >= S1.f16);
 
 #### Notes
 
-Write only EXEC. SDST must be set to EXEC\_LO. Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
+Write only EXEC. SDST must be set to EXEC_LO. Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
 
-**V\_CMPX\_NLG\_F16**
+**V_CMPX_NLG_F16**
 
 138
 
@@ -23151,9 +23147,9 @@ EXEC.u64[laneId] = !(S0.f16 <> S1.f16);
 
 **Notes**
 
-Write only EXEC. SDST must be set to EXEC\_LO. Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
+Write only EXEC. SDST must be set to EXEC_LO. Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
 
-**V\_CMPX\_NGT\_F16**
+**V_CMPX_NGT_F16**
 
 139
 
@@ -23166,9 +23162,9 @@ EXEC.u64[laneId] = !(S0.f16 > S1.f16);
 
 **Notes**
 
-Write only EXEC. SDST must be set to EXEC\_LO. Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
+Write only EXEC. SDST must be set to EXEC_LO. Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
 
-**V\_CMPX\_NLE\_F16**
+**V_CMPX_NLE_F16**
 
 140
 
@@ -23181,9 +23177,9 @@ EXEC.u64[laneId] = !(S0.f16 <= S1.f16);
 
 **Notes**
 
-Write only EXEC. SDST must be set to EXEC\_LO. Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
+Write only EXEC. SDST must be set to EXEC_LO. Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
 
-**V\_CMPX\_NEQ\_F16**
+**V_CMPX_NEQ_F16**
 
 141
 
@@ -23199,9 +23195,9 @@ EXEC.u64[laneId] = !(S0.f16 == S1.f16);
 
 #### Notes
 
-Write only EXEC. SDST must be set to EXEC\_LO. Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
+Write only EXEC. SDST must be set to EXEC_LO. Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
 
-### V\_CMPX\_NLT\_F16
+### V_CMPX_NLT_F16
 
 142
 
@@ -23214,9 +23210,9 @@ EXEC.u64[laneId] = !(S0.f16 < S1.f16);
 
 #### Notes
 
-Write only EXEC. SDST must be set to EXEC\_LO. Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
+Write only EXEC. SDST must be set to EXEC_LO. Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
 
-### V\_CMPX\_T\_F16
+### V_CMPX_T_F16
 
 143
 
@@ -23228,9 +23224,9 @@ EXEC.u64[laneId] = 1'1U
 
 #### Notes
 
-Write only EXEC. SDST must be set to EXEC\_LO. Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
+Write only EXEC. SDST must be set to EXEC_LO. Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
 
-### V\_CMPX\_F\_F32
+### V_CMPX_F_F32
 
 144
 
@@ -23242,9 +23238,9 @@ EXEC.u64[laneId] = 1'0U
 
 #### Notes
 
-Write only EXEC. SDST must be set to EXEC\_LO. Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
+Write only EXEC. SDST must be set to EXEC_LO. Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
 
-### V\_CMPX\_LT\_F32
+### V_CMPX_LT_F32
 
 145
 
@@ -23256,9 +23252,9 @@ EXEC.u64[laneId] = S0.f32 < S1.f32
 
 #### Notes
 
-Write only EXEC. SDST must be set to EXEC\_LO. Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
+Write only EXEC. SDST must be set to EXEC_LO. Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
 
-### V\_CMPX\_EQ\_F32
+### V_CMPX_EQ_F32
 
 146
 
@@ -23270,9 +23266,9 @@ EXEC.u64[laneId] = S0.f32 == S1.f32
 
 #### Notes
 
-Write only EXEC. SDST must be set to EXEC\_LO. Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
+Write only EXEC. SDST must be set to EXEC_LO. Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
 
-### V\_CMPX\_LE\_F32
+### V_CMPX_LE_F32
 
 147
 
@@ -23284,9 +23280,9 @@ EXEC.u64[laneId] = S0.f32 <= S1.f32
 
 #### Notes
 
-Write only EXEC. SDST must be set to EXEC\_LO. Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
+Write only EXEC. SDST must be set to EXEC_LO. Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
 
-### V\_CMPX\_GT\_F32
+### V_CMPX_GT_F32
 
 148
 
@@ -23298,9 +23294,9 @@ EXEC.u64[laneId] = S0.f32 > S1.f32
 
 #### Notes
 
-Write only EXEC. SDST must be set to EXEC\_LO. Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
+Write only EXEC. SDST must be set to EXEC_LO. Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
 
-**V\_CMPX\_LG\_F32**
+**V_CMPX_LG_F32**
 
 149
 
@@ -23312,9 +23308,9 @@ EXEC.u64[laneId] = S0.f32 <> S1.f32
 
 **Notes**
 
-Write only EXEC. SDST must be set to EXEC\_LO. Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
+Write only EXEC. SDST must be set to EXEC_LO. Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
 
-**V\_CMPX\_GE\_F32**
+**V_CMPX_GE_F32**
 
 150
 
@@ -23326,9 +23322,9 @@ EXEC.u64[laneId] = S0.f32 >= S1.f32
 
 **Notes**
 
-Write only EXEC. SDST must be set to EXEC\_LO. Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
+Write only EXEC. SDST must be set to EXEC_LO. Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
 
-**V\_CMPX\_O\_F32**
+**V_CMPX_O_F32**
 
 151
 
@@ -23340,9 +23336,9 @@ EXEC.u64[laneId] = (!isNAN(64'F(S0.f32)) && !isNAN(64'F(S1.f32)))
 
 **Notes**
 
-Write only EXEC. SDST must be set to EXEC\_LO. Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
+Write only EXEC. SDST must be set to EXEC_LO. Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
 
-**V\_CMPX\_U\_F32**
+**V_CMPX_U_F32**
 
 152
 
@@ -23354,9 +23350,9 @@ EXEC.u64[laneId] = (isNAN(64'F(S0.f32)) || isNAN(64'F(S1.f32)))
 
 **Notes**
 
-Write only EXEC. SDST must be set to EXEC\_LO. Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
+Write only EXEC. SDST must be set to EXEC_LO. Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
 
-**V\_CMPX\_NGE\_F32****153**
+**V_CMPX_NGE_F32****153**
 
 Set the per-lane condition code to 1 iff the first input is not greater than or equal to the second input. Store the result into the EXEC mask.
 
@@ -23367,9 +23363,9 @@ EXEC.u64[laneId] = !(S0.f32 >= S1.f32);
 
 **Notes**
 
-Write only EXEC. SDST must be set to EXEC\_LO. Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
+Write only EXEC. SDST must be set to EXEC_LO. Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
 
-**V\_CMPX\_NLG\_F32****154**
+**V_CMPX_NLG_F32****154**
 
 Set the per-lane condition code to 1 iff the first input is not less than or greater than the second input. Store the result into the EXEC mask.
 
@@ -23380,9 +23376,9 @@ EXEC.u64[laneId] = !(S0.f32 <> S1.f32);
 
 **Notes**
 
-Write only EXEC. SDST must be set to EXEC\_LO. Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
+Write only EXEC. SDST must be set to EXEC_LO. Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
 
-**V\_CMPX\_NGT\_F32****155**
+**V_CMPX_NGT_F32****155**
 
 Set the per-lane condition code to 1 iff the first input is not greater than the second input. Store the result into the EXEC mask.
 
@@ -23393,9 +23389,9 @@ EXEC.u64[laneId] = !(S0.f32 > S1.f32);
 
 **Notes**
 
-Write only EXEC. SDST must be set to EXEC\_LO. Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
+Write only EXEC. SDST must be set to EXEC_LO. Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
 
-**V\_CMPX\_NLE\_F32****156**
+**V_CMPX_NLE_F32****156**
 
 Set the per-lane condition code to 1 iff the first input is not less than or equal to the second input. Store the result into the EXEC mask.
 
@@ -23406,9 +23402,9 @@ EXEC.u64[laneId] = !(S0.f32 <= S1.f32);
 
 #### Notes
 
-Write only EXEC. SDST must be set to EXEC\_LO. Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
+Write only EXEC. SDST must be set to EXEC_LO. Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
 
-### V\_CMPX\_NEQ\_F32
+### V_CMPX_NEQ_F32
 
 157
 
@@ -23421,9 +23417,9 @@ EXEC.u64[laneId] = !(S0.f32 == S1.f32);
 
 #### Notes
 
-Write only EXEC. SDST must be set to EXEC\_LO. Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
+Write only EXEC. SDST must be set to EXEC_LO. Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
 
-### V\_CMPX\_NLT\_F32
+### V_CMPX_NLT_F32
 
 158
 
@@ -23436,9 +23432,9 @@ EXEC.u64[laneId] = !(S0.f32 < S1.f32);
 
 #### Notes
 
-Write only EXEC. SDST must be set to EXEC\_LO. Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
+Write only EXEC. SDST must be set to EXEC_LO. Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
 
-### V\_CMPX\_T\_F32
+### V_CMPX_T_F32
 
 159
 
@@ -23450,9 +23446,9 @@ EXEC.u64[laneId] = 1'1U
 
 #### Notes
 
-Write only EXEC. SDST must be set to EXEC\_LO. Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
+Write only EXEC. SDST must be set to EXEC_LO. Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
 
-**V\_CMPX\_F\_F64****160**
+**V_CMPX_F_F64****160**
 
 Set the per-lane condition code to 0. Store the result into the EXEC mask.
 
@@ -23462,9 +23458,9 @@ EXEC.u64[laneId] = 1'0U
 
 **Notes**
 
-Write only EXEC. SDST must be set to EXEC\_LO. Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
+Write only EXEC. SDST must be set to EXEC_LO. Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
 
-**V\_CMPX\_LT\_F64****161**
+**V_CMPX_LT_F64****161**
 
 Set the per-lane condition code to 1 iff the first input is less than the second input. Store the result into the EXEC mask.
 
@@ -23474,9 +23470,9 @@ EXEC.u64[laneId] = S0.f64 < S1.f64
 
 **Notes**
 
-Write only EXEC. SDST must be set to EXEC\_LO. Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
+Write only EXEC. SDST must be set to EXEC_LO. Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
 
-**V\_CMPX\_EQ\_F64****162**
+**V_CMPX_EQ_F64****162**
 
 Set the per-lane condition code to 1 iff the first input is equal to the second input. Store the result into the EXEC mask.
 
@@ -23486,9 +23482,9 @@ EXEC.u64[laneId] = S0.f64 == S1.f64
 
 **Notes**
 
-Write only EXEC. SDST must be set to EXEC\_LO. Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
+Write only EXEC. SDST must be set to EXEC_LO. Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
 
-**V\_CMPX\_LE\_F64****163**
+**V_CMPX_LE_F64****163**
 
 Set the per-lane condition code to 1 iff the first input is less than or equal to the second input. Store the result into the EXEC mask.
 
@@ -23498,9 +23494,9 @@ EXEC.u64[laneId] = S0.f64 <= S1.f64
 
 #### Notes
 
-Write only EXEC. SDST must be set to EXEC\_LO. Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
+Write only EXEC. SDST must be set to EXEC_LO. Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
 
-### V\_CMPX\_GT\_F64
+### V_CMPX_GT_F64
 
 164
 
@@ -23512,9 +23508,9 @@ EXEC.u64[laneId] = S0.f64 > S1.f64
 
 #### Notes
 
-Write only EXEC. SDST must be set to EXEC\_LO. Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
+Write only EXEC. SDST must be set to EXEC_LO. Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
 
-### V\_CMPX\_LG\_F64
+### V_CMPX_LG_F64
 
 165
 
@@ -23526,9 +23522,9 @@ EXEC.u64[laneId] = S0.f64 <> S1.f64
 
 #### Notes
 
-Write only EXEC. SDST must be set to EXEC\_LO. Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
+Write only EXEC. SDST must be set to EXEC_LO. Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
 
-### V\_CMPX\_GE\_F64
+### V_CMPX_GE_F64
 
 166
 
@@ -23540,9 +23536,9 @@ EXEC.u64[laneId] = S0.f64 >= S1.f64
 
 #### Notes
 
-Write only EXEC. SDST must be set to EXEC\_LO. Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
+Write only EXEC. SDST must be set to EXEC_LO. Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
 
-**V\_CMPX\_O\_F64**
+**V_CMPX_O_F64**
 
 167
 
@@ -23554,11 +23550,11 @@ EXEC.u64[laneId] = (!isNAN(S0.f64) && !isNAN(S1.f64))
 
 **Notes**
 
-Write only EXEC. SDST must be set to EXEC\_LO. Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
+Write only EXEC. SDST must be set to EXEC_LO. Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
 
 ---
 
-**V\_CMPX\_U\_F64**
+**V_CMPX_U_F64**
 
 168
 
@@ -23570,11 +23566,11 @@ EXEC.u64[laneId] = (isNAN(S0.f64) || isNAN(S1.f64))
 
 **Notes**
 
-Write only EXEC. SDST must be set to EXEC\_LO. Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
+Write only EXEC. SDST must be set to EXEC_LO. Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
 
 ---
 
-**V\_CMPX\_NGE\_F64**
+**V_CMPX_NGE_F64**
 
 169
 
@@ -23587,11 +23583,11 @@ EXEC.u64[laneId] = !(S0.f64 >= S1.f64);
 
 **Notes**
 
-Write only EXEC. SDST must be set to EXEC\_LO. Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
+Write only EXEC. SDST must be set to EXEC_LO. Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
 
 ---
 
-**V\_CMPX\_NLG\_F64**
+**V_CMPX_NLG_F64**
 
 170
 
@@ -23604,9 +23600,9 @@ EXEC.u64[laneId] = !(S0.f64 <> S1.f64);
 
 **Notes**
 
-Write only EXEC. SDST must be set to EXEC\_LO. Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
+Write only EXEC. SDST must be set to EXEC_LO. Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
 
-**V\_CMPX\_NGT\_F64****171**
+**V_CMPX_NGT_F64****171**
 
 Set the per-lane condition code to 1 iff the first input is not greater than the second input. Store the result into the EXEC mask.
 
@@ -23617,9 +23613,9 @@ EXEC.u64[laneId] = !(S0.f64 > S1.f64);
 
 **Notes**
 
-Write only EXEC. SDST must be set to EXEC\_LO. Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
+Write only EXEC. SDST must be set to EXEC_LO. Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
 
-**V\_CMPX\_NLE\_F64****172**
+**V_CMPX_NLE_F64****172**
 
 Set the per-lane condition code to 1 iff the first input is not less than or equal to the second input. Store the result into the EXEC mask.
 
@@ -23630,9 +23626,9 @@ EXEC.u64[laneId] = !(S0.f64 <= S1.f64);
 
 **Notes**
 
-Write only EXEC. SDST must be set to EXEC\_LO. Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
+Write only EXEC. SDST must be set to EXEC_LO. Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
 
-**V\_CMPX\_NEQ\_F64****173**
+**V_CMPX_NEQ_F64****173**
 
 Set the per-lane condition code to 1 iff the first input is not equal to the second input. Store the result into the EXEC mask.
 
@@ -23643,9 +23639,9 @@ EXEC.u64[laneId] = !(S0.f64 == S1.f64);
 
 **Notes**
 
-Write only EXEC. SDST must be set to EXEC\_LO. Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
+Write only EXEC. SDST must be set to EXEC_LO. Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
 
-**V\_CMPX\_NLT\_F64****174**
+**V_CMPX_NLT_F64****174**
 
 Set the per-lane condition code to 1 iff the first input is not less than the second input. Store the result into the EXEC mask.
 
@@ -23656,9 +23652,9 @@ EXEC.u64[laneId] = !(S0.f64 < S1.f64);
 
 #### Notes
 
-Write only EXEC. SDST must be set to EXEC\_LO. Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
+Write only EXEC. SDST must be set to EXEC_LO. Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
 
-### V\_CMPX\_T\_F64
+### V_CMPX_T_F64
 
 175
 
@@ -23670,9 +23666,9 @@ EXEC.u64[laneId] = 1'1U
 
 #### Notes
 
-Write only EXEC. SDST must be set to EXEC\_LO. Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
+Write only EXEC. SDST must be set to EXEC_LO. Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
 
-### V\_CMPX\_LT\_I16
+### V_CMPX_LT_I16
 
 177
 
@@ -23684,9 +23680,9 @@ EXEC.u64[laneId] = S0.i16 < S1.i16
 
 #### Notes
 
-Write only EXEC. SDST must be set to EXEC\_LO. Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
+Write only EXEC. SDST must be set to EXEC_LO. Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
 
-### V\_CMPX\_EQ\_I16
+### V_CMPX_EQ_I16
 
 178
 
@@ -23698,9 +23694,9 @@ EXEC.u64[laneId] = S0.i16 == S1.i16
 
 #### Notes
 
-Write only EXEC. SDST must be set to EXEC\_LO. Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
+Write only EXEC. SDST must be set to EXEC_LO. Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
 
-**V\_CMPX\_LE\_I16**
+**V_CMPX_LE_I16**
 
 179
 
@@ -23712,9 +23708,9 @@ EXEC.u64[laneId] = S0.i16 <= S1.i16
 
 **Notes**
 
-Write only EXEC. SDST must be set to EXEC\_LO. Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
+Write only EXEC. SDST must be set to EXEC_LO. Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
 
-**V\_CMPX\_GT\_I16**
+**V_CMPX_GT_I16**
 
 180
 
@@ -23726,9 +23722,9 @@ EXEC.u64[laneId] = S0.i16 > S1.i16
 
 **Notes**
 
-Write only EXEC. SDST must be set to EXEC\_LO. Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
+Write only EXEC. SDST must be set to EXEC_LO. Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
 
-**V\_CMPX\_NE\_I16**
+**V_CMPX_NE_I16**
 
 181
 
@@ -23740,9 +23736,9 @@ EXEC.u64[laneId] = S0.i16 <> S1.i16
 
 **Notes**
 
-Write only EXEC. SDST must be set to EXEC\_LO. Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
+Write only EXEC. SDST must be set to EXEC_LO. Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
 
-**V\_CMPX\_GE\_I16**
+**V_CMPX_GE_I16**
 
 182
 
@@ -23754,9 +23750,9 @@ EXEC.u64[laneId] = S0.i16 >= S1.i16
 
 **Notes**
 
-Write only EXEC. SDST must be set to EXEC\_LO. Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
+Write only EXEC. SDST must be set to EXEC_LO. Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
 
-**V\_CMPX\_LT\_U16****185**
+**V_CMPX_LT_U16****185**
 
 Set the per-lane condition code to 1 iff the first input is less than the second input. Store the result into the EXEC mask.
 
@@ -23766,9 +23762,9 @@ EXEC.u64[laneId] = S0.u16 < S1.u16
 
 **Notes**
 
-Write only EXEC. SDST must be set to EXEC\_LO. Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
+Write only EXEC. SDST must be set to EXEC_LO. Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
 
-**V\_CMPX\_EQ\_U16****186**
+**V_CMPX_EQ_U16****186**
 
 Set the per-lane condition code to 1 iff the first input is equal to the second input. Store the result into the EXEC mask.
 
@@ -23778,9 +23774,9 @@ EXEC.u64[laneId] = S0.u16 == S1.u16
 
 **Notes**
 
-Write only EXEC. SDST must be set to EXEC\_LO. Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
+Write only EXEC. SDST must be set to EXEC_LO. Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
 
-**V\_CMPX\_LE\_U16****187**
+**V_CMPX_LE_U16****187**
 
 Set the per-lane condition code to 1 iff the first input is less than or equal to the second input. Store the result into the EXEC mask.
 
@@ -23790,9 +23786,9 @@ EXEC.u64[laneId] = S0.u16 <= S1.u16
 
 **Notes**
 
-Write only EXEC. SDST must be set to EXEC\_LO. Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
+Write only EXEC. SDST must be set to EXEC_LO. Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
 
-**V\_CMPX\_GT\_U16****188**
+**V_CMPX_GT_U16****188**
 
 Set the per-lane condition code to 1 iff the first input is greater than the second input. Store the result into the EXEC mask.
 
@@ -23802,9 +23798,9 @@ EXEC.u64[laneId] = S0.u16 > S1.u16
 
 #### Notes
 
-Write only EXEC. SDST must be set to EXEC\_LO. Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
+Write only EXEC. SDST must be set to EXEC_LO. Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
 
-### V\_CMPX\_NE\_U16
+### V_CMPX_NE_U16
 
 189
 
@@ -23816,9 +23812,9 @@ EXEC.u64[laneId] = S0.u16 <> S1.u16
 
 #### Notes
 
-Write only EXEC. SDST must be set to EXEC\_LO. Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
+Write only EXEC. SDST must be set to EXEC_LO. Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
 
-### V\_CMPX\_GE\_U16
+### V_CMPX_GE_U16
 
 190
 
@@ -23830,9 +23826,9 @@ EXEC.u64[laneId] = S0.u16 >= S1.u16
 
 #### Notes
 
-Write only EXEC. SDST must be set to EXEC\_LO. Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
+Write only EXEC. SDST must be set to EXEC_LO. Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
 
-### V\_CMPX\_F\_I32
+### V_CMPX_F_I32
 
 192
 
@@ -23844,9 +23840,9 @@ EXEC.u64[laneId] = 1'0U
 
 #### Notes
 
-Write only EXEC. SDST must be set to EXEC\_LO. Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
+Write only EXEC. SDST must be set to EXEC_LO. Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
 
-### V\_CMPX\_LT\_I32
+### V_CMPX_LT_I32
 
 193
 
@@ -23858,9 +23854,9 @@ EXEC.u64[laneId] = S0.i32 < S1.i32
 
 #### Notes
 
-Write only EXEC. SDST must be set to EXEC\_LO. Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
+Write only EXEC. SDST must be set to EXEC_LO. Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
 
-### V\_CMPX\_EQ\_I32
+### V_CMPX_EQ_I32
 
 194
 
@@ -23872,9 +23868,9 @@ EXEC.u64[laneId] = S0.i32 == S1.i32
 
 #### Notes
 
-Write only EXEC. SDST must be set to EXEC\_LO. Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
+Write only EXEC. SDST must be set to EXEC_LO. Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
 
-### V\_CMPX\_LE\_I32
+### V_CMPX_LE_I32
 
 195
 
@@ -23886,9 +23882,9 @@ EXEC.u64[laneId] = S0.i32 <= S1.i32
 
 #### Notes
 
-Write only EXEC. SDST must be set to EXEC\_LO. Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
+Write only EXEC. SDST must be set to EXEC_LO. Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
 
-### V\_CMPX\_GT\_I32
+### V_CMPX_GT_I32
 
 196
 
@@ -23900,9 +23896,9 @@ EXEC.u64[laneId] = S0.i32 > S1.i32
 
 #### Notes
 
-Write only EXEC. SDST must be set to EXEC\_LO. Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
+Write only EXEC. SDST must be set to EXEC_LO. Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
 
-**V\_CMPX\_NE\_I32****197**
+**V_CMPX_NE_I32****197**
 
 Set the per-lane condition code to 1 iff the first input is not equal to the second input. Store the result into the EXEC mask.
 
@@ -23912,9 +23908,9 @@ EXEC.u64[laneId] = S0.i32 <> S1.i32
 
 **Notes**
 
-Write only EXEC. SDST must be set to EXEC\_LO. Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
+Write only EXEC. SDST must be set to EXEC_LO. Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
 
-**V\_CMPX\_GE\_I32****198**
+**V_CMPX_GE_I32****198**
 
 Set the per-lane condition code to 1 iff the first input is greater than or equal to the second input. Store the result into the EXEC mask.
 
@@ -23924,9 +23920,9 @@ EXEC.u64[laneId] = S0.i32 >= S1.i32
 
 **Notes**
 
-Write only EXEC. SDST must be set to EXEC\_LO. Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
+Write only EXEC. SDST must be set to EXEC_LO. Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
 
-**V\_CMPX\_T\_I32****199**
+**V_CMPX_T_I32****199**
 
 Set the per-lane condition code to 1. Store the result into the EXEC mask.
 
@@ -23936,9 +23932,9 @@ EXEC.u64[laneId] = 1'1U
 
 **Notes**
 
-Write only EXEC. SDST must be set to EXEC\_LO. Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
+Write only EXEC. SDST must be set to EXEC_LO. Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
 
-**V\_CMPX\_F\_U32****200**
+**V_CMPX_F_U32****200**
 
 Set the per-lane condition code to 0. Store the result into the EXEC mask.
 
@@ -23948,9 +23944,9 @@ EXEC.u64[laneId] = 1'0U
 
 **Notes**
 
-Write only EXEC. SDST must be set to EXEC\_LO. Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
+Write only EXEC. SDST must be set to EXEC_LO. Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
 
-**V\_CMPX\_LT\_U32****201**
+**V_CMPX_LT_U32****201**
 
 Set the per-lane condition code to 1 iff the first input is less than the second input. Store the result into the EXEC mask.
 
@@ -23960,9 +23956,9 @@ EXEC.u64[laneId] = S0.u32 < S1.u32
 
 **Notes**
 
-Write only EXEC. SDST must be set to EXEC\_LO. Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
+Write only EXEC. SDST must be set to EXEC_LO. Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
 
-**V\_CMPX\_EQ\_U32****202**
+**V_CMPX_EQ_U32****202**
 
 Set the per-lane condition code to 1 iff the first input is equal to the second input. Store the result into the EXEC mask.
 
@@ -23972,9 +23968,9 @@ EXEC.u64[laneId] = S0.u32 == S1.u32
 
 **Notes**
 
-Write only EXEC. SDST must be set to EXEC\_LO. Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
+Write only EXEC. SDST must be set to EXEC_LO. Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
 
-**V\_CMPX\_LE\_U32****203**
+**V_CMPX_LE_U32****203**
 
 Set the per-lane condition code to 1 iff the first input is less than or equal to the second input. Store the result into the EXEC mask.
 
@@ -23984,9 +23980,9 @@ EXEC.u64[laneId] = S0.u32 <= S1.u32
 
 **Notes**
 
-Write only EXEC. SDST must be set to EXEC\_LO. Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
+Write only EXEC. SDST must be set to EXEC_LO. Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
 
-**V\_CMPX\_GT\_U32****204**
+**V_CMPX_GT_U32****204**
 
 Set the per-lane condition code to 1 iff the first input is greater than the second input. Store the result into the EXEC mask.
 
@@ -23996,9 +23992,9 @@ EXEC.u64[laneId] = S0.u32 > S1.u32
 
 #### Notes
 
-Write only EXEC. SDST must be set to EXEC\_LO. Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
+Write only EXEC. SDST must be set to EXEC_LO. Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
 
-### V\_CMPX\_NE\_U32
+### V_CMPX_NE_U32
 
 205
 
@@ -24010,9 +24006,9 @@ EXEC.u64[laneId] = S0.u32 <> S1.u32
 
 #### Notes
 
-Write only EXEC. SDST must be set to EXEC\_LO. Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
+Write only EXEC. SDST must be set to EXEC_LO. Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
 
-### V\_CMPX\_GE\_U32
+### V_CMPX_GE_U32
 
 206
 
@@ -24024,9 +24020,9 @@ EXEC.u64[laneId] = S0.u32 >= S1.u32
 
 #### Notes
 
-Write only EXEC. SDST must be set to EXEC\_LO. Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
+Write only EXEC. SDST must be set to EXEC_LO. Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
 
-### V\_CMPX\_T\_U32
+### V_CMPX_T_U32
 
 207
 
@@ -24038,9 +24034,9 @@ EXEC.u64[laneId] = 1'1U
 
 #### Notes
 
-Write only EXEC. SDST must be set to EXEC\_LO. Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
+Write only EXEC. SDST must be set to EXEC_LO. Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
 
-### V\_CMPX\_F\_I64
+### V_CMPX_F_I64
 
 208
 
@@ -24052,9 +24048,9 @@ EXEC.u64[laneId] = 1'0U
 
 #### Notes
 
-Write only EXEC. SDST must be set to EXEC\_LO. Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
+Write only EXEC. SDST must be set to EXEC_LO. Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
 
-### V\_CMPX\_LT\_I64
+### V_CMPX_LT_I64
 
 209
 
@@ -24066,9 +24062,9 @@ EXEC.u64[laneId] = S0.i64 < S1.i64
 
 #### Notes
 
-Write only EXEC. SDST must be set to EXEC\_LO. Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
+Write only EXEC. SDST must be set to EXEC_LO. Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
 
-### V\_CMPX\_EQ\_I64
+### V_CMPX_EQ_I64
 
 210
 
@@ -24080,9 +24076,9 @@ EXEC.u64[laneId] = S0.i64 == S1.i64
 
 #### Notes
 
-Write only EXEC. SDST must be set to EXEC\_LO. Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
+Write only EXEC. SDST must be set to EXEC_LO. Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
 
-### V\_CMPX\_LE\_I64
+### V_CMPX_LE_I64
 
 211
 
@@ -24094,9 +24090,9 @@ EXEC.u64[laneId] = S0.i64 <= S1.i64
 
 #### Notes
 
-Write only EXEC. SDST must be set to EXEC\_LO. Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
+Write only EXEC. SDST must be set to EXEC_LO. Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
 
-**V\_CMPX\_GT\_I64****212**
+**V_CMPX_GT_I64****212**
 
 Set the per-lane condition code to 1 iff the first input is greater than the second input. Store the result into the EXEC mask.
 
@@ -24106,11 +24102,11 @@ EXEC.u64[laneId] = S0.i64 > S1.i64
 
 **Notes**
 
-Write only EXEC. SDST must be set to EXEC\_LO. Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
+Write only EXEC. SDST must be set to EXEC_LO. Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
 
 ---
 
-**V\_CMPX\_NE\_I64****213**
+**V_CMPX_NE_I64****213**
 
 Set the per-lane condition code to 1 iff the first input is not equal to the second input. Store the result into the EXEC mask.
 
@@ -24120,11 +24116,11 @@ EXEC.u64[laneId] = S0.i64 <> S1.i64
 
 **Notes**
 
-Write only EXEC. SDST must be set to EXEC\_LO. Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
+Write only EXEC. SDST must be set to EXEC_LO. Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
 
 ---
 
-**V\_CMPX\_GE\_I64****214**
+**V_CMPX_GE_I64****214**
 
 Set the per-lane condition code to 1 iff the first input is greater than or equal to the second input. Store the result into the EXEC mask.
 
@@ -24134,11 +24130,11 @@ EXEC.u64[laneId] = S0.i64 >= S1.i64
 
 **Notes**
 
-Write only EXEC. SDST must be set to EXEC\_LO. Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
+Write only EXEC. SDST must be set to EXEC_LO. Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
 
 ---
 
-**V\_CMPX\_T\_I64****215**
+**V_CMPX_T_I64****215**
 
 Set the per-lane condition code to 1. Store the result into the EXEC mask.
 
@@ -24148,9 +24144,9 @@ EXEC.u64[laneId] = 1'1U
 
 **Notes**
 
-Write only EXEC. SDST must be set to EXEC\_LO. Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
+Write only EXEC. SDST must be set to EXEC_LO. Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
 
-**V\_CMPX\_F\_U64****216**
+**V_CMPX_F_U64****216**
 
 Set the per-lane condition code to 0. Store the result into the EXEC mask.
 
@@ -24160,9 +24156,9 @@ EXEC.u64[laneId] = 1'0U
 
 **Notes**
 
-Write only EXEC. SDST must be set to EXEC\_LO. Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
+Write only EXEC. SDST must be set to EXEC_LO. Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
 
-**V\_CMPX\_LT\_U64****217**
+**V_CMPX_LT_U64****217**
 
 Set the per-lane condition code to 1 iff the first input is less than the second input. Store the result into the EXEC mask.
 
@@ -24172,9 +24168,9 @@ EXEC.u64[laneId] = S0.u64 < S1.u64
 
 **Notes**
 
-Write only EXEC. SDST must be set to EXEC\_LO. Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
+Write only EXEC. SDST must be set to EXEC_LO. Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
 
-**V\_CMPX\_EQ\_U64****218**
+**V_CMPX_EQ_U64****218**
 
 Set the per-lane condition code to 1 iff the first input is equal to the second input. Store the result into the EXEC mask.
 
@@ -24184,9 +24180,9 @@ EXEC.u64[laneId] = S0.u64 == S1.u64
 
 **Notes**
 
-Write only EXEC. SDST must be set to EXEC\_LO. Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
+Write only EXEC. SDST must be set to EXEC_LO. Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
 
-**V\_CMPX\_LE\_U64****219**
+**V_CMPX_LE_U64****219**
 
 Set the per-lane condition code to 1 iff the first input is less than or equal to the second input. Store the result into the EXEC mask.
 
@@ -24196,9 +24192,9 @@ EXEC.u64[laneId] = S0.u64 <= S1.u64
 
 #### Notes
 
-Write only EXEC. SDST must be set to EXEC\_LO. Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
+Write only EXEC. SDST must be set to EXEC_LO. Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
 
-### V\_CMPX\_GT\_U64
+### V_CMPX_GT_U64
 
 **220**
 
@@ -24210,9 +24206,9 @@ EXEC.u64[laneId] = S0.u64 > S1.u64
 
 #### Notes
 
-Write only EXEC. SDST must be set to EXEC\_LO. Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
+Write only EXEC. SDST must be set to EXEC_LO. Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
 
-### V\_CMPX\_NE\_U64
+### V_CMPX_NE_U64
 
 **221**
 
@@ -24224,9 +24220,9 @@ EXEC.u64[laneId] = S0.u64 <> S1.u64
 
 #### Notes
 
-Write only EXEC. SDST must be set to EXEC\_LO. Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
+Write only EXEC. SDST must be set to EXEC_LO. Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
 
-### V\_CMPX\_GE\_U64
+### V_CMPX_GE_U64
 
 **222**
 
@@ -24238,9 +24234,9 @@ EXEC.u64[laneId] = S0.u64 >= S1.u64
 
 #### Notes
 
-Write only EXEC. SDST must be set to EXEC\_LO. Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
+Write only EXEC. SDST must be set to EXEC_LO. Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
 
-**V\_CMPX\_T\_U64**
+**V_CMPX_T_U64**
 
 223
 
@@ -24252,9 +24248,9 @@ EXEC.u64[laneId] = 1'1U
 
 **Notes**
 
-Write only EXEC. SDST must be set to EXEC\_LO. Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
+Write only EXEC. SDST must be set to EXEC_LO. Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
 
-**V\_CMPX\_CLASS\_F16**
+**V_CMPX_CLASS_F16**
 
 253
 
@@ -24297,9 +24293,9 @@ EXEC.u64[laneId] = result
 
 **Notes**
 
-Write only EXEC. SDST must be set to EXEC\_LO. Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
+Write only EXEC. SDST must be set to EXEC_LO. Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
 
-**V\_CMPX\_CLASS\_F32**
+**V_CMPX_CLASS_F32**
 
 254
 
@@ -24342,9 +24338,9 @@ EXEC.u64[laneId] = result
 
 **Notes**
 
-Write only EXEC. SDST must be set to EXEC\_LO. Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
+Write only EXEC. SDST must be set to EXEC_LO. Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
 
-**V\_CMPX\_CLASS\_F64**
+**V_CMPX_CLASS_F64**
 
 255
 
@@ -24396,7 +24392,7 @@ EXEC.u64[laneId] = result
 
 ## Notes
 
-Write only EXEC. SDST must be set to EXEC\_LO. Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
+Write only EXEC. SDST must be set to EXEC_LO. Signal 'invalid' on sNAN's, and also on qNAN's if clamp is set.
 
 ## 16.13. VINTERP Instructions
 
@@ -24419,11 +24415,11 @@ The diagram illustrates the 32-bit VINTERP instruction format. The fields are de
 
 VINTERP instruction format diagram showing fields: VINTERP (63-31), NEG (31-28), SRC2g (28-24), OP (24-20), CM (20-19), OPSEL3.0 (19-16), WAITEXP (16-15), SRC1g (15-12), SRC0g (12-8), and VDST8 (8-0).
 
-### V\_INTERP\_P10\_F32
+### V_INTERP_P10_F32
 
 0
 
-Given the P10 parameter of an attribute, the  $I$  coordinate and the P0 parameter as single-precision float inputs, compute the first part of parameter interpolation and store the intermediate result into a vector register. Use V\_INTERP\_P2\_F32 to complete the operation.
+Given the P10 parameter of an attribute, the  $I$  coordinate and the P0 parameter as single-precision float inputs, compute the first part of parameter interpolation and store the intermediate result into a vector register. Use V_INTERP_P2_F32 to complete the operation.
 
 The overall calculation is:
 
@@ -24435,9 +24431,9 @@ D0.f32 = fma(VGPR[(laneId.u32 & 0xffffffff) + 1U][SRC0.u32].f32, S1.f32, VGPR[la
 
 ### Notes
 
-This operation is designed for use in pixel shaders where attribute data has previously been loaded with an LDS\_PARAM\_LOAD instruction.
+This operation is designed for use in pixel shaders where attribute data has previously been loaded with an LDS_PARAM_LOAD instruction.
 
-This operation performs a V\_FMA\_F32 operation using fixed DPP8 settings. S0 and S2 refer to a VGPR that contains packed interpolation data. S1 is the  $I$  coordinate.
+This operation performs a V_FMA_F32 operation using fixed DPP8 settings. S0 and S2 refer to a VGPR that contains packed interpolation data. S1 is the  $I$  coordinate.
 
 S0 uses a fixed DPP8 lane select of {1,1,1,1,5,5,5}.
 
@@ -24452,7 +24448,7 @@ v_inter_p10_f32 v3, v0, v1, v0 // v1 contains i coordinate
 v_inter_p2_f32 v3, v0, v2, v3 // v2 contains j coordinate
 ```
 
-### V\_INTERP\_P2\_F32
+### V_INTERP_P2_F32
 
 1
 
@@ -24476,7 +24472,7 @@ This operation performs a `V_FMA_F32` operation using fixed DPP8 settings. S0 re
 
 S0 uses a fixed DPP8 lane select of {2,2,2,2,6,6,6,6}.
 
-## V\_INTERP\_P10\_F16\_F32
+## V_INTERP_P10_F16_F32
 
 2
 
@@ -24508,11 +24504,11 @@ OPSEL is used to specify which half of S0 and S2 to read from.
 
 Note the *I* coordinate is 32-bit and the destination is also 32-bit.
 
-### V\_INTERP\_P2\_F16\_F32
+### V_INTERP_P2_F16_F32
 
 3
 
-Given a half-precision float P20 parameter of an attribute, a single-precision float *J* coordinate and the result of a prior V\_INTERP\_P10\_F16\_F32 instruction as inputs, compute the second part of parameter interpolation and store the final result into a vector register.
+Given a half-precision float P20 parameter of an attribute, a single-precision float *J* coordinate and the result of a prior V_INTERP_P10_F16_F32 instruction as inputs, compute the second part of parameter interpolation and store the final result into a vector register.
 
 The overall calculation is:
 
@@ -24524,9 +24520,9 @@ D0.f16 = 16'F(fma(32'F(VGPR[(laneId.u32 & 0xffffffffU) + 2U][SRC0.u32].f16), S1.
 
 #### Notes
 
-This operation is designed for use in pixel shaders where attribute data has previously been loaded with an LDS\_PARAM\_LOAD instruction.
+This operation is designed for use in pixel shaders where attribute data has previously been loaded with an LDS_PARAM_LOAD instruction.
 
-This operation performs a hybrid 16/32-bit fused multiply add operation using fixed DPP8 settings. S0 refers to a VGPR that contains packed interpolation data. S1 is the *J* coordinate. S2 is the result of a previous V\_INTERP\_P10\_F16\_F32 instruction.
+This operation performs a hybrid 16/32-bit fused multiply add operation using fixed DPP8 settings. S0 refers to a VGPR that contains packed interpolation data. S1 is the *J* coordinate. S2 is the result of a previous V_INTERP_P10_F16_F32 instruction.
 
 S0 uses a fixed DPP8 lane select of {2,2,2,2,6,6,6,6}.
 
@@ -24534,11 +24530,11 @@ OPSEL is used to specify which half of S0 to read from and which half of D0 to w
 
 Note the *J* coordinate is 32-bit.
 
-### V\_INTERP\_P10\_RTZ\_F16\_F32
+### V_INTERP_P10_RTZ_F16_F32
 
 4
 
-Given a half-precision float P10 parameter of an attribute, a single-precision float *I* coordinate and a half-precision float P0 parameter as inputs, compute the first part of parameter interpolation using round toward zero semantics and store the intermediate result in single-precision float format into a vector register. Use V\_INTERP\_P2\_RTZ\_F16\_F32 to complete the operation.
+Given a half-precision float P10 parameter of an attribute, a single-precision float *I* coordinate and a half-precision float P0 parameter as inputs, compute the first part of parameter interpolation using round toward zero semantics and store the intermediate result in single-precision float format into a vector register. Use V_INTERP_P2_RTZ_F16_F32 to complete the operation.
 
 The overall calculation is:
 
@@ -24570,7 +24566,7 @@ Note the  $I$  coordinate is 32-bit and the destination is also 32-bit.
 
 Rounding mode is overridden to round toward zero.
 
-## V\_INTERP\_P2\_RTZ\_F16\_F32
+## V_INTERP_P2_RTZ_F16_F32
 
 5
 
@@ -24594,9 +24590,9 @@ D0.f32 = fma(32'F(VGPR[(laneId.u32 & 0xffffffff) + 2U][SRC0.u32].f16), S1.f32, S
 
 This operation is designed for use in pixel shaders where attribute data has previously been loaded with an
 
-LDS\_PARAM\_LOAD instruction.
+LDS_PARAM_LOAD instruction.
 
-This operation performs a hybrid 16/32-bit fused multiply add operation using fixed DPP8 settings. S0 refers to a VGPR that contains packed interpolation data. S1 is the *J* coordinate. S2 is the result of a previous V\_INTERP\_P10\_F16\_F32 instruction.
+This operation performs a hybrid 16/32-bit fused multiply add operation using fixed DPP8 settings. S0 refers to a VGPR that contains packed interpolation data. S1 is the *J* coordinate. S2 is the result of a previous V_INTERP_P10_F16_F32 instruction.
 
 S0 uses a fixed DPP8 lane select of {2,2,2,2,6,6,6,6}.
 
@@ -24618,7 +24614,7 @@ The diagram illustrates the bit layout of the LDSDIR instruction. It is a 32-bit
 
 Diagram of the LDSDIR instruction format. It shows a 32-bit register with fields: LDSDIR (1 bit), 31 bits of data (1 1 0 0 1 1 1 0), OP (2 bits), WAITVDST (1 bit), ATTR (2 bits), ATRCHN (1 bit), and VDST (2 bits).
 
-### LDS\_PARAM\_LOAD
+### LDS_PARAM_LOAD
 
 0
 
@@ -24626,13 +24622,13 @@ Transfer parameter data from LDS to VGPRs and expand data in LDS using the NewPr
 
 {P0, P10, P20, 0.0}
 
-This data may be extracted using DPP8 for interpolation operations. The V\_INTERP\_\* instructions unpack data automatically.
+This data may be extracted using DPP8 for interpolation operations. The V_INTERP_\* instructions unpack data automatically.
 
 When loading FP16 parameters, two attributes are loaded into a single VGPR: Attribute 2\*ATTR is loaded into the low 16 bits and attribute 2\*ATTR+1 is loaded into the high 16 bits.
 
 This instruction runs in whole quad mode: if any pixel of a quad is active then all 4 pixels of that quad are written. This is required for interpolation instructions to have all the parameter information available for the quad.
 
-### LDS\_DIRECT\_LOAD
+### LDS_DIRECT_LOAD
 
 1
 
@@ -24674,7 +24670,7 @@ Information icon
 
 All instructions with RTN in the name return the value that was in memory before the operation was performed.
 
-### DS\_ADD\_U32
+### DS_ADD_U32
 
 0
 
@@ -24686,7 +24682,7 @@ MEM[ADDR].u32 += DATA.u32;
 RETURN_DATA.u32 = tmp
 ```
 
-### DS\_SUB\_U32
+### DS_SUB_U32
 
 1
 
@@ -24698,7 +24694,7 @@ MEM[ADDR].u32 -= DATA.u32;
 RETURN_DATA.u32 = tmp
 ```
 
-### DS\_RSUB\_U32
+### DS_RSUB_U32
 
 2
 
@@ -24712,7 +24708,7 @@ MEM[ADDR].u32 = DATA.u32 - MEM[ADDR].u32;
 RETURN_DATA.u32 = tmp
 ```
 
-### DS\_INC\_U32
+### DS_INC_U32
 
 3
 
@@ -24725,7 +24721,7 @@ MEM[ADDR].u32 = tmp >= src ? 0U : tmp + 1U;
 RETURN_DATA.u32 = tmp
 ```
 
-### DS\_DEC\_U32
+### DS_DEC_U32
 
 4
 
@@ -24738,7 +24734,7 @@ MEM[ADDR].u32 = ((tmp == 0U) || (tmp > src)) ? src : tmp - 1U;
 RETURN_DATA.u32 = tmp
 ```
 
-### DS\_MIN\_I32
+### DS_MIN_I32
 
 5
 
@@ -24751,7 +24747,7 @@ MEM[ADDR].i32 = src < tmp ? src : tmp;
 RETURN_DATA.i32 = tmp
 ```
 
-### DS\_MAX\_I32
+### DS_MAX_I32
 
 6
 
@@ -24764,7 +24760,7 @@ MEM[ADDR].i32 = src >= tmp ? src : tmp;
 RETURN_DATA.i32 = tmp
 ```
 
-**DS\_MIN\_U32**
+**DS_MIN_U32**
 
 7
 
@@ -24777,7 +24773,7 @@ MEM[ADDR].u32 = src < tmp ? src : tmp;
 RETURN_DATA.u32 = tmp
 ```
 
-**DS\_MAX\_U32**
+**DS_MAX_U32**
 
 8
 
@@ -24790,7 +24786,7 @@ MEM[ADDR].u32 = src >= tmp ? src : tmp;
 RETURN_DATA.u32 = tmp
 ```
 
-**DS\_AND\_B32**
+**DS_AND_B32**
 
 9
 
@@ -24802,7 +24798,7 @@ MEM[ADDR].b32 = (tmp & DATA.b32);
 RETURN_DATA.b32 = tmp
 ```
 
-**DS\_OR\_B32**
+**DS_OR_B32**
 
 10
 
@@ -24814,7 +24810,7 @@ MEM[ADDR].b32 = (tmp | DATA.b32);
 RETURN_DATA.b32 = tmp
 ```
 
-**DS\_XOR\_B32****11**
+**DS_XOR_B32****11**
 
 Calculate bitwise XOR given two unsigned 32-bit integer values stored in the data register and a location in a data share.
 
@@ -24824,7 +24820,7 @@ MEM[ADDR].b32 = (tmp ^ DATA.b32);
 RETURN_DATA.b32 = tmp
 ```
 
-**DS\_MSKOR\_B32****12**
+**DS_MSKOR_B32****12**
 
 Calculate masked bitwise OR on an unsigned 32-bit integer location in a data share, given mask value and bits to OR in the data registers.
 
@@ -24834,7 +24830,7 @@ MEM[ADDR].b32 = ((tmp & ~DATA.b32) | DATA2.b32);
 RETURN_DATA.b32 = tmp
 ```
 
-**DS\_STORE\_B32****13**
+**DS_STORE_B32****13**
 
 Store 32 bits of data from a vector input register into a data share.
 
@@ -24842,7 +24838,7 @@ Store 32 bits of data from a vector input register into a data share.
 MEM[ADDR + OFFSET.u32].b32 = DATA[31 : 0]
 ```
 
-**DS\_STORE\_2ADDR\_B32****14**
+**DS_STORE_2ADDR_B32****14**
 
 Store 32 bits of data from one vector input register and then 32 bits of data from a second vector input register into a data share.
 
@@ -24851,7 +24847,7 @@ MEM[ADDR + OFFSET0.u32 * 4U].b32 = DATA[31 : 0];
 MEM[ADDR + OFFSET1.u32 * 4U].b32 = DATA2[31 : 0]
 ```
 
-**DS\_STORE\_2ADDR\_STRIDE64\_B32**
+**DS_STORE_2ADDR_STRIDE64_B32**
 
 15
 
@@ -24862,7 +24858,7 @@ MEM[ADDR + OFFSET0.u32 * 256U].b32 = DATA[31 : 0];
 MEM[ADDR + OFFSET1.u32 * 256U].b32 = DATA2[31 : 0]
 ```
 
-**DS\_CMPSTORE\_B32**
+**DS_CMPSTORE_B32**
 
 16
 
@@ -24880,7 +24876,7 @@ RETURN_DATA.b32 = tmp
 
 In this architecture the order of `src` and `cmp` agree with the `BUFFER_ATOMIC_CMPSWAP` opcode.
 
-**DS\_CMPSTORE\_F32**
+**DS_CMPSTORE_F32**
 
 17
 
@@ -24898,7 +24894,7 @@ RETURN_DATA.f32 = tmp
 
 In this architecture the order of `src` and `cmp` agree with the `BUFFER_ATOMIC_CMPSWAP` opcode.
 
-**DS\_MIN\_F32**
+**DS_MIN_F32**
 
 18
 
@@ -24917,7 +24913,7 @@ Floating-point compare handles NAN/INF/denorm.
 
 ---
 
-## DS\_MAX\_F32
+## DS_MAX_F32
 
 19
 
@@ -24936,7 +24932,7 @@ Floating-point compare handles NAN/INF/denorm.
 
 ---
 
-## DS\_NOP
+## DS_NOP
 
 20
 
@@ -24944,7 +24940,7 @@ Do nothing.
 
 ---
 
-## DS\_ADD\_F32
+## DS_ADD_F32
 
 21
 
@@ -24962,7 +24958,7 @@ Floating-point addition handles NAN/INF/denorm.
 
 ---
 
-## DS\_STORE\_B8
+## DS_STORE_B8
 
 30
 
@@ -24972,7 +24968,7 @@ Store 8 bits of data from a vector register into a data share.
 MEM[ADDR].b8 = DATA[7 : 0]
 ```
 
-### **DS\_STORE\_B16**
+### **DS_STORE_B16**
 
 **31**
 
@@ -24982,7 +24978,7 @@ Store 16 bits of data from a vector register into a data share.
 MEM[ADDR].b16 = DATA[15 : 0]
 ```
 
-### **DS\_ADD\_RTN\_U32**
+### **DS_ADD_RTN_U32**
 
 **32**
 
@@ -24994,7 +24990,7 @@ MEM[ADDR].u32 += DATA.u32;
 RETURN_DATA.u32 = tmp
 ```
 
-### **DS\_SUB\_RTN\_U32**
+### **DS_SUB_RTN_U32**
 
 **33**
 
@@ -25006,7 +25002,7 @@ MEM[ADDR].u32 -= DATA.u32;
 RETURN_DATA.u32 = tmp
 ```
 
-### **DS\_RSUB\_RTN\_U32**
+### **DS_RSUB_RTN_U32**
 
 **34**
 
@@ -25018,7 +25014,7 @@ MEM[ADDR].u32 = DATA.u32 - MEM[ADDR].u32;
 RETURN_DATA.u32 = tmp
 ```
 
-**DS\_INC\_RTN\_U32****35**
+**DS_INC_RTN_U32****35**
 
 Increment an unsigned 32-bit integer value from a location in a data share with wraparound to 0 if the value exceeds a value in the data register. Store the original value from data share into a vector register.
 
@@ -25029,7 +25025,7 @@ MEM[ADDR].u32 = tmp >= src ? 0U : tmp + 1U;
 RETURN_DATA.u32 = tmp
 ```
 
-**DS\_DEC\_RTN\_U32****36**
+**DS_DEC_RTN_U32****36**
 
 Decrement an unsigned 32-bit integer value from a location in a data share with wraparound to a value in the data register if the decrement yields a negative value. Store the original value from data share into a vector register.
 
@@ -25040,7 +25036,7 @@ MEM[ADDR].u32 = ((tmp == 0U) || (tmp > src)) ? src : tmp - 1U;
 RETURN_DATA.u32 = tmp
 ```
 
-**DS\_MIN\_RTN\_I32****37**
+**DS_MIN_RTN_I32****37**
 
 Select the minimum of two signed 32-bit integer inputs, given two values stored in the data register and a location in a data share. Store the original value from data share into a vector register.
 
@@ -25051,7 +25047,7 @@ MEM[ADDR].i32 = src < tmp ? src : tmp;
 RETURN_DATA.i32 = tmp
 ```
 
-**DS\_MAX\_RTN\_I32****38**
+**DS_MAX_RTN_I32****38**
 
 Select the maximum of two signed 32-bit integer inputs, given two values stored in the data register and a location in a data share. Store the original value from data share into a vector register.
 
@@ -25062,7 +25058,7 @@ MEM[ADDR].i32 = src >= tmp ? src : tmp;
 RETURN_DATA.i32 = tmp
 ```
 
-**DS\_MIN\_RTN\_U32****39**
+**DS_MIN_RTN_U32****39**
 
 Select the minimum of two unsigned 32-bit integer inputs, given two values stored in the data register and a location in a data share. Store the original value from data share into a vector register.
 
@@ -25073,7 +25069,7 @@ MEM[ADDR].u32 = src < tmp ? src : tmp;
 RETURN_DATA.u32 = tmp
 ```
 
-**DS\_MAX\_RTN\_U32****40**
+**DS_MAX_RTN_U32****40**
 
 Select the maximum of two unsigned 32-bit integer inputs, given two values stored in the data register and a location in a data share. Store the original value from data share into a vector register.
 
@@ -25084,7 +25080,7 @@ MEM[ADDR].u32 = src >= tmp ? src : tmp;
 RETURN_DATA.u32 = tmp
 ```
 
-**DS\_AND\_RTN\_B32****41**
+**DS_AND_RTN_B32****41**
 
 Calculate bitwise AND given two unsigned 32-bit integer values stored in the data register and a location in a data share. Store the original value from data share into a vector register.
 
@@ -25094,7 +25090,7 @@ MEM[ADDR].b32 = (tmp & DATA.b32);
 RETURN_DATA.b32 = tmp
 ```
 
-**DS\_OR\_RTN\_B32****42**
+**DS_OR_RTN_B32****42**
 
 Calculate bitwise OR given two unsigned 32-bit integer values stored in the data register and a location in a data share. Store the original value from data share into a vector register.
 
@@ -25104,7 +25100,7 @@ MEM[ADDR].b32 = (tmp | DATA.b32);
 RETURN_DATA.b32 = tmp
 ```
 
-**DS\_XOR\_RTN\_B32****43**
+**DS_XOR_RTN_B32****43**
 
 Calculate bitwise XOR given two unsigned 32-bit integer values stored in the data register and a location in a data share. Store the original value from data share into a vector register.
 
@@ -25114,7 +25110,7 @@ MEM[ADDR].b32 = (tmp ^ DATA.b32);
 RETURN_DATA.b32 = tmp
 ```
 
-#### DS\_MSKOR\_RTN\_B32
+#### DS_MSKOR_RTN_B32
 
 44
 
@@ -25126,7 +25122,7 @@ MEM[ADDR].b32 = ((tmp & ~DATA.b32) | DATA2.b32);
 RETURN_DATA.b32 = tmp
 ```
 
-#### DS\_STOREXCHG\_RTN\_B32
+#### DS_STOREXCHG_RTN_B32
 
 45
 
@@ -25138,7 +25134,7 @@ MEM[ADDR].b32 = DATA.b32;
 RETURN_DATA.b32 = tmp
 ```
 
-#### DS\_STOREXCHG\_2ADDR\_RTN\_B32
+#### DS_STOREXCHG_2ADDR_RTN_B32
 
 46
 
@@ -25156,7 +25152,7 @@ RETURN_DATA[31 : 0] = tmp1;
 RETURN_DATA[63 : 32] = tmp2
 ```
 
-#### DS\_STOREXCHG\_2ADDR\_STRIDE64\_RTN\_B32
+#### DS_STOREXCHG_2ADDR_STRIDE64_RTN_B32
 
 47
 
@@ -25174,7 +25170,7 @@ RETURN_DATA[31 : 0] = tmp1;
 RETURN_DATA[63 : 32] = tmp2
 ```
 
-## DS\_CMPSTORE\_RTN\_B32
+## DS_CMPSTORE_RTN_B32
 
 48
 
@@ -25192,7 +25188,7 @@ RETURN_DATA.b32 = tmp
 
 In this architecture the order of *src* and *cmp* agree with the `BUFFER_ATOMIC_CMPSWAP` opcode.
 
-## DS\_CMPSTORE\_RTN\_F32
+## DS_CMPSTORE_RTN_F32
 
 49
 
@@ -25210,7 +25206,7 @@ RETURN_DATA.f32 = tmp
 
 In this architecture the order of *src* and *cmp* agree with the `BUFFER_ATOMIC_CMPSWAP` opcode.
 
-## DS\_MIN\_RTN\_F32
+## DS_MIN_RTN_F32
 
 50
 
@@ -25227,7 +25223,7 @@ RETURN_DATA.f32 = tmp
 
 Floating-point compare handles NAN/INF/denorm.
 
-### DS\_MAX\_RTN\_F32
+### DS_MAX_RTN_F32
 
 51
 
@@ -25244,7 +25240,7 @@ RETURN_DATA.f32 = tmp
 
 Floating-point compare handles NAN/INF/denorm.
 
-### DS\_WRAP\_RTN\_B32
+### DS_WRAP_RTN_B32
 
 52
 
@@ -25262,7 +25258,7 @@ RETURN_DATA = tmp
 
 This instruction is designed to for use in ring buffer management.
 
-### DS\_SWIZZLE\_B32
+### DS_SWIZZLE_B32
 
 53
 
@@ -25302,35 +25298,35 @@ The first basic swizzle mode (when offset[15] == 1) allows full data sharing bet
 
 The second basic swizzle mode (when offset[15] == 0) allows limited data sharing between 32 consecutive threads. In this case, the offset is used to specify a 5-bit xor-mask, 5-bit or-mask, and 5-bit and-mask used to generate a thread mapping. Note that the offset bits apply to each group of 32 within a wavefront. The details of the thread mapping are listed below. Some example usages:
 
-SWAPX16 : xor\_mask = 0x10, or\_mask = 0x00, and\_mask = 0x1f
+SWAPX16 : xor_mask = 0x10, or_mask = 0x00, and_mask = 0x1f
 
-SWAPX8 : xor\_mask = 0x08, or\_mask = 0x00, and\_mask = 0x1f
+SWAPX8 : xor_mask = 0x08, or_mask = 0x00, and_mask = 0x1f
 
-SWAPX4 : xor\_mask = 0x04, or\_mask = 0x00, and\_mask = 0x1f
+SWAPX4 : xor_mask = 0x04, or_mask = 0x00, and_mask = 0x1f
 
-SWAPX2 : xor\_mask = 0x02, or\_mask = 0x00, and\_mask = 0x1f
+SWAPX2 : xor_mask = 0x02, or_mask = 0x00, and_mask = 0x1f
 
-SWAPX1 : xor\_mask = 0x01, or\_mask = 0x00, and\_mask = 0x1f
+SWAPX1 : xor_mask = 0x01, or_mask = 0x00, and_mask = 0x1f
 
-REVERSEX32 : xor\_mask = 0x1f, or\_mask = 0x00, and\_mask = 0x1f
+REVERSEX32 : xor_mask = 0x1f, or_mask = 0x00, and_mask = 0x1f
 
-REVERSEX16 : xor\_mask = 0x0f, or\_mask = 0x00, and\_mask = 0x1f
+REVERSEX16 : xor_mask = 0x0f, or_mask = 0x00, and_mask = 0x1f
 
-REVERSEX8 : xor\_mask = 0x07, or\_mask = 0x00, and\_mask = 0x1f
+REVERSEX8 : xor_mask = 0x07, or_mask = 0x00, and_mask = 0x1f
 
-REVERSEX4 : xor\_mask = 0x03, or\_mask = 0x00, and\_mask = 0x1f
+REVERSEX4 : xor_mask = 0x03, or_mask = 0x00, and_mask = 0x1f
 
-REVERSEX2 : xor\_mask = 0x01 or\_mask = 0x00, and\_mask = 0x1f
+REVERSEX2 : xor_mask = 0x01 or_mask = 0x00, and_mask = 0x1f
 
-BCASTX32: xor\_mask = 0x00, or\_mask = thread, and\_mask = 0x00
+BCASTX32: xor_mask = 0x00, or_mask = thread, and_mask = 0x00
 
-BCASTX16: xor\_mask = 0x00, or\_mask = thread, and\_mask = 0x10
+BCASTX16: xor_mask = 0x00, or_mask = thread, and_mask = 0x10
 
-BCASTX8: xor\_mask = 0x00, or\_mask = thread, and\_mask = 0x18
+BCASTX8: xor_mask = 0x00, or_mask = thread, and_mask = 0x18
 
-BCASTX4: xor\_mask = 0x00, or\_mask = thread, and\_mask = 0x1c
+BCASTX4: xor_mask = 0x00, or_mask = thread, and_mask = 0x1c
 
-BCASTX2: xor\_mask = 0x00, or\_mask = thread, and\_mask = 0x1e
+BCASTX2: xor_mask = 0x00, or_mask = thread, and_mask = 0x1e
 
 Pseudocode follows:
 
@@ -25398,7 +25394,7 @@ if (offset >= 0xe000) {
 
 ```
 
-**DS\_LOAD\_B32**
+**DS_LOAD_B32**
 
 54
 
@@ -25408,7 +25404,7 @@ Load 32 bits of data from a data share into a vector register.
 RETURN_DATA[31 : 0] = MEM[ADDR + OFFSET.u32].b32
 ```
 
-**DS\_LOAD\_2ADDR\_B32**
+**DS_LOAD_2ADDR_B32**
 
 55
 
@@ -25419,7 +25415,7 @@ RETURN_DATA[31 : 0] = MEM[ADDR + OFFSET0.u32 * 4U].b32;
 RETURN_DATA[63 : 32] = MEM[ADDR + OFFSET1.u32 * 4U].b32
 ```
 
-**DS\_LOAD\_2ADDR\_STRIDE64\_B32**
+**DS_LOAD_2ADDR_STRIDE64_B32**
 
 56
 
@@ -25430,7 +25426,7 @@ RETURN_DATA[31 : 0] = MEM[ADDR + OFFSET0.u32 * 256U].b32;
 RETURN_DATA[63 : 32] = MEM[ADDR + OFFSET1.u32 * 256U].b32
 ```
 
-**DS\_LOAD\_I8**
+**DS_LOAD_I8**
 
 57
 
@@ -25440,7 +25436,7 @@ Load 8 bits of signed data from a data share, sign extend to 32 bits and store t
 RETURN_DATA.i32 = 32'I(signext(MEM[ADDR].i8))
 ```
 
-**DS\_LOAD\_U8**
+**DS_LOAD_U8**
 
 58
 
@@ -25450,7 +25446,7 @@ Load 8 bits of unsigned data from a data share, zero extend to 32 bits and store
 RETURN_DATA.u32 = 32'U({ 24'0U, MEM[ADDR].u8 })
 ```
 
-**DS\_LOAD\_I16**
+**DS_LOAD_I16**
 
 59
 
@@ -25460,7 +25456,7 @@ Load 16 bits of signed data from a data share, sign extend to 32 bits and store 
 RETURN_DATA.i32 = 32'I(signext(MEM[ADDR].i16))
 ```
 
-**DS\_LOAD\_U16**
+**DS_LOAD_U16**
 
 60
 
@@ -25470,7 +25466,7 @@ Load 16 bits of unsigned data from a data share, zero extend to 32 bits and stor
 RETURN_DATA.u32 = 32'U({ 16'0U, MEM[ADDR].u16 })
 ```
 
-**DS\_CONSUME**
+**DS_CONSUME**
 
 61
 
@@ -25489,7 +25485,7 @@ LDS(addr) = LDS(addr) - countbits(valid mask);
 GPR[VDST] = rtnval; // return to all valid threads
 ```
 
-## DS\_APPEND
+## DS_APPEND
 
 62
 
@@ -25508,7 +25504,7 @@ LDS(addr) = LDS(addr) + countbits(valid mask);
 GPR[VDST] = rtnval; // return to all valid threads
 ```
 
-## DS\_ORDERED\_COUNT
+## DS_ORDERED_COUNT
 
 63
 
@@ -25522,14 +25518,14 @@ The following attributes are encoded in the instruction:
 - `OFFSET1[0]` contains the `wave_release` flag.
 - `OFFSET1[1]` contains the `wave_done` flag.
 
-- OFFSET1[5:4] contains the ord\_idx\_opcode: 2'b00 = DS\_ADD\_RTN\_U32, 2'b01 = DS\_STOREXCHG\_RTN\_B32, 2'b11 = DS\_WRAP\_RTN\_B32.
-- VGPR\_DST is the VGPR the result is written to.
-- VGPR\_ADDR specifies the increment in the first valid lane. If no lanes are valid (EXEC = 0) then the increment is zero.
-- M0 normally carries {16'gds\_base, 16'gds\_size} for GDS usage. gds\_base[15:2] is ordered\_count\_base[13:0] (in dwords) and gds\_size is used to hold the logical\_wave\_id, the width is based on total number of waves in the chip.
+- OFFSET1[5:4] contains the ord_idx_opcode: 2'b00 = DS_ADD_RTN_U32, 2'b01 = DS_STOREXCHG_RTN_B32, 2'b11 = DS_WRAP_RTN_B32.
+- VGPR_DST is the VGPR the result is written to.
+- VGPR_ADDR specifies the increment in the first valid lane. If no lanes are valid (EXEC = 0) then the increment is zero.
+- M0 normally carries {16'gds_base, 16'gds_size} for GDS usage. gds_base[15:2] is ordered_count_base[13:0] (in dwords) and gds_size is used to hold the logical_wave_id, the width is based on total number of waves in the chip.
 
-The wave type is determined automatically based on the ME\_ID and QUEUE\_ID of the wavefront.
+The wave type is determined automatically based on the ME_ID and QUEUE_ID of the wavefront.
 
-#### DS\_ADD\_U64
+#### DS_ADD_U64
 
 64
 
@@ -25541,7 +25537,7 @@ MEM[ADDR].u64 += DATA.u64;
 RETURN_DATA.u64 = tmp
 ```
 
-#### DS\_SUB\_U64
+#### DS_SUB_U64
 
 65
 
@@ -25553,7 +25549,7 @@ MEM[ADDR].u64 -= DATA.u64;
 RETURN_DATA.u64 = tmp
 ```
 
-#### DS\_RSUB\_U64
+#### DS_RSUB_U64
 
 66
 
@@ -25565,7 +25561,7 @@ MEM[ADDR].u64 = DATA.u64 - MEM[ADDR].u64;
 RETURN_DATA.u64 = tmp
 ```
 
-#### DS\_INC\_U64
+#### DS_INC_U64
 
 67
 
@@ -25580,7 +25576,7 @@ MEM[ADDR].u64 = tmp >= src ? 0ULL : tmp + 1ULL;
 RETURN_DATA.u64 = tmp
 ```
 
-#### DS\_DEC\_U64
+#### DS_DEC_U64
 
 68
 
@@ -25593,7 +25589,7 @@ MEM[ADDR].u64 = ((tmp == 0ULL) || (tmp > src)) ? src : tmp - 1ULL;
 RETURN_DATA.u64 = tmp
 ```
 
-#### DS\_MIN\_I64
+#### DS_MIN_I64
 
 69
 
@@ -25606,7 +25602,7 @@ MEM[ADDR].i64 = src < tmp ? src : tmp;
 RETURN_DATA.i64 = tmp
 ```
 
-#### DS\_MAX\_I64
+#### DS_MAX_I64
 
 70
 
@@ -25619,7 +25615,7 @@ MEM[ADDR].i64 = src >= tmp ? src : tmp;
 RETURN_DATA.i64 = tmp
 ```
 
-#### DS\_MIN\_U64
+#### DS_MIN_U64
 
 71
 
@@ -25634,7 +25630,7 @@ MEM[ADDR].u64 = src < tmp ? src : tmp;
 RETURN_DATA.u64 = tmp
 ```
 
-#### DS\_MAX\_U64
+#### DS_MAX_U64
 
 72
 
@@ -25647,7 +25643,7 @@ MEM[ADDR].u64 = src >= tmp ? src : tmp;
 RETURN_DATA.u64 = tmp
 ```
 
-#### DS\_AND\_B64
+#### DS_AND_B64
 
 73
 
@@ -25659,7 +25655,7 @@ MEM[ADDR].b64 = (tmp & DATA.b64);
 RETURN_DATA.b64 = tmp
 ```
 
-#### DS\_OR\_B64
+#### DS_OR_B64
 
 74
 
@@ -25671,7 +25667,7 @@ MEM[ADDR].b64 = (tmp | DATA.b64);
 RETURN_DATA.b64 = tmp
 ```
 
-#### DS\_XOR\_B64
+#### DS_XOR_B64
 
 75
 
@@ -25683,7 +25679,7 @@ MEM[ADDR].b64 = (tmp ^ DATA.b64);
 RETURN_DATA.b64 = tmp
 ```
 
-**DS\_MSKOR\_B64**
+**DS_MSKOR_B64**
 
 76
 
@@ -25695,7 +25691,7 @@ MEM[ADDR].b64 = ((tmp & ~DATA.b64) | DATA2.b64);
 RETURN_DATA.b64 = tmp
 ```
 
-**DS\_STORE\_B64**
+**DS_STORE_B64**
 
 77
 
@@ -25706,7 +25702,7 @@ MEM[ADDR + OFFSET.u32].b32 = DATA[31 : 0];
 MEM[ADDR + OFFSET.u32 + 4U].b32 = DATA[63 : 32]
 ```
 
-**DS\_STORE\_2ADDR\_B64**
+**DS_STORE_2ADDR_B64**
 
 78
 
@@ -25719,7 +25715,7 @@ MEM[ADDR + OFFSET1.u32 * 8U].b32 = DATA2[31 : 0];
 MEM[ADDR + OFFSET1.u32 * 8U + 4U].b32 = DATA2[63 : 32]
 ```
 
-**DS\_STORE\_2ADDR\_STRIDE64\_B64**
+**DS_STORE_2ADDR_STRIDE64_B64**
 
 79
 
@@ -25735,7 +25731,7 @@ MEM[ADDR + OFFSET1.u32 * 512U].b32 = DATA2[31 : 0];
 MEM[ADDR + OFFSET1.u32 * 512U + 4U].b32 = DATA2[63 : 32]
 ```
 
-## DS\_CMPSTORE\_B64
+## DS_CMPSTORE_B64
 
 80
 
@@ -25753,7 +25749,7 @@ RETURN_DATA.b64 = tmp
 
 In this architecture the order of `src` and `cmp` agree with the `BUFFER_ATOMIC_CMPSWAP` opcode.
 
-## DS\_CMPSTORE\_F64
+## DS_CMPSTORE_F64
 
 81
 
@@ -25771,7 +25767,7 @@ RETURN_DATA.f64 = tmp
 
 In this architecture the order of `src` and `cmp` agree with the `BUFFER_ATOMIC_CMPSWAP` opcode.
 
-## DS\_MIN\_F64
+## DS_MIN_F64
 
 82
 
@@ -25788,7 +25784,7 @@ RETURN_DATA.f64 = tmp
 
 Floating-point compare handles NAN/INF/denorm.
 
-**DS\_MAX\_F64****83**
+**DS_MAX_F64****83**
 
 Select the maximum of two double-precision float inputs, given two values stored in the data register and a location in a data share.
 
@@ -25803,7 +25799,7 @@ RETURN_DATA.f64 = tmp
 
 Floating-point compare handles NAN/INF/denorm.
 
-**DS\_ADD\_RTN\_U64****96**
+**DS_ADD_RTN_U64****96**
 
 Add two unsigned 64-bit integer values stored in the data register and a location in a data share. Store the original value from data share into a vector register.
 
@@ -25813,7 +25809,7 @@ MEM[ADDR].u64 += DATA.u64;
 RETURN_DATA.u64 = tmp
 ```
 
-**DS\_SUB\_RTN\_U64****97**
+**DS_SUB_RTN_U64****97**
 
 Subtract an unsigned 64-bit integer value stored in the data register from a value stored in a location in a data share. Store the original value from data share into a vector register.
 
@@ -25823,7 +25819,7 @@ MEM[ADDR].u64 -= DATA.u64;
 RETURN_DATA.u64 = tmp
 ```
 
-**DS\_RSUB\_RTN\_U64****98**
+**DS_RSUB_RTN_U64****98**
 
 Subtract an unsigned 64-bit integer value stored in a location in a data share from a value stored in the data register. Store the original value from data share into a vector register.
 
@@ -25836,7 +25832,7 @@ MEM[ADDR].u64 = DATA.u64 - MEM[ADDR].u64;
 RETURN_DATA.u64 = tmp
 ```
 
-**DS\_INC\_RTN\_U64****99**
+**DS_INC_RTN_U64****99**
 
 Increment an unsigned 64-bit integer value from a location in a data share with wraparound to 0 if the value exceeds a value in the data register. Store the original value from data share into a vector register.
 
@@ -25847,7 +25843,7 @@ MEM[ADDR].u64 = tmp >= src ? 0ULL : tmp + 1ULL;
 RETURN_DATA.u64 = tmp
 ```
 
-**DS\_DEC\_RTN\_U64****100**
+**DS_DEC_RTN_U64****100**
 
 Decrement an unsigned 64-bit integer value from a location in a data share with wraparound to a value in the data register if the decrement yields a negative value. Store the original value from data share into a vector register.
 
@@ -25858,7 +25854,7 @@ MEM[ADDR].u64 = ((tmp == 0ULL) || (tmp > src)) ? src : tmp - 1ULL;
 RETURN_DATA.u64 = tmp
 ```
 
-**DS\_MIN\_RTN\_I64****101**
+**DS_MIN_RTN_I64****101**
 
 Select the minimum of two signed 64-bit integer inputs, given two values stored in the data register and a location in a data share. Store the original value from data share into a vector register.
 
@@ -25869,7 +25865,7 @@ MEM[ADDR].i64 = src < tmp ? src : tmp;
 RETURN_DATA.i64 = tmp
 ```
 
-**DS\_MAX\_RTN\_I64****102**
+**DS_MAX_RTN_I64****102**
 
 Select the maximum of two signed 64-bit integer inputs, given two values stored in the data register and a location in a data share. Store the original value from data share into a vector register.
 
@@ -25883,7 +25879,7 @@ MEM[ADDR].i64 = src >= tmp ? src : tmp;
 RETURN_DATA.i64 = tmp
 ```
 
-**DS\_MIN\_RTN\_U64****103**
+**DS_MIN_RTN_U64****103**
 
 Select the minimum of two unsigned 64-bit integer inputs, given two values stored in the data register and a location in a data share. Store the original value from data share into a vector register.
 
@@ -25894,7 +25890,7 @@ MEM[ADDR].u64 = src < tmp ? src : tmp;
 RETURN_DATA.u64 = tmp
 ```
 
-**DS\_MAX\_RTN\_U64****104**
+**DS_MAX_RTN_U64****104**
 
 Select the maximum of two unsigned 64-bit integer inputs, given two values stored in the data register and a location in a data share. Store the original value from data share into a vector register.
 
@@ -25905,7 +25901,7 @@ MEM[ADDR].u64 = src >= tmp ? src : tmp;
 RETURN_DATA.u64 = tmp
 ```
 
-**DS\_AND\_RTN\_B64****105**
+**DS_AND_RTN_B64****105**
 
 Calculate bitwise AND given two unsigned 64-bit integer values stored in the data register and a location in a data share. Store the original value from data share into a vector register.
 
@@ -25915,7 +25911,7 @@ MEM[ADDR].b64 = (tmp & DATA.b64);
 RETURN_DATA.b64 = tmp
 ```
 
-**DS\_OR\_RTN\_B64****106**
+**DS_OR_RTN_B64****106**
 
 Calculate bitwise OR given two unsigned 64-bit integer values stored in the data register and a location in a data share. Store the original value from data share into a vector register.
 
@@ -25928,7 +25924,7 @@ MEM[ADDR].b64 = (tmp | DATA.b64);
 RETURN_DATA.b64 = tmp
 ```
 
-### DS\_XOR\_RTN\_B64
+### DS_XOR_RTN_B64
 
 107
 
@@ -25940,7 +25936,7 @@ MEM[ADDR].b64 = (tmp ^ DATA.b64);
 RETURN_DATA.b64 = tmp
 ```
 
-### DS\_MSKOR\_RTN\_B64
+### DS_MSKOR_RTN_B64
 
 108
 
@@ -25952,7 +25948,7 @@ MEM[ADDR].b64 = ((tmp & ~DATA.b64) | DATA2.b64);
 RETURN_DATA.b64 = tmp
 ```
 
-### DS\_STOREXCHG\_RTN\_B64
+### DS_STOREXCHG_RTN_B64
 
 109
 
@@ -25964,7 +25960,7 @@ MEM[ADDR].b64 = DATA.b64;
 RETURN_DATA.b64 = tmp
 ```
 
-### DS\_STOREXCHG\_2ADDR\_RTN\_B64
+### DS_STOREXCHG_2ADDR_RTN_B64
 
 110
 
@@ -25985,7 +25981,7 @@ RETURN_DATA[63 : 0] = tmp1;
 RETURN_DATA[127 : 64] = tmp2
 ```
 
-### DS\_STOREXCHG\_2ADDR\_STRIDE64\_RTN\_B64
+### DS_STOREXCHG_2ADDR_STRIDE64_RTN_B64
 
 111
 
@@ -26003,7 +25999,7 @@ RETURN_DATA[63 : 0] = tmp1;
 RETURN_DATA[127 : 64] = tmp2
 ```
 
-### DS\_CMPSWAP\_RTN\_B64
+### DS_CMPSWAP_RTN_B64
 
 112
 
@@ -26021,7 +26017,7 @@ RETURN_DATA.b64 = tmp
 
 In this architecture the order of `src` and `cmp` agree with the `BUFFER_ATOMIC_CMPSWAP` opcode.
 
-### DS\_CMPSWAP\_RTN\_F64
+### DS_CMPSWAP_RTN_F64
 
 113
 
@@ -26039,7 +26035,7 @@ RETURN_DATA.f64 = tmp
 
 In this architecture the order of  $src$  and  $cmp$  agree with the `BUFFER_ATOMIC_CMPSWAP` opcode.
 
-**DS\_MIN\_RTN\_F64****114**
+**DS_MIN_RTN_F64****114**
 
 Select the minimum of two double-precision float inputs, given two values stored in the data register and a location in a data share. Store the original value from data share into a vector register.
 
@@ -26054,7 +26050,7 @@ RETURN_DATA.f64 = tmp
 
 Floating-point compare handles NAN/INF/denorm.
 
-**DS\_MAX\_RTN\_F64****115**
+**DS_MAX_RTN_F64****115**
 
 Select the maximum of two double-precision float inputs, given two values stored in the data register and a location in a data share. Store the original value from data share into a vector register.
 
@@ -26069,7 +26065,7 @@ RETURN_DATA.f64 = tmp
 
 Floating-point compare handles NAN/INF/denorm.
 
-**DS\_LOAD\_B64****118**
+**DS_LOAD_B64****118**
 
 Load 64 bits of data from a data share into a vector register.
 
@@ -26078,7 +26074,7 @@ RETURN_DATA[31 : 0] = MEM[ADDR + OFFSET.u32].b32;
 RETURN_DATA[63 : 32] = MEM[ADDR + OFFSET.u32 + 4U].b32
 ```
 
-**DS\_LOAD\_2ADDR\_B64****119**
+**DS_LOAD_2ADDR_B64****119**
 
 Load 64 bits of data from one location in a data share and then 64 bits of data from a second location in a data share and store the results into a 128-bit vector register.
 
@@ -26089,7 +26085,7 @@ RETURN_DATA[95 : 64] = MEM[ADDR + OFFSET1.u32 * 8U].b32;
 RETURN_DATA[127 : 96] = MEM[ADDR + OFFSET1.u32 * 8U + 4U].b32
 ```
 
-## DS\_LOAD\_2ADDR\_STRIDE64\_B64
+## DS_LOAD_2ADDR_STRIDE64_B64
 
 120
 
@@ -26102,7 +26098,7 @@ RETURN_DATA[95 : 64] = MEM[ADDR + OFFSET1.u32 * 512U].b32;
 RETURN_DATA[127 : 96] = MEM[ADDR + OFFSET1.u32 * 512U + 4U].b32
 ```
 
-## DS\_ADD\_RTN\_F32
+## DS_ADD_RTN_F32
 
 121
 
@@ -26118,7 +26114,7 @@ RETURN_DATA.f32 = tmp
 
 Floating-point addition handles NAN/INF/denorm.
 
-## DS\_ADD\_GS\_REG\_RTN
+## DS_ADD_GS_REG_RTN
 
 122
 
@@ -26177,7 +26173,7 @@ offset[5:2] Register
 
 ```
 
-## DS\_SUB\_GS\_REG\_RTN
+## DS_SUB_GS_REG_RTN
 
 123
 
@@ -26232,7 +26228,7 @@ offset[5:2] Register
 15 GDS_STRMOUT_PRIMS_WRITTEN_3
 ```
 
-## DS\_CONDXCHG32\_RTN\_B64
+## DS_CONDXCHG32_RTN_B64
 
 126
 
@@ -26257,7 +26253,7 @@ if DATA[63] then
 endif
 ```
 
-**DS\_STORE\_B8\_D16\_HI**
+**DS_STORE_B8_D16_HI**
 
 160
 
@@ -26267,7 +26263,7 @@ Store 8 bits of data from the high bits of a vector register into a data share.
 MEM[ADDR].b8 = DATA[23 : 16]
 ```
 
-**DS\_STORE\_B16\_D16\_HI**
+**DS_STORE_B16_D16_HI**
 
 161
 
@@ -26277,7 +26273,7 @@ Store 16 bits of data from the high bits of a vector register into a data share.
 MEM[ADDR].b16 = DATA[31 : 16]
 ```
 
-**DS\_LOAD\_U8\_D16**
+**DS_LOAD_U8_D16**
 
 162
 
@@ -26288,7 +26284,7 @@ RETURN_DATA[15 : 0].u16 = 16'U({ 8'0U, MEM[ADDR].u8 });
 // RETURN_DATA[31:16] is preserved.
 ```
 
-**DS\_LOAD\_U8\_D16\_HI**
+**DS_LOAD_U8_D16_HI**
 
 163
 
@@ -26299,7 +26295,7 @@ RETURN_DATA[31 : 16].u16 = 16'U({ 8'0U, MEM[ADDR].u8 });
 // RETURN_DATA[15:0] is preserved.
 ```
 
-**DS\_LOAD\_I8\_D16**
+**DS_LOAD_I8_D16**
 
 164
 
@@ -26310,7 +26306,7 @@ RETURN_DATA[15 : 0].i16 = 16'I(signext(MEM[ADDR].i8));
 // RETURN_DATA[31:16] is preserved.
 ```
 
-**DS\_LOAD\_I8\_D16\_HI****165**
+**DS_LOAD_I8_D16_HI****165**
 
 Load 8 bits of signed data from a data share, sign extend to 16 bits and store the result into the high 16 bits of a vector register.
 
@@ -26319,7 +26315,7 @@ RETURN_DATA[31 : 16].i16 = 16'I(signext(MEM[ADDR].i8));
 // RETURN_DATA[15:0] is preserved.
 ```
 
-**DS\_LOAD\_U16\_D16****166**
+**DS_LOAD_U16_D16****166**
 
 Load 16 bits of unsigned data from a data share and store the result into the low 16 bits of a vector register.
 
@@ -26328,7 +26324,7 @@ RETURN_DATA[15 : 0].u16 = MEM[ADDR].u16;
 // RETURN_DATA[31:16] is preserved.
 ```
 
-**DS\_LOAD\_U16\_D16\_HI****167**
+**DS_LOAD_U16_D16_HI****167**
 
 Load 16 bits of unsigned data from a data share and store the result into the high 16 bits of a vector register.
 
@@ -26337,11 +26333,11 @@ RETURN_DATA[31 : 16].u16 = MEM[ADDR].u16;
 // RETURN_DATA[15:0] is preserved.
 ```
 
-**DS\_BVH\_STACK\_RTN\_B32****173**
+**DS_BVH_STACK_RTN_B32****173**
 
 Ray tracing involves traversing a BVH which is a kind of tree where nodes have up to 4 children. Each shader thread processes one child at a time, and *overflow* nodes are stored temporarily in LDS using a stack. This instruction supports pushing/popping the stack to reduce the number of VALU instructions required per traversal and reduce VMEM bandwidth requirements.
 
-The LDS stack address is computed using values packed into ADDR and part of OFFSET1. ADDR carries the stack address for the lane. OFFSET1[5:4] contains stack\_size[1:0] -- this value is constant for all lanes and is patched into the shader by software. Valid stack sizes are {8, 16, 32, 64}.
+The LDS stack address is computed using values packed into ADDR and part of OFFSET1. ADDR carries the stack address for the lane. OFFSET1[5:4] contains stack_size[1:0] -- this value is constant for all lanes and is patched into the shader by software. Valid stack sizes are {8, 16, 32, 64}.
 
 A new stack address is returned to ADDR --- note that this VGPR is an **in-out** operand.
 
@@ -26388,7 +26384,7 @@ endfunction.
 
 ```
 
-**DS\_STORE\_ADDTID\_B32**
+**DS_STORE_ADDTID_B32**
 
 176
 
@@ -26402,7 +26398,7 @@ MEM[32'I({ OFFSET1, OFFSET0 } + M0[15 : 0]) + laneID.i32 * 4].u32 = DATA0.u32
 
 ```
 
-**DS\_LOAD\_ADDTID\_B32**
+**DS_LOAD_ADDTID_B32**
 
 177
 
@@ -26419,7 +26415,7 @@ declare OFFSET1 : 8'U;
 RETURN_DATA.u32 = MEM[32'I({ OFFSET1, OFFSET0 } + M0[15 : 0]) + laneID.i32 * 4].u32
 ```
 
-## DS\_PERMUTE\_B32
+## DS_PERMUTE_B32
 
 178
 
@@ -26429,7 +26425,7 @@ Note the address passed in is the thread ID multiplied by 4.
 
 If multiple sources map to the same destination lane, it is not deterministic which source lane writes to the destination lane.
 
-See also DS\_BPERMUTE\_B32.
+See also DS_BPERMUTE_B32.
 
 ```
 // VGPR[laneId][index] is the VGPR RAM
@@ -26482,7 +26478,7 @@ EXEC = 0xA, OFFSET = 0
 VGPR[VDST] = { -, D, -, 0 }
 ```
 
-## DS\_BPERMUTE\_B32
+## DS_BPERMUTE_B32
 
 179
 
@@ -26490,9 +26486,9 @@ Backward permute. This does not access LDS memory and may be called even if no L
 
 Note the address passed in is the thread ID multiplied by 4.
 
-Note that EXEC mask is applied to both VGPR read and write. If src\_lane selects a disabled thread then zero is returned.
+Note that EXEC mask is applied to both VGPR read and write. If src_lane selects a disabled thread then zero is returned.
 
-See also DS\_PERMUTE\_B32.
+See also DS_PERMUTE_B32.
 
 ```
 // VGPR[laneId][index] is the VGPR RAM
@@ -26545,7 +26541,7 @@ VGPR[VDST] = { -, 0, -, B }
 
 ```
 
-**DS\_STORE\_B96****222**
+**DS_STORE_B96****222**
 
 Store 96 bits of data from a vector input register into a data share.
 
@@ -26557,7 +26553,7 @@ MEM[ADDR + OFFSET.u32 + 8U].b32 = DATA[95 : 64]
 
 ```
 
-**DS\_STORE\_B128****223**
+**DS_STORE_B128****223**
 
 Store 128 bits of data from a vector input register into a data share.
 
@@ -26570,7 +26566,7 @@ MEM[ADDR + OFFSET.u32 + 12U].b32 = DATA[127 : 96]
 
 ```
 
-**DS\_LOAD\_B96****254**
+**DS_LOAD_B96****254**
 
 Load 96 bits of data from a data share into a vector register.
 
@@ -26582,7 +26578,7 @@ RETURN_DATA[95 : 64] = MEM[ADDR + OFFSET.u32 + 8U].b32
 
 ```
 
-**DS\_LOAD\_B128****255**
+**DS_LOAD_B128****255**
 
 Load 128 bits of data from a data share into a vector register.
 
@@ -26597,13 +26593,13 @@ RETURN_DATA[127 : 96] = MEM[ADDR + OFFSET.u32 + 12U].b32
 
 Some of the DS instructions are available only to GDS, not LDS. These are:
 
-- DS\_GWS\_SEMA\_RELEASE\_ALL
-- DS\_GWS\_INIT
-- DS\_GWS\_SEMA\_V
-- DS\_GWS\_SEMA\_BR
-- DS\_GWS\_SEMA\_P
-- DS\_GWS\_BARRIER
-- DS\_ORDERED\_COUNT
+- DS_GWS_SEMA_RELEASE_ALL
+- DS_GWS_INIT
+- DS_GWS_SEMA_V
+- DS_GWS_SEMA_BR
+- DS_GWS_SEMA_P
+- DS_GWS_BARRIER
+- DS_ORDERED_COUNT
 
 ## 16.16. MUBUF Instructions
 
@@ -26625,7 +26621,7 @@ The bitfield map of the MUBUF format is:
 
 Bitfield map of the MUBUF format showing fields: SOFFSET (63-31), OP (30-24), SRSRC (23-16), GLC (15-14), DLC (13-12), SLC (11-10), VDATA (9-0), and VADDR (63-32). The OP field has sub-fields: IDX (30-28), OFF (27-24), TFE (23-20), and OFFSET (19-0).
 
-### BUFFER\_LOAD\_FORMAT\_X
+### BUFFER_LOAD_FORMAT_X
 
 0
 
@@ -26636,7 +26632,7 @@ VDATA[31 : 0].b32 = ConvertFromFormat(MEM[TADDR.X]);
 // Mem access size depends on format
 ```
 
-### BUFFER\_LOAD\_FORMAT\_XY
+### BUFFER_LOAD_FORMAT_XY
 
 1
 
@@ -26648,7 +26644,7 @@ VDATA[31 : 0].b32 = ConvertFromFormat(MEM[TADDR.X]);
 VDATA[63 : 32].b32 = ConvertFromFormat(MEM[TADDR.Y])
 ```
 
-### BUFFER\_LOAD\_FORMAT\_XYZ
+### BUFFER_LOAD_FORMAT_XYZ
 
 2
 
@@ -26661,7 +26657,7 @@ VDATA[63 : 32].b32 = ConvertFromFormat(MEM[TADDR.Y]);
 VDATA[95 : 64].b32 = ConvertFromFormat(MEM[TADDR.Z])
 ```
 
-### BUFFER\_LOAD\_FORMAT\_XYZW
+### BUFFER_LOAD_FORMAT_XYZW
 
 3
 
@@ -26675,7 +26671,7 @@ VDATA[95 : 64].b32 = ConvertFromFormat(MEM[TADDR.Z]);
 VDATA[127 : 96].b32 = ConvertFromFormat(MEM[TADDR.W])
 ```
 
-#### **BUFFER\_STORE\_FORMAT\_X**
+#### **BUFFER_STORE_FORMAT_X**
 
 **4**
 
@@ -26686,7 +26682,7 @@ MEM[TADDR.X] = ConvertToFormat(VDATA[31 : 0].b32);
 // Mem access size depends on format
 ```
 
-#### **BUFFER\_STORE\_FORMAT\_XY**
+#### **BUFFER_STORE_FORMAT_XY**
 
 **5**
 
@@ -26698,7 +26694,7 @@ MEM[TADDR.X] = ConvertToFormat(VDATA[31 : 0].b32);
 MEM[TADDR.Y] = ConvertToFormat(VDATA[63 : 32].b32)
 ```
 
-#### **BUFFER\_STORE\_FORMAT\_XYZ**
+#### **BUFFER_STORE_FORMAT_XYZ**
 
 **6**
 
@@ -26711,7 +26707,7 @@ MEM[TADDR.Y] = ConvertToFormat(VDATA[63 : 32].b32);
 MEM[TADDR.Z] = ConvertToFormat(VDATA[95 : 64].b32)
 ```
 
-#### **BUFFER\_STORE\_FORMAT\_XYZW**
+#### **BUFFER_STORE_FORMAT_XYZW**
 
 **7**
 
@@ -26727,7 +26723,7 @@ MEM[TADDR.Z] = ConvertToFormat(VDATA[95 : 64].b32);
 MEM[TADDR.W] = ConvertToFormat(VDATA[127 : 96].b32)
 ```
 
-#### **BUFFER\_LOAD\_D16\_FORMAT\_X**
+#### **BUFFER_LOAD_D16_FORMAT_X**
 
 8
 
@@ -26739,7 +26735,7 @@ VDATA[15 : 0].b16 = 16'B(ConvertFromFormat(MEM[TADDR.X]));
 // VDATA[31:16].b16 is preserved.
 ```
 
-#### **BUFFER\_LOAD\_D16\_FORMAT\_XY**
+#### **BUFFER_LOAD_D16_FORMAT_XY**
 
 9
 
@@ -26751,7 +26747,7 @@ VDATA[15 : 0].b16 = 16'B(ConvertFromFormat(MEM[TADDR.X]));
 VDATA[31 : 16].b16 = 16'B(ConvertFromFormat(MEM[TADDR.Y]))
 ```
 
-#### **BUFFER\_LOAD\_D16\_FORMAT\_XYZ**
+#### **BUFFER_LOAD_D16_FORMAT_XYZ**
 
 10
 
@@ -26765,7 +26761,7 @@ VDATA[47 : 32].b16 = 16'B(ConvertFromFormat(MEM[TADDR.Z]));
 // VDATA[63:48].b16 is preserved.
 ```
 
-**BUFFER\_LOAD\_D16\_FORMAT\_XYZW**
+**BUFFER_LOAD_D16_FORMAT_XYZW**
 
 11
 
@@ -26779,7 +26775,7 @@ VDATA[47 : 32].b16 = 16'B(ConvertFromFormat(MEM[TADDR.Z]));
 VDATA[63 : 48].b16 = 16'B(ConvertFromFormat(MEM[TADDR.W]))
 ```
 
-**BUFFER\_STORE\_D16\_FORMAT\_X**
+**BUFFER_STORE_D16_FORMAT_X**
 
 12
 
@@ -26790,7 +26786,7 @@ MEM[TADDR.X] = ConvertToFormat(32'B(VDATA[15 : 0].b16));
 // Mem access size depends on format
 ```
 
-**BUFFER\_STORE\_D16\_FORMAT\_XY**
+**BUFFER_STORE_D16_FORMAT_XY**
 
 13
 
@@ -26802,7 +26798,7 @@ MEM[TADDR.X] = ConvertToFormat(32'B(VDATA[15 : 0].b16));
 MEM[TADDR.Y] = ConvertToFormat(32'B(VDATA[31 : 16].b16))
 ```
 
-**BUFFER\_STORE\_D16\_FORMAT\_XYZ**
+**BUFFER_STORE_D16_FORMAT_XYZ**
 
 14
 
@@ -26815,7 +26811,7 @@ MEM[TADDR.Y] = ConvertToFormat(32'B(VDATA[31 : 16].b16));
 MEM[TADDR.Z] = ConvertToFormat(32'B(VDATA[47 : 32].b16))
 ```
 
-**BUFFER\_STORE\_D16\_FORMAT\_XYZW**
+**BUFFER_STORE_D16_FORMAT_XYZW**
 
 15
 
@@ -26829,7 +26825,7 @@ MEM[TADDR.Z] = ConvertToFormat(32'B(VDATA[47 : 32].b16));
 MEM[TADDR.W] = ConvertToFormat(32'B(VDATA[63 : 48].b16))
 ```
 
-**BUFFER\_LOAD\_U8**
+**BUFFER_LOAD_U8**
 
 16
 
@@ -26839,7 +26835,7 @@ Load 8 bits of unsigned data from a buffer surface, zero extend to 32 bits and s
 VDATA.u32 = 32'U({ 24'0U, MEM[ADDR].u8 })
 ```
 
-**BUFFER\_LOAD\_I8**
+**BUFFER_LOAD_I8**
 
 17
 
@@ -26849,7 +26845,7 @@ Load 8 bits of signed data from a buffer surface, sign extend to 32 bits and sto
 VDATA.i32 = 32'I(signext(MEM[ADDR].i8))
 ```
 
-**BUFFER\_LOAD\_U16**
+**BUFFER_LOAD_U16**
 
 18
 
@@ -26859,7 +26855,7 @@ Load 16 bits of unsigned data from a buffer surface, zero extend to 32 bits and 
 VDATA.u32 = 32'U({ 16'0U, MEM[ADDR].u16 })
 ```
 
-**BUFFER\_LOAD\_I16**
+**BUFFER_LOAD_I16**
 
 19
 
@@ -26869,7 +26865,7 @@ Load 16 bits of signed data from a buffer surface, sign extend to 32 bits and st
 VDATA.i32 = 32'I(signext(MEM[ADDR].i16))
 ```
 
-**BUFFER\_LOAD\_B32**
+**BUFFER_LOAD_B32**
 
 20
 
@@ -26879,7 +26875,7 @@ Load 32 bits of data from a buffer surface into a vector register.
 VDATA[31 : 0] = MEM[ADDR].b32
 ```
 
-**BUFFER\_LOAD\_B64**
+**BUFFER_LOAD_B64**
 
 21
 
@@ -26890,7 +26886,7 @@ VDATA[31 : 0] = MEM[ADDR].b32;
 VDATA[63 : 32] = MEM[ADDR + 4U].b32
 ```
 
-**BUFFER\_LOAD\_B96**
+**BUFFER_LOAD_B96**
 
 22
 
@@ -26902,7 +26898,7 @@ VDATA[63 : 32] = MEM[ADDR + 4U].b32;
 VDATA[95 : 64] = MEM[ADDR + 8U].b32
 ```
 
-**BUFFER\_LOAD\_B128**
+**BUFFER_LOAD_B128**
 
 23
 
@@ -26915,7 +26911,7 @@ VDATA[95 : 64] = MEM[ADDR + 8U].b32;
 VDATA[127 : 96] = MEM[ADDR + 12U].b32
 ```
 
-**BUFFER\_STORE\_B8**
+**BUFFER_STORE_B8**
 
 24
 
@@ -26925,7 +26921,7 @@ Store 8 bits of data from a vector register into a buffer surface.
 MEM[ADDR].b8 = VDATA[7 : 0]
 ```
 
-**BUFFER\_STORE\_B16**
+**BUFFER_STORE_B16**
 
 25
 
@@ -26935,7 +26931,7 @@ Store 16 bits of data from a vector register into a buffer surface.
 MEM[ADDR].b16 = VDATA[15 : 0]
 ```
 
-**BUFFER\_STORE\_B32**
+**BUFFER_STORE_B32**
 
 26
 
@@ -26945,7 +26941,7 @@ Store 32 bits of data from vector input registers into a buffer surface.
 MEM[ADDR].b32 = VDATA[31 : 0]
 ```
 
-**BUFFER\_STORE\_B64**
+**BUFFER_STORE_B64**
 
 27
 
@@ -26956,7 +26952,7 @@ MEM[ADDR].b32 = VDATA[31 : 0];
 MEM[ADDR + 4U].b32 = VDATA[63 : 32]
 ```
 
-**BUFFER\_STORE\_B96**
+**BUFFER_STORE_B96**
 
 28
 
@@ -26968,7 +26964,7 @@ MEM[ADDR + 4U].b32 = VDATA[63 : 32];
 MEM[ADDR + 8U].b32 = VDATA[95 : 64]
 ```
 
-**BUFFER\_STORE\_B128**
+**BUFFER_STORE_B128**
 
 29
 
@@ -26981,7 +26977,7 @@ MEM[ADDR + 8U].b32 = VDATA[95 : 64];
 MEM[ADDR + 12U].b32 = VDATA[127 : 96]
 ```
 
-**BUFFER\_LOAD\_D16\_U8**
+**BUFFER_LOAD_D16_U8**
 
 30
 
@@ -26992,7 +26988,7 @@ VDATA[15 : 0].u16 = 16'U({ 8'0U, MEM[ADDR].u8 });
 // VDATA[31:16] is preserved.
 ```
 
-**BUFFER\_LOAD\_D16\_I8**
+**BUFFER_LOAD_D16_I8**
 
 31
 
@@ -27003,7 +26999,7 @@ VDATA[15 : 0].i16 = 16'I(signext(MEM[ADDR].i8));
 // VDATA[31:16] is preserved.
 ```
 
-**BUFFER\_LOAD\_D16\_B16**
+**BUFFER_LOAD_D16_B16**
 
 32
 
@@ -27014,7 +27010,7 @@ VDATA[15 : 0].b16 = MEM[ADDR].b16;
 // VDATA[31:16] is preserved.
 ```
 
-**BUFFER\_LOAD\_D16\_HI\_U8**
+**BUFFER_LOAD_D16_HI_U8**
 
 33
 
@@ -27025,7 +27021,7 @@ VDATA[31 : 16].u16 = 16'U({ 8'0U, MEM[ADDR].u8 });
 // VDATA[15:0] is preserved.
 ```
 
-**BUFFER\_LOAD\_D16\_HI\_I8**
+**BUFFER_LOAD_D16_HI_I8**
 
 34
 
@@ -27039,7 +27035,7 @@ VDATA[31 : 16].i16 = 16'I(signext(MEM[ADDR].i8));
 // VDATA[15:0] is preserved.
 ```
 
-**BUFFER\_LOAD\_D16\_HI\_B16**
+**BUFFER_LOAD_D16_HI_B16**
 
 35
 
@@ -27050,7 +27046,7 @@ VDATA[31 : 16].b16 = MEM[ADDR].b16;
 // VDATA[15:0] is preserved.
 ```
 
-**BUFFER\_STORE\_D16\_HI\_B8**
+**BUFFER_STORE_D16_HI_B8**
 
 36
 
@@ -27060,7 +27056,7 @@ Store 8 bits of data from the high 16 bits of a 32-bit vector register into a bu
 MEM[ADDR].b8 = VDATA[23 : 16]
 ```
 
-**BUFFER\_STORE\_D16\_HI\_B16**
+**BUFFER_STORE_D16_HI_B16**
 
 37
 
@@ -27070,7 +27066,7 @@ Store 16 bits of data from the high 16 bits of a 32-bit vector register into a b
 MEM[ADDR].b16 = VDATA[31 : 16]
 ```
 
-**BUFFER\_LOAD\_D16\_HI\_FORMAT\_X**
+**BUFFER_LOAD_D16_HI_FORMAT_X**
 
 38
 
@@ -27082,7 +27078,7 @@ VDATA[31 : 16].b16 = 16'B(ConvertFromFormat(MEM[TADDR.X]));
 // VDATA[15:0].b16 is preserved.
 ```
 
-**BUFFER\_STORE\_D16\_HI\_FORMAT\_X**
+**BUFFER_STORE_D16_HI_FORMAT_X**
 
 39
 
@@ -27095,19 +27091,19 @@ MEM[TADDR.X] = ConvertToFormat(32'B(VDATA[31 : 16].b16));
 // Mem access size depends on format
 ```
 
-#### **BUFFER\_GL0\_INV**
+#### **BUFFER_GL0_INV**
 
 43
 
 Write back and invalidate the shader L0. Returns ACK to shader.
 
-#### **BUFFER\_GL1\_INV**
+#### **BUFFER_GL1_INV**
 
 44
 
 Invalidate the GL1 cache only. Returns ACK to shader.
 
-#### **BUFFER\_ATOMIC\_SWAP\_B32**
+#### **BUFFER_ATOMIC_SWAP_B32**
 
 51
 
@@ -27119,7 +27115,7 @@ MEM[ADDR].b32 = DATA.b32;
 RETURN_DATA.b32 = tmp
 ```
 
-#### **BUFFER\_ATOMIC\_CMPSWAP\_B32**
+#### **BUFFER_ATOMIC_CMPSWAP_B32**
 
 52
 
@@ -27133,7 +27129,7 @@ MEM[ADDR].u32 = tmp == cmp ? src : tmp;
 RETURN_DATA.u32 = tmp
 ```
 
-#### **BUFFER\_ATOMIC\_ADD\_U32**
+#### **BUFFER_ATOMIC_ADD_U32**
 
 53
 
@@ -27145,7 +27141,7 @@ MEM[ADDR].u32 += DATA.u32;
 RETURN_DATA.u32 = tmp
 ```
 
-**BUFFER\_ATOMIC\_SUB\_U32**
+**BUFFER_ATOMIC_SUB_U32**
 
 54
 
@@ -27157,7 +27153,7 @@ MEM[ADDR].u32 -= DATA.u32;
 RETURN_DATA.u32 = tmp
 ```
 
-**BUFFER\_ATOMIC\_CSUB\_U32**
+**BUFFER_ATOMIC_CSUB_U32**
 
 55
 
@@ -27175,7 +27171,7 @@ MEM[ADDR].u32 = new_value;
 RETURN_DATA.u32 = old_value
 ```
 
-**BUFFER\_ATOMIC\_MIN\_I32**
+**BUFFER_ATOMIC_MIN_I32**
 
 56
 
@@ -27188,7 +27184,7 @@ MEM[ADDR].i32 = src < tmp ? src : tmp;
 RETURN_DATA.i32 = tmp
 ```
 
-**BUFFER\_ATOMIC\_MIN\_U32**
+**BUFFER_ATOMIC_MIN_U32**
 
 57
 
@@ -27201,7 +27197,7 @@ MEM[ADDR].u32 = src < tmp ? src : tmp;
 RETURN_DATA.u32 = tmp
 ```
 
-#### **BUFFER\_ATOMIC\_MAX\_I32**
+#### **BUFFER_ATOMIC_MAX_I32**
 
 **58**
 
@@ -27214,7 +27210,7 @@ MEM[ADDR].i32 = src >= tmp ? src : tmp;
 RETURN_DATA.i32 = tmp
 ```
 
-#### **BUFFER\_ATOMIC\_MAX\_U32**
+#### **BUFFER_ATOMIC_MAX_U32**
 
 **59**
 
@@ -27227,7 +27223,7 @@ MEM[ADDR].u32 = src >= tmp ? src : tmp;
 RETURN_DATA.u32 = tmp
 ```
 
-#### **BUFFER\_ATOMIC\_AND\_B32**
+#### **BUFFER_ATOMIC_AND_B32**
 
 **60**
 
@@ -27239,7 +27235,7 @@ MEM[ADDR].b32 = (tmp & DATA.b32);
 RETURN_DATA.b32 = tmp
 ```
 
-**BUFFER\_ATOMIC\_OR\_B32**
+**BUFFER_ATOMIC_OR_B32**
 
 61
 
@@ -27251,7 +27247,7 @@ MEM[ADDR].b32 = (tmp | DATA.b32);
 RETURN_DATA.b32 = tmp
 ```
 
-**BUFFER\_ATOMIC\_XOR\_B32**
+**BUFFER_ATOMIC_XOR_B32**
 
 62
 
@@ -27263,7 +27259,7 @@ MEM[ADDR].b32 = (tmp ^ DATA.b32);
 RETURN_DATA.b32 = tmp
 ```
 
-**BUFFER\_ATOMIC\_INC\_U32**
+**BUFFER_ATOMIC_INC_U32**
 
 63
 
@@ -27276,7 +27272,7 @@ MEM[ADDR].u32 = tmp >= src ? 0U : tmp + 1U;
 RETURN_DATA.u32 = tmp
 ```
 
-**BUFFER\_ATOMIC\_DEC\_U32**
+**BUFFER_ATOMIC_DEC_U32**
 
 64
 
@@ -27289,7 +27285,7 @@ MEM[ADDR].u32 = ((tmp == 0U) || (tmp > src)) ? src : tmp - 1U;
 RETURN_DATA.u32 = tmp
 ```
 
-**BUFFER\_ATOMIC\_SWAP\_B64**
+**BUFFER_ATOMIC_SWAP_B64**
 
 65
 
@@ -27301,7 +27297,7 @@ MEM[ADDR].b64 = DATA.b64;
 RETURN_DATA.b64 = tmp
 ```
 
-**BUFFER\_ATOMIC\_CMPSWAP\_B64**
+**BUFFER_ATOMIC_CMPSWAP_B64**
 
 66
 
@@ -27315,7 +27311,7 @@ MEM[ADDR].u64 = tmp == cmp ? src : tmp;
 RETURN_DATA.u64 = tmp
 ```
 
-**BUFFER\_ATOMIC\_ADD\_U64**
+**BUFFER_ATOMIC_ADD_U64**
 
 67
 
@@ -27327,7 +27323,7 @@ MEM[ADDR].u64 += DATA.u64;
 RETURN_DATA.u64 = tmp
 ```
 
-**BUFFER\_ATOMIC\_SUB\_U64**
+**BUFFER_ATOMIC_SUB_U64**
 
 68
 
@@ -27339,7 +27335,7 @@ MEM[ADDR].u64 -= DATA.u64;
 RETURN_DATA.u64 = tmp
 ```
 
-**BUFFER\_ATOMIC\_MIN\_I64**
+**BUFFER_ATOMIC_MIN_I64**
 
 69
 
@@ -27352,7 +27348,7 @@ MEM[ADDR].i64 = src < tmp ? src : tmp;
 RETURN_DATA.i64 = tmp
 ```
 
-**BUFFER\_ATOMIC\_MIN\_U64**
+**BUFFER_ATOMIC_MIN_U64**
 
 70
 
@@ -27365,7 +27361,7 @@ MEM[ADDR].u64 = src < tmp ? src : tmp;
 RETURN_DATA.u64 = tmp
 ```
 
-**BUFFER\_ATOMIC\_MAX\_I64**
+**BUFFER_ATOMIC_MAX_I64**
 
 71
 
@@ -27378,7 +27374,7 @@ MEM[ADDR].i64 = src >= tmp ? src : tmp;
 RETURN_DATA.i64 = tmp
 ```
 
-**BUFFER\_ATOMIC\_MAX\_U64**
+**BUFFER_ATOMIC_MAX_U64**
 
 72
 
@@ -27394,7 +27390,7 @@ MEM[ADDR].u64 = src >= tmp ? src : tmp;
 RETURN_DATA.u64 = tmp
 ```
 
-### BUFFER\_ATOMIC\_AND\_B64
+### BUFFER_ATOMIC_AND_B64
 
 73
 
@@ -27406,7 +27402,7 @@ MEM[ADDR].b64 = (tmp & DATA.b64);
 RETURN_DATA.b64 = tmp
 ```
 
-### BUFFER\_ATOMIC\_OR\_B64
+### BUFFER_ATOMIC_OR_B64
 
 74
 
@@ -27418,7 +27414,7 @@ MEM[ADDR].b64 = (tmp | DATA.b64);
 RETURN_DATA.b64 = tmp
 ```
 
-### BUFFER\_ATOMIC\_XOR\_B64
+### BUFFER_ATOMIC_XOR_B64
 
 75
 
@@ -27430,7 +27426,7 @@ MEM[ADDR].b64 = (tmp ^ DATA.b64);
 RETURN_DATA.b64 = tmp
 ```
 
-### BUFFER\_ATOMIC\_INC\_U64
+### BUFFER_ATOMIC_INC_U64
 
 76
 
@@ -27443,7 +27439,7 @@ MEM[ADDR].u64 = tmp >= src ? 0ULL : tmp + 1ULL;
 RETURN_DATA.u64 = tmp
 ```
 
-**BUFFER\_ATOMIC\_DEC\_U64**
+**BUFFER_ATOMIC_DEC_U64**
 
 77
 
@@ -27456,7 +27452,7 @@ MEM[ADDR].u64 = ((tmp == 0ULL) || (tmp > src)) ? src : tmp - 1ULL;
 RETURN_DATA.u64 = tmp
 ```
 
-**BUFFER\_ATOMIC\_CMPSWAP\_F32**
+**BUFFER_ATOMIC_CMPSWAP_F32**
 
 80
 
@@ -27474,7 +27470,7 @@ RETURN_DATA.f32 = tmp
 
 Floating-point compare handles NAN/INF/denorm.
 
-**BUFFER\_ATOMIC\_MIN\_F32**
+**BUFFER_ATOMIC_MIN_F32**
 
 81
 
@@ -27491,7 +27487,7 @@ RETURN_DATA.f32 = tmp
 
 Floating-point compare handles NAN/INF/denorm.
 
-**BUFFER\_ATOMIC\_MAX\_F32**
+**BUFFER_ATOMIC_MAX_F32**
 
 82
 
@@ -27508,7 +27504,7 @@ RETURN_DATA.f32 = tmp
 
 Floating-point compare handles NAN/INF/denorm.
 
-**BUFFER\_ATOMIC\_ADD\_F32**
+**BUFFER_ATOMIC_ADD_F32**
 
 86
 
@@ -27535,7 +27531,7 @@ The bitfield map of the MTBUF format is:
 | MTBUF | 31 | 1       | 1   | 1   | 0   | 1     | 0     | FORMAT | OP | GLC   | DLC | SLC | OFFSET | 0 |
 |       | 63 | SOFFSET | IDX | OFF | TFE | SRSRC | VDATA |        |    | VADDR | 32  |     |        |   |
 
-### TBUFFER\_LOAD\_FORMAT\_X
+### TBUFFER_LOAD_FORMAT_X
 
 0
 
@@ -27546,7 +27542,7 @@ VDATA[31 : 0].b32 = ConvertFromFormat(MEM[TADDR.X]);
 // Mem access size depends on format
 ```
 
-### TBUFFER\_LOAD\_FORMAT\_XY
+### TBUFFER_LOAD_FORMAT_XY
 
 1
 
@@ -27558,7 +27554,7 @@ VDATA[31 : 0].b32 = ConvertFromFormat(MEM[TADDR.X]);
 VDATA[63 : 32].b32 = ConvertFromFormat(MEM[TADDR.Y])
 ```
 
-### TBUFFER\_LOAD\_FORMAT\_XYZ
+### TBUFFER_LOAD_FORMAT_XYZ
 
 2
 
@@ -27571,7 +27567,7 @@ VDATA[63 : 32].b32 = ConvertFromFormat(MEM[TADDR.Y]);
 VDATA[95 : 64].b32 = ConvertFromFormat(MEM[TADDR.Z])
 ```
 
-### TBUFFER\_LOAD\_FORMAT\_XYZW
+### TBUFFER_LOAD_FORMAT_XYZW
 
 3
 
@@ -27585,7 +27581,7 @@ VDATA[95 : 64].b32 = ConvertFromFormat(MEM[TADDR.Z]);
 VDATA[127 : 96].b32 = ConvertFromFormat(MEM[TADDR.W])
 ```
 
-#### TBUFFER\_STORE\_FORMAT\_X
+#### TBUFFER_STORE_FORMAT_X
 
 4
 
@@ -27596,7 +27592,7 @@ MEM[TADDR.X] = ConvertToFormat(VDATA[31 : 0].b32);
 // Mem access size depends on format
 ```
 
-#### TBUFFER\_STORE\_FORMAT\_XY
+#### TBUFFER_STORE_FORMAT_XY
 
 5
 
@@ -27608,7 +27604,7 @@ MEM[TADDR.X] = ConvertToFormat(VDATA[31 : 0].b32);
 MEM[TADDR.Y] = ConvertToFormat(VDATA[63 : 32].b32)
 ```
 
-#### TBUFFER\_STORE\_FORMAT\_XYZ
+#### TBUFFER_STORE_FORMAT_XYZ
 
 6
 
@@ -27621,7 +27617,7 @@ MEM[TADDR.Y] = ConvertToFormat(VDATA[63 : 32].b32);
 MEM[TADDR.Z] = ConvertToFormat(VDATA[95 : 64].b32)
 ```
 
-#### TBUFFER\_STORE\_FORMAT\_XYZW
+#### TBUFFER_STORE_FORMAT_XYZW
 
 7
 
@@ -27637,7 +27633,7 @@ MEM[TADDR.Z] = ConvertToFormat(VDATA[95 : 64].b32);
 MEM[TADDR.W] = ConvertToFormat(VDATA[127 : 96].b32)
 ```
 
-#### TBUFFER\_LOAD\_D16\_FORMAT\_X
+#### TBUFFER_LOAD_D16_FORMAT_X
 
 8
 
@@ -27649,7 +27645,7 @@ VDATA[15 : 0].b16 = 16'B(ConvertFromFormat(MEM[TADDR.X]));
 // VDATA[31:16].b16 is preserved.
 ```
 
-#### TBUFFER\_LOAD\_D16\_FORMAT\_XY
+#### TBUFFER_LOAD_D16_FORMAT_XY
 
 9
 
@@ -27661,7 +27657,7 @@ VDATA[15 : 0].b16 = 16'B(ConvertFromFormat(MEM[TADDR.X]));
 VDATA[31 : 16].b16 = 16'B(ConvertFromFormat(MEM[TADDR.Y]))
 ```
 
-#### TBUFFER\_LOAD\_D16\_FORMAT\_XYZ
+#### TBUFFER_LOAD_D16_FORMAT_XYZ
 
 10
 
@@ -27675,7 +27671,7 @@ VDATA[47 : 32].b16 = 16'B(ConvertFromFormat(MEM[TADDR.Z]));
 // VDATA[63:48].b16 is preserved.
 ```
 
-**TBUFFER\_LOAD\_D16\_FORMAT\_XYZW**
+**TBUFFER_LOAD_D16_FORMAT_XYZW**
 
 11
 
@@ -27689,7 +27685,7 @@ VDATA[47 : 32].b16 = 16'B(ConvertFromFormat(MEM[TADDR.Z]));
 VDATA[63 : 48].b16 = 16'B(ConvertFromFormat(MEM[TADDR.W]))
 ```
 
-**TBUFFER\_STORE\_D16\_FORMAT\_X**
+**TBUFFER_STORE_D16_FORMAT_X**
 
 12
 
@@ -27700,7 +27696,7 @@ MEM[TADDR.X] = ConvertToFormat(32'B(VDATA[15 : 0].b16));
 // Mem access size depends on format
 ```
 
-**TBUFFER\_STORE\_D16\_FORMAT\_XY**
+**TBUFFER_STORE_D16_FORMAT_XY**
 
 13
 
@@ -27712,7 +27708,7 @@ MEM[TADDR.X] = ConvertToFormat(32'B(VDATA[15 : 0].b16));
 MEM[TADDR.Y] = ConvertToFormat(32'B(VDATA[31 : 16].b16))
 ```
 
-**TBUFFER\_STORE\_D16\_FORMAT\_XYZ**
+**TBUFFER_STORE_D16_FORMAT_XYZ**
 
 14
 
@@ -27725,7 +27721,7 @@ MEM[TADDR.Y] = ConvertToFormat(32'B(VDATA[31 : 16].b16));
 MEM[TADDR.Z] = ConvertToFormat(32'B(VDATA[47 : 32].b16))
 ```
 
-**TBUFFER\_STORE\_D16\_FORMAT\_XYZW**
+**TBUFFER_STORE_D16_FORMAT_XYZW**
 
 15
 
@@ -27767,37 +27763,37 @@ The diagram shows the bitfield layout of the MIMG instruction format. The fields
 
 Bitfield map of the MIMG format showing fields from bit 31 to bit 0.
 
-### IMAGE\_LOAD
+### IMAGE_LOAD
 
 0
 
 Load a texel from the largest mipmap level in an image surface and store the result into a vector register. Perform the format conversion specified by the resource descriptor. No sampling is performed.
 
-### IMAGE\_LOAD\_MIP
+### IMAGE_LOAD_MIP
 
 1
 
 Load a texel from a user-specified mipmap level in an image surface and store the result into a vector register. Perform the format conversion specified by the resource descriptor. No sampling is performed.
 
-### IMAGE\_LOAD\_PCK
+### IMAGE_LOAD_PCK
 
 2
 
 Load a texel from the largest mipmap level in an image surface and store the result into a vector register. 8- and 16-bit components are zero-extended. The format specified in the resource descriptor is ignored. No sampling is performed.
 
-### IMAGE\_LOAD\_PCK\_SGN
+### IMAGE_LOAD_PCK_SGN
 
 3
 
 Load a texel from the largest mipmap level in an image surface and store the result into a vector register. 8- and 16-bit components are sign-extended. The format specified in the resource descriptor is ignored. No sampling is performed.
 
-### IMAGE\_LOAD\_MIP\_PCK
+### IMAGE_LOAD_MIP_PCK
 
 4
 
 Load a texel from a user-specified mipmap level in an image surface and store the result into a vector register. 8- and 16-bit components are zero-extended. The format specified in the resource descriptor is ignored. No sampling is performed.
 
-### IMAGE\_LOAD\_MIP\_PCK\_SGN
+### IMAGE_LOAD_MIP_PCK_SGN
 
 5
 
@@ -27807,7 +27803,7 @@ sampling is performed.
 
 ---
 
-## IMAGE\_STORE
+## IMAGE_STORE
 
 **6**
 
@@ -27815,7 +27811,7 @@ Store a texel from a vector register to the largest mipmap level in an image sur
 
 ---
 
-## IMAGE\_STORE\_MIP
+## IMAGE_STORE_MIP
 
 **7**
 
@@ -27823,7 +27819,7 @@ Store a texel from a vector register to a user-specified mipmap level in an imag
 
 ---
 
-## IMAGE\_STORE\_PCK
+## IMAGE_STORE_PCK
 
 **8**
 
@@ -27831,7 +27827,7 @@ Store a texel from a vector register to the largest mipmap level in an image sur
 
 ---
 
-## IMAGE\_STORE\_MIP\_PCK
+## IMAGE_STORE_MIP_PCK
 
 **9**
 
@@ -27839,7 +27835,7 @@ Store a texel from a vector register to a user-specified mipmap level in an imag
 
 ---
 
-## IMAGE\_ATOMIC\_SWAP
+## IMAGE_ATOMIC_SWAP
 
 **10**
 
@@ -27853,7 +27849,7 @@ RETURN_DATA.b32 = tmp
 
 ---
 
-## IMAGE\_ATOMIC\_CMPSWAP
+## IMAGE_ATOMIC_CMPSWAP
 
 **11**
 
@@ -27870,7 +27866,7 @@ MEM[ADDR].u32 = tmp == cmp ? src : tmp;
 RETURN_DATA.u32 = tmp
 ```
 
-## IMAGE\_ATOMIC\_ADD
+## IMAGE_ATOMIC_ADD
 
 12
 
@@ -27882,7 +27878,7 @@ MEM[ADDR].u32 += DATA.u32;
 RETURN_DATA.u32 = tmp
 ```
 
-## IMAGE\_ATOMIC\_SUB
+## IMAGE_ATOMIC_SUB
 
 13
 
@@ -27894,7 +27890,7 @@ MEM[ADDR].u32 -= DATA.u32;
 RETURN_DATA.u32 = tmp
 ```
 
-## IMAGE\_ATOMIC\_SMIN
+## IMAGE_ATOMIC_SMIN
 
 14
 
@@ -27907,7 +27903,7 @@ MEM[ADDR].i32 = src < tmp ? src : tmp;
 RETURN_DATA.i32 = tmp
 ```
 
-## IMAGE\_ATOMIC\_UMIN
+## IMAGE_ATOMIC_UMIN
 
 15
 
@@ -27923,7 +27919,7 @@ MEM[ADDR].u32 = src < tmp ? src : tmp;
 RETURN_DATA.u32 = tmp
 ```
 
-## IMAGE\_ATOMIC\_SMAX
+## IMAGE_ATOMIC_SMAX
 
 16
 
@@ -27936,7 +27932,7 @@ MEM[ADDR].i32 = src >= tmp ? src : tmp;
 RETURN_DATA.i32 = tmp
 ```
 
-## IMAGE\_ATOMIC\_UMAX
+## IMAGE_ATOMIC_UMAX
 
 17
 
@@ -27949,7 +27945,7 @@ MEM[ADDR].u32 = src >= tmp ? src : tmp;
 RETURN_DATA.u32 = tmp
 ```
 
-## IMAGE\_ATOMIC\_AND
+## IMAGE_ATOMIC_AND
 
 18
 
@@ -27961,7 +27957,7 @@ MEM[ADDR].b32 = (tmp & DATA.b32);
 RETURN_DATA.b32 = tmp
 ```
 
-## IMAGE\_ATOMIC\_OR
+## IMAGE_ATOMIC_OR
 
 19
 
@@ -27973,7 +27969,7 @@ MEM[ADDR].b32 = (tmp | DATA.b32);
 RETURN_DATA.b32 = tmp
 ```
 
-**IMAGE\_ATOMIC\_XOR**
+**IMAGE_ATOMIC_XOR**
 
 20
 
@@ -27985,7 +27981,7 @@ MEM[ADDR].b32 = (tmp ^ DATA.b32);
 RETURN_DATA.b32 = tmp
 ```
 
-**IMAGE\_ATOMIC\_INC**
+**IMAGE_ATOMIC_INC**
 
 21
 
@@ -27998,7 +27994,7 @@ MEM[ADDR].u32 = tmp >= src ? 0U : tmp + 1U;
 RETURN_DATA.u32 = tmp
 ```
 
-**IMAGE\_ATOMIC\_DEC**
+**IMAGE_ATOMIC_DEC**
 
 22
 
@@ -28011,19 +28007,19 @@ MEM[ADDR].u32 = ((tmp == 0U) || (tmp > src)) ? src : tmp - 1U;
 RETURN_DATA.u32 = tmp
 ```
 
-**IMAGE\_GET\_RESINFO**
+**IMAGE_GET_RESINFO**
 
 23
 
-Gather resource information for a given mipmap level provided in the address register. Returns 4 integer values into registers 3:0 as { num\_mip\_levels, depth, height, width }. No memory access is performed.
+Gather resource information for a given mipmap level provided in the address register. Returns 4 integer values into registers 3:0 as { num_mip_levels, depth, height, width }. No memory access is performed.
 
-**IMAGE\_MSAA\_LOAD**
+**IMAGE_MSAA_LOAD**
 
 24
 
 Load up to 4 samples of 1 component from an MSAA resource with a user-specified fragment ID. No sampling is performed.
 
-**IMAGE\_BVH\_INTERSECT Ray**
+**IMAGE_BVH_INTERSECT Ray**
 
 25
 
@@ -28044,25 +28040,25 @@ The address GPR packing varies based on addressing mode (A16) and NSA mode.
 11 address VGPRs contain the ray data and BVH node pointer for the intersection test. The data is laid out as follows (dependent on NSA mode):
 
 - **NSA=0 NSA=1 Value**
-  - VADDR[0] VADDR[0] = node\_pointer (uint32)
-  - VADDR[1] VADDR[0] = ray\_extent (float32)
-  - VADDR[2] VADDRB[0] = ray\_origin.x (float32)
-  - VADDR[3] VADDRB[1] = ray\_origin.y (float32)
-  - VADDR[4] VADDRB[2] = ray\_origin.z (float32)
-  - VADDR[5] VADDRC[0] = ray\_dir.x (float32)
-  - VADDR[6] VADDRC[1] = ray\_dir.y (float32)
-  - VADDR[7] VADDRC[2] = ray\_dir.z (float32)
-  - VADDR[8] VADDRD[0] = ray\_inv\_dir.x (float32)
-  - VADDR[9] VADDRD[1] = ray\_inv\_dir.y (float32)
-  - VADDR[10] VADDRD[2] = ray\_inv\_dir.z (float32)
+  - VADDR[0] VADDR[0] = node_pointer (uint32)
+  - VADDR[1] VADDR[0] = ray_extent (float32)
+  - VADDR[2] VADDRB[0] = ray_origin.x (float32)
+  - VADDR[3] VADDRB[1] = ray_origin.y (float32)
+  - VADDR[4] VADDRB[2] = ray_origin.z (float32)
+  - VADDR[5] VADDRC[0] = ray_dir.x (float32)
+  - VADDR[6] VADDRC[1] = ray_dir.y (float32)
+  - VADDR[7] VADDRC[2] = ray_dir.z (float32)
+  - VADDR[8] VADDRD[0] = ray_inv_dir.x (float32)
+  - VADDR[9] VADDRD[1] = ray_inv_dir.y (float32)
+  - VADDR[10] VADDRD[2] = ray_inv_dir.z (float32)
 
 **ADDR (A16 = 1):**
 
-For performance and power optimization, the instruction can be encoded to use 16 bit floats for ray\_dir and ray\_inv\_dir by setting A16 to 1. When the instruction is encoded with 16 bit addresses only 8 address VGPRs are used as follows (dependent on NSA mode):
+For performance and power optimization, the instruction can be encoded to use 16 bit floats for ray_dir and ray_inv_dir by setting A16 to 1. When the instruction is encoded with 16 bit addresses only 8 address VGPRs are used as follows (dependent on NSA mode):
 
 - **NSA=0 NSA=1 Value**
-  - VADDR[0] VADDR[0] = node\_pointer (uint32)
-  - VADDR[1] VADDR[0] = ray\_extent (float32)
+  - VADDR[0] VADDR[0] = node_pointer (uint32)
+  - VADDR[1] VADDR[0] = ray_extent (float32)
 
 ```
 
@@ -28101,7 +28097,7 @@ The HW also has some additional restrictions on the BVH instructions when they a
 
 This instruction optimizes ray tracing by efficiently determining which parts of a scene a ray intersects with.
 
-## IMAGE\_BVH64\_INTERSECT Ray
+## IMAGE_BVH64_INTERSECT Ray
 
 26
 
@@ -28156,7 +28152,7 @@ This instruction optimizes ray tracing by efficiently determining which parts of
 
 ---
 
-#### IMAGE\_SAMPLE
+#### IMAGE_SAMPLE
 
 27
 
@@ -28164,55 +28160,55 @@ Sample texels from an image surface using texel coordinates provided by the addr
 
 ---
 
-#### IMAGE\_SAMPLE\_D
+#### IMAGE_SAMPLE_D
 
 28
 
 Sample texels from an image surface using texel coordinates provided by the address input registers and store the result into vector registers. Additional data for user derivatives are provided by the address registers.
 
-**IMAGE\_SAMPLE\_L****29**
+**IMAGE_SAMPLE_L****29**
 
 Sample texels from an image surface using texel coordinates provided by the address input registers and store the result into vector registers. Additional data for LOD are provided by the address registers.
 
 ---
 
-**IMAGE\_SAMPLE\_B****30**
+**IMAGE_SAMPLE_B****30**
 
 Sample texels from an image surface using texel coordinates provided by the address input registers and store the result into vector registers. Additional data for LOD bias are provided by the address registers.
 
 ---
 
-**IMAGE\_SAMPLE\_LZ****31**
+**IMAGE_SAMPLE_LZ****31**
 
 Sample texels from an image surface using texel coordinates provided by the address input registers and store the result into vector registers. Additional data for are provided by the address registers. Mipmap level is set to zero.
 
 ---
 
-**IMAGE\_SAMPLE\_C****32**
+**IMAGE_SAMPLE_C****32**
 
 Sample texels from an image surface using texel coordinates provided by the address input registers and store the result into vector registers. Additional data for PCF are provided by the address registers.
 
 ---
 
-**IMAGE\_SAMPLE\_C\_D****33**
+**IMAGE_SAMPLE_C_D****33**
 
 Sample texels from an image surface using texel coordinates provided by the address input registers and store the result into vector registers. Additional data for PCF, user derivatives are provided by the address registers.
 
 ---
 
-**IMAGE\_SAMPLE\_C\_L****34**
+**IMAGE_SAMPLE_C_L****34**
 
 Sample texels from an image surface using texel coordinates provided by the address input registers and store the result into vector registers. Additional data for PCF, LOD are provided by the address registers.
 
 ---
 
-**IMAGE\_SAMPLE\_C\_B****35**
+**IMAGE_SAMPLE_C_B****35**
 
 Sample texels from an image surface using texel coordinates provided by the address input registers and store the result into vector registers. Additional data for PCF, LOD bias are provided by the address registers.
 
 ---
 
-**IMAGE\_SAMPLE\_C\_LZ****36**
+**IMAGE_SAMPLE_C_LZ****36**
 
 Sample texels from an image surface using texel coordinates provided by the address input registers and store
 
@@ -28220,43 +28216,43 @@ the result into vector registers. Additional data for PCF are provided by the ad
 
 ---
 
-**IMAGE\_SAMPLE\_O****37**
+**IMAGE_SAMPLE_O****37**
 
 Sample texels from an image surface using texel coordinates provided by the address input registers and store the result into vector registers. Additional data for user offsets are provided by the address registers.
 
 ---
 
-**IMAGE\_SAMPLE\_D\_O****38**
+**IMAGE_SAMPLE_D_O****38**
 
 Sample texels from an image surface using texel coordinates provided by the address input registers and store the result into vector registers. Additional data for user derivatives, user offsets are provided by the address registers.
 
 ---
 
-**IMAGE\_SAMPLE\_L\_O****39**
+**IMAGE_SAMPLE_L_O****39**
 
 Sample texels from an image surface using texel coordinates provided by the address input registers and store the result into vector registers. Additional data for LOD, user offsets are provided by the address registers.
 
 ---
 
-**IMAGE\_SAMPLE\_B\_O****40**
+**IMAGE_SAMPLE_B_O****40**
 
 Sample texels from an image surface using texel coordinates provided by the address input registers and store the result into vector registers. Additional data for LOD bias, user offsets are provided by the address registers.
 
 ---
 
-**IMAGE\_SAMPLE\_LZ\_O****41**
+**IMAGE_SAMPLE_LZ_O****41**
 
 Sample texels from an image surface using texel coordinates provided by the address input registers and store the result into vector registers. Additional data for user offsets are provided by the address registers. Mipmap level is set to zero.
 
 ---
 
-**IMAGE\_SAMPLE\_C\_O****42**
+**IMAGE_SAMPLE_C_O****42**
 
 Sample texels from an image surface using texel coordinates provided by the address input registers and store the result into vector registers. Additional data for PCF, user offsets are provided by the address registers.
 
 ---
 
-**IMAGE\_SAMPLE\_C\_D\_O****43**
+**IMAGE_SAMPLE_C_D_O****43**
 
 Sample texels from an image surface using texel coordinates provided by the address input registers and store the result into vector registers. Additional data for PCF, user derivatives, user offsets are provided by the
 
@@ -28264,43 +28260,43 @@ address registers.
 
 ---
 
-**IMAGE\_SAMPLE\_C\_L\_O****44**
+**IMAGE_SAMPLE_C_L_O****44**
 
 Sample texels from an image surface using texel coordinates provided by the address input registers and store the result into vector registers. Additional data for PCF, LOD, user offsets are provided by the address registers.
 
 ---
 
-**IMAGE\_SAMPLE\_C\_B\_O****45**
+**IMAGE_SAMPLE_C_B_O****45**
 
 Sample texels from an image surface using texel coordinates provided by the address input registers and store the result into vector registers. Additional data for PCF, LOD bias, user offsets are provided by the address registers.
 
 ---
 
-**IMAGE\_SAMPLE\_C\_LZ\_O****46**
+**IMAGE_SAMPLE_C_LZ_O****46**
 
 Sample texels from an image surface using texel coordinates provided by the address input registers and store the result into vector registers. Additional data for PCF, user offsets are provided by the address registers. Mipmap level is set to zero.
 
 ---
 
-**IMAGE\_GATHER4****47**
+**IMAGE_GATHER4****47**
 
 Gather 4 single-component texels from a 2x2 matrix on an image surface. Store the result into vector registers. The DMASK selects which channel to read from (R, G, B, A) and must only have one bit set to 1.
 
 ---
 
-**IMAGE\_GATHER4\_L****48**
+**IMAGE_GATHER4_L****48**
 
 Gather 4 single-component texels from a 2x2 matrix on an image surface. Store the result into vector registers. The DMASK selects which channel to read from (R, G, B, A) and must only have one bit set to 1. Additional data for LOD are provided by the address registers.
 
 ---
 
-**IMAGE\_GATHER4\_B****49**
+**IMAGE_GATHER4_B****49**
 
 Gather 4 single-component texels from a 2x2 matrix on an image surface. Store the result into vector registers. The DMASK selects which channel to read from (R, G, B, A) and must only have one bit set to 1. Additional data for LOD bias are provided by the address registers.
 
 ---
 
-**IMAGE\_GATHER4\_LZ****50**
+**IMAGE_GATHER4_LZ****50**
 
 Gather 4 single-component texels from a 2x2 matrix on an image surface. Store the result into vector registers.
 
@@ -28308,7 +28304,7 @@ The DMASK selects which channel to read from (R, G, B, A) and must only have one
 
 ---
 
-#### IMAGE\_GATHER4\_C
+#### IMAGE_GATHER4_C
 
 51
 
@@ -28316,7 +28312,7 @@ Gather 4 single-component texels from a 2x2 matrix on an image surface. Store th
 
 ---
 
-#### IMAGE\_GATHER4\_C\_LZ
+#### IMAGE_GATHER4_C_LZ
 
 52
 
@@ -28324,7 +28320,7 @@ Gather 4 single-component texels from a 2x2 matrix on an image surface. Store th
 
 ---
 
-#### IMAGE\_GATHER4\_O
+#### IMAGE_GATHER4_O
 
 53
 
@@ -28332,7 +28328,7 @@ Gather 4 single-component texels from a 2x2 matrix on an image surface. Store th
 
 ---
 
-#### IMAGE\_GATHER4\_LZ\_O
+#### IMAGE_GATHER4_LZ_O
 
 54
 
@@ -28340,7 +28336,7 @@ Gather 4 single-component texels from a 2x2 matrix on an image surface. Store th
 
 ---
 
-#### IMAGE\_GATHER4\_C\_LZ\_O
+#### IMAGE_GATHER4_C_LZ_O
 
 55
 
@@ -28348,7 +28344,7 @@ Gather 4 single-component texels from a 2x2 matrix on an image surface. Store th
 
 ---
 
-#### IMAGE\_GET\_LOD
+#### IMAGE_GET_LOD
 
 56
 
@@ -28362,31 +28358,31 @@ VDATA[0] = clampedLOD;
 VDATA[1] = rawLOD.
 ```
 
-**IMAGE\_SAMPLE\_D\_G16****57**
+**IMAGE_SAMPLE_D_G16****57**
 
 Sample texels from an image surface using texel coordinates provided by the address input registers and store the result into vector registers. Additional data for 16-bit derivatives are provided by the address registers.
 
-**IMAGE\_SAMPLE\_C\_D\_G16****58**
+**IMAGE_SAMPLE_C_D_G16****58**
 
 Sample texels from an image surface using texel coordinates provided by the address input registers and store the result into vector registers. Additional data for PCF, 16-bit derivatives are provided by the address registers.
 
-**IMAGE\_SAMPLE\_D\_O\_G16****59**
+**IMAGE_SAMPLE_D_O_G16****59**
 
 Sample texels from an image surface using texel coordinates provided by the address input registers and store the result into vector registers. Additional data for user offsets, 16-bit derivatives are provided by the address registers.
 
-**IMAGE\_SAMPLE\_C\_D\_O\_G16****60**
+**IMAGE_SAMPLE_C_D_O_G16****60**
 
 Sample texels from an image surface using texel coordinates provided by the address input registers and store the result into vector registers. Additional data for PCF, user offsets, 16-bit derivatives are provided by the address registers.
 
-**IMAGE\_SAMPLE\_CL****64**
+**IMAGE_SAMPLE_CL****64**
 
 Sample texels from an image surface using texel coordinates provided by the address input registers and store the result into vector registers. Additional data for LOD clamp are provided by the address registers.
 
-**IMAGE\_SAMPLE\_D\_CL****65**
+**IMAGE_SAMPLE_D_CL****65**
 
 Sample texels from an image surface using texel coordinates provided by the address input registers and store the result into vector registers. Additional data for user derivatives, LOD clamp are provided by the address registers.
 
-**IMAGE\_SAMPLE\_B\_CL****66**
+**IMAGE_SAMPLE_B_CL****66**
 
 Sample texels from an image surface using texel coordinates provided by the address input registers and store
 
@@ -28394,121 +28390,121 @@ the result into vector registers. Additional data for LOD bias, LOD clamp are pr
 
 ---
 
-**IMAGE\_SAMPLE\_C\_CL****67**
+**IMAGE_SAMPLE_C_CL****67**
 
 Sample texels from an image surface using texel coordinates provided by the address input registers and store the result into vector registers. Additional data for PCF, LOD clamp are provided by the address registers.
 
 ---
 
-**IMAGE\_SAMPLE\_C\_D\_CL****68**
+**IMAGE_SAMPLE_C_D_CL****68**
 
 Sample texels from an image surface using texel coordinates provided by the address input registers and store the result into vector registers. Additional data for PCF, user derivatives, LOD clamp are provided by the address registers.
 
 ---
 
-**IMAGE\_SAMPLE\_C\_B\_CL****69**
+**IMAGE_SAMPLE_C_B_CL****69**
 
 Sample texels from an image surface using texel coordinates provided by the address input registers and store the result into vector registers. Additional data for PCF, LOD bias, LOD clamp are provided by the address registers.
 
 ---
 
-**IMAGE\_SAMPLE\_CL\_O****70**
+**IMAGE_SAMPLE_CL_O****70**
 
 Sample texels from an image surface using texel coordinates provided by the address input registers and store the result into vector registers. Additional data for LOD clamp, user offsets are provided by the address registers.
 
 ---
 
-**IMAGE\_SAMPLE\_D\_CL\_O****71**
+**IMAGE_SAMPLE_D_CL_O****71**
 
 Sample texels from an image surface using texel coordinates provided by the address input registers and store the result into vector registers. Additional data for user derivatives, LOD clamp, user offsets are provided by the address registers.
 
 ---
 
-**IMAGE\_SAMPLE\_B\_CL\_O****72**
+**IMAGE_SAMPLE_B_CL_O****72**
 
 Sample texels from an image surface using texel coordinates provided by the address input registers and store the result into vector registers. Additional data for LOD bias, LOD clamp, user offsets are provided by the address registers.
 
 ---
 
-**IMAGE\_SAMPLE\_C\_CL\_O****73**
+**IMAGE_SAMPLE_C_CL_O****73**
 
 Sample texels from an image surface using texel coordinates provided by the address input registers and store the result into vector registers. Additional data for PCF, LOD clamp, user offsets are provided by the address registers.
 
 ---
 
-**IMAGE\_SAMPLE\_C\_D\_CL\_O****74**
+**IMAGE_SAMPLE_C_D_CL_O****74**
 
 Sample texels from an image surface using texel coordinates provided by the address input registers and store the result into vector registers. Additional data for PCF, user derivatives, LOD clamp, user offsets are provided by the address registers.
 
 ---
 
-**IMAGE\_SAMPLE\_C\_B\_CL\_O****75**
+**IMAGE_SAMPLE_C_B_CL_O****75**
 
 Sample texels from an image surface using texel coordinates provided by the address input registers and store the result into vector registers. Additional data for PCF, LOD bias, LOD clamp, user offsets are provided by the address registers.
 
 ---
 
-**IMAGE\_SAMPLE\_C\_D\_CL\_G16****84**
+**IMAGE_SAMPLE_C_D_CL_G16****84**
 
 Sample texels from an image surface using texel coordinates provided by the address input registers and store the result into vector registers. Additional data for PCF, LOD clamp, 16-bit derivatives are provided by the address registers.
 
 ---
 
-**IMAGE\_SAMPLE\_D\_CL\_O\_G16****85**
+**IMAGE_SAMPLE_D_CL_O_G16****85**
 
 Sample texels from an image surface using texel coordinates provided by the address input registers and store the result into vector registers. Additional data for LOD clamp, user offsets, 16-bit derivatives are provided by the address registers.
 
 ---
 
-**IMAGE\_SAMPLE\_C\_D\_CL\_O\_G16****86**
+**IMAGE_SAMPLE_C_D_CL_O_G16****86**
 
 Sample texels from an image surface using texel coordinates provided by the address input registers and store the result into vector registers. Additional data for PCF, LOD clamp, user offsets, 16-bit derivatives are provided by the address registers.
 
 ---
 
-**IMAGE\_SAMPLE\_D\_CL\_G16****95**
+**IMAGE_SAMPLE_D_CL_G16****95**
 
 Sample texels from an image surface using texel coordinates provided by the address input registers and store the result into vector registers. Additional data for LOD clamp, 16-bit derivatives are provided by the address registers.
 
 ---
 
-**IMAGE\_GATHER4\_CL****96**
+**IMAGE_GATHER4_CL****96**
 
 Gather 4 single-component texels from a 2x2 matrix on an image surface. Store the result into vector registers. The DMASK selects which channel to read from (R, G, B, A) and must only have one bit set to 1. Additional data for LOD clamp are provided by the address registers.
 
 ---
 
-**IMAGE\_GATHER4\_B\_CL****97**
+**IMAGE_GATHER4_B_CL****97**
 
 Gather 4 single-component texels from a 2x2 matrix on an image surface. Store the result into vector registers. The DMASK selects which channel to read from (R, G, B, A) and must only have one bit set to 1. Additional data for LOD bias, LOD clamp are provided by the address registers.
 
 ---
 
-**IMAGE\_GATHER4\_C\_CL****98**
+**IMAGE_GATHER4_C_CL****98**
 
 Gather 4 single-component texels from a 2x2 matrix on an image surface. Store the result into vector registers. The DMASK selects which channel to read from (R, G, B, A) and must only have one bit set to 1. Additional data for PCF, LOD clamp are provided by the address registers.
 
 ---
 
-**IMAGE\_GATHER4\_C\_L****99**
+**IMAGE_GATHER4_C_L****99**
 
 Gather 4 single-component texels from a 2x2 matrix on an image surface. Store the result into vector registers. The DMASK selects which channel to read from (R, G, B, A) and must only have one bit set to 1. Additional data for PCF, LOD are provided by the address registers.
 
 ---
 
-**IMAGE\_GATHER4\_C\_B****100**
+**IMAGE_GATHER4_C_B****100**
 
 Gather 4 single-component texels from a 2x2 matrix on an image surface. Store the result into vector registers. The DMASK selects which channel to read from (R, G, B, A) and must only have one bit set to 1. Additional data for PCF, LOD bias are provided by the address registers.
 
 ---
 
-**IMAGE\_GATHER4\_C\_B\_CL****101**
+**IMAGE_GATHER4_C_B_CL****101**
 
 Gather 4 single-component texels from a 2x2 matrix on an image surface. Store the result into vector registers. The DMASK selects which channel to read from (R, G, B, A) and must only have one bit set to 1. Additional data for PCF, LOD bias, LOD clamp are provided by the address registers.
 
 ---
 
-**IMAGE\_GATHER4H****144**
+**IMAGE_GATHER4H****144**
 
 Gather 4 single-component texels from a 4x1 row vector on an image surface. Store the result into vector registers. The DMASK selects which channel to read from (R, G, B, A) and must only have one bit set to 1.
 
@@ -28546,7 +28542,7 @@ FLAT
 
 Flat instructions look at the per work-item address and determine for each work-item if the target memory address is in global, private or scratch memory.
 
-#### FLAT\_LOAD\_U8
+#### FLAT_LOAD_U8
 
 16
 
@@ -28556,7 +28552,7 @@ Load 8 bits of unsigned data from the flat aperture, zero extend to 32 bits and 
 VDATA.u32 = 32'U({ 24'0U, MEM[ADDR].u8 })
 ```
 
-#### FLAT\_LOAD\_I8
+#### FLAT_LOAD_I8
 
 17
 
@@ -28566,7 +28562,7 @@ Load 8 bits of signed data from the flat aperture, sign extend to 32 bits and st
 VDATA.i32 = 32'I(signext(MEM[ADDR].i8))
 ```
 
-#### FLAT\_LOAD\_U16
+#### FLAT_LOAD_U16
 
 18
 
@@ -28576,7 +28572,7 @@ Load 16 bits of unsigned data from the flat aperture, zero extend to 32 bits and
 VDATA.u32 = 32'U({ 16'0U, MEM[ADDR].u16 })
 ```
 
-#### FLAT\_LOAD\_I16
+#### FLAT_LOAD_I16
 
 19
 
@@ -28586,7 +28582,7 @@ Load 16 bits of signed data from the flat aperture, sign extend to 32 bits and s
 VDATA.i32 = 32'I(signext(MEM[ADDR].i16))
 ```
 
-**FLAT\_LOAD\_B32****20**
+**FLAT_LOAD_B32****20**
 
 Load 32 bits of data from the flat aperture into a vector register.
 
@@ -28594,7 +28590,7 @@ Load 32 bits of data from the flat aperture into a vector register.
 VDATA[31 : 0] = MEM[ADDR].b32
 ```
 
-**FLAT\_LOAD\_B64****21**
+**FLAT_LOAD_B64****21**
 
 Load 64 bits of data from the flat aperture into a vector register.
 
@@ -28603,7 +28599,7 @@ VDATA[31 : 0] = MEM[ADDR].b32;
 VDATA[63 : 32] = MEM[ADDR + 4U].b32
 ```
 
-**FLAT\_LOAD\_B96****22**
+**FLAT_LOAD_B96****22**
 
 Load 96 bits of data from the flat aperture into a vector register.
 
@@ -28613,7 +28609,7 @@ VDATA[63 : 32] = MEM[ADDR + 4U].b32;
 VDATA[95 : 64] = MEM[ADDR + 8U].b32
 ```
 
-**FLAT\_LOAD\_B128****23**
+**FLAT_LOAD_B128****23**
 
 Load 128 bits of data from the flat aperture into a vector register.
 
@@ -28624,7 +28620,7 @@ VDATA[95 : 64] = MEM[ADDR + 8U].b32;
 VDATA[127 : 96] = MEM[ADDR + 12U].b32
 ```
 
-**FLAT\_STORE\_B8****24**
+**FLAT_STORE_B8****24**
 
 Store 8 bits of data from a vector register into the flat aperture.
 
@@ -28632,7 +28628,7 @@ Store 8 bits of data from a vector register into the flat aperture.
 MEM[ADDR].b8 = VDATA[7 : 0]
 ```
 
-**FLAT\_STORE\_B16****25**
+**FLAT_STORE_B16****25**
 
 Store 16 bits of data from a vector register into the flat aperture.
 
@@ -28640,7 +28636,7 @@ Store 16 bits of data from a vector register into the flat aperture.
 MEM[ADDR].b16 = VDATA[15 : 0]
 ```
 
-**FLAT\_STORE\_B32****26**
+**FLAT_STORE_B32****26**
 
 Store 32 bits of data from vector input registers into the flat aperture.
 
@@ -28648,7 +28644,7 @@ Store 32 bits of data from vector input registers into the flat aperture.
 MEM[ADDR].b32 = VDATA[31 : 0]
 ```
 
-**FLAT\_STORE\_B64****27**
+**FLAT_STORE_B64****27**
 
 Store 64 bits of data from vector input registers into the flat aperture.
 
@@ -28657,7 +28653,7 @@ MEM[ADDR].b32 = VDATA[31 : 0];
 MEM[ADDR + 4U].b32 = VDATA[63 : 32]
 ```
 
-**FLAT\_STORE\_B96****28**
+**FLAT_STORE_B96****28**
 
 Store 96 bits of data from vector input registers into the flat aperture.
 
@@ -28667,7 +28663,7 @@ MEM[ADDR + 4U].b32 = VDATA[63 : 32];
 MEM[ADDR + 8U].b32 = VDATA[95 : 64]
 ```
 
-**FLAT\_STORE\_B128****29**
+**FLAT_STORE_B128****29**
 
 Store 128 bits of data from vector input registers into the flat aperture.
 
@@ -28681,7 +28677,7 @@ MEM[ADDR + 8U].b32 = VDATA[95 : 64];
 MEM[ADDR + 12U].b32 = VDATA[127 : 96]
 ```
 
-### FLAT\_LOAD\_D16\_U8
+### FLAT_LOAD_D16_U8
 
 30
 
@@ -28692,7 +28688,7 @@ VDATA[15 : 0].u16 = 16'U({ 8'0U, MEM[ADDR].u8 });
 // VDATA[31:16] is preserved.
 ```
 
-### FLAT\_LOAD\_D16\_I8
+### FLAT_LOAD_D16_I8
 
 31
 
@@ -28703,7 +28699,7 @@ VDATA[15 : 0].i16 = 16'I(signext(MEM[ADDR].i8));
 // VDATA[31:16] is preserved.
 ```
 
-### FLAT\_LOAD\_D16\_B16
+### FLAT_LOAD_D16_B16
 
 32
 
@@ -28714,7 +28710,7 @@ VDATA[15 : 0].b16 = MEM[ADDR].b16;
 // VDATA[31:16] is preserved.
 ```
 
-### FLAT\_LOAD\_D16\_HI\_U8
+### FLAT_LOAD_D16_HI_U8
 
 33
 
@@ -28725,7 +28721,7 @@ VDATA[31 : 16].u16 = 16'U({ 8'0U, MEM[ADDR].u8 });
 // VDATA[15:0] is preserved.
 ```
 
-### FLAT\_LOAD\_D16\_HI\_I8
+### FLAT_LOAD_D16_HI_I8
 
 34
 
@@ -28736,7 +28732,7 @@ VDATA[31 : 16].i16 = 16'I(signext(MEM[ADDR].i8));
 // VDATA[15:0] is preserved.
 ```
 
-#### **FLAT\_LOAD\_D16\_HI\_B16**
+#### **FLAT_LOAD_D16_HI_B16**
 
 **35**
 
@@ -28747,7 +28743,7 @@ VDATA[31 : 16].b16 = MEM[ADDR].b16;
 // VDATA[15:0] is preserved.
 ```
 
-#### **FLAT\_STORE\_D16\_HI\_B8**
+#### **FLAT_STORE_D16_HI_B8**
 
 **36**
 
@@ -28757,7 +28753,7 @@ Store 8 bits of data from the high 16 bits of a 32-bit vector register into the 
 MEM[ADDR].b8 = VDATA[23 : 16]
 ```
 
-#### **FLAT\_STORE\_D16\_HI\_B16**
+#### **FLAT_STORE_D16_HI_B16**
 
 **37**
 
@@ -28767,7 +28763,7 @@ Store 16 bits of data from the high 16 bits of a 32-bit vector register into the
 MEM[ADDR].b16 = VDATA[31 : 16]
 ```
 
-#### **FLAT\_ATOMIC\_SWAP\_B32**
+#### **FLAT_ATOMIC_SWAP_B32**
 
 **51**
 
@@ -28779,7 +28775,7 @@ MEM[ADDR].b32 = DATA.b32;
 RETURN_DATA.b32 = tmp
 ```
 
-#### **FLAT\_ATOMIC\_CMPSWAP\_B32**
+#### **FLAT_ATOMIC_CMPSWAP_B32**
 
 **52**
 
@@ -28793,7 +28789,7 @@ MEM[ADDR].u32 = tmp == cmp ? src : tmp;
 RETURN_DATA.u32 = tmp
 ```
 
-#### FLAT\_ATOMIC\_ADD\_U32
+#### FLAT_ATOMIC_ADD_U32
 
 53
 
@@ -28805,7 +28801,7 @@ MEM[ADDR].u32 += DATA.u32;
 RETURN_DATA.u32 = tmp
 ```
 
-#### FLAT\_ATOMIC\_SUB\_U32
+#### FLAT_ATOMIC_SUB_U32
 
 54
 
@@ -28817,7 +28813,7 @@ MEM[ADDR].u32 -= DATA.u32;
 RETURN_DATA.u32 = tmp
 ```
 
-#### FLAT\_ATOMIC\_MIN\_I32
+#### FLAT_ATOMIC_MIN_I32
 
 56
 
@@ -28830,7 +28826,7 @@ MEM[ADDR].i32 = src < tmp ? src : tmp;
 RETURN_DATA.i32 = tmp
 ```
 
-#### FLAT\_ATOMIC\_MIN\_U32
+#### FLAT_ATOMIC_MIN_U32
 
 57
 
@@ -28843,7 +28839,7 @@ MEM[ADDR].u32 = src < tmp ? src : tmp;
 RETURN_DATA.u32 = tmp
 ```
 
-#### FLAT\_ATOMIC\_MAX\_I32
+#### FLAT_ATOMIC_MAX_I32
 
 58
 
@@ -28856,7 +28852,7 @@ MEM[ADDR].i32 = src >= tmp ? src : tmp;
 RETURN_DATA.i32 = tmp
 ```
 
-#### FLAT\_ATOMIC\_MAX\_U32
+#### FLAT_ATOMIC_MAX_U32
 
 59
 
@@ -28869,7 +28865,7 @@ MEM[ADDR].u32 = src >= tmp ? src : tmp;
 RETURN_DATA.u32 = tmp
 ```
 
-#### FLAT\_ATOMIC\_AND\_B32
+#### FLAT_ATOMIC_AND_B32
 
 60
 
@@ -28881,7 +28877,7 @@ MEM[ADDR].b32 = (tmp & DATA.b32);
 RETURN_DATA.b32 = tmp
 ```
 
-**FLAT\_ATOMIC\_OR\_B32**
+**FLAT_ATOMIC_OR_B32**
 
 61
 
@@ -28893,7 +28889,7 @@ MEM[ADDR].b32 = (tmp | DATA.b32);
 RETURN_DATA.b32 = tmp
 ```
 
-**FLAT\_ATOMIC\_XOR\_B32**
+**FLAT_ATOMIC_XOR_B32**
 
 62
 
@@ -28905,7 +28901,7 @@ MEM[ADDR].b32 = (tmp ^ DATA.b32);
 RETURN_DATA.b32 = tmp
 ```
 
-**FLAT\_ATOMIC\_INC\_U32**
+**FLAT_ATOMIC_INC_U32**
 
 63
 
@@ -28918,7 +28914,7 @@ MEM[ADDR].u32 = tmp >= src ? 0U : tmp + 1U;
 RETURN_DATA.u32 = tmp
 ```
 
-**FLAT\_ATOMIC\_DEC\_U32**
+**FLAT_ATOMIC_DEC_U32**
 
 64
 
@@ -28931,7 +28927,7 @@ MEM[ADDR].u32 = ((tmp == 0U) || (tmp > src)) ? src : tmp - 1U;
 RETURN_DATA.u32 = tmp
 ```
 
-**FLAT\_ATOMIC\_SWAP\_B64**
+**FLAT_ATOMIC_SWAP_B64**
 
 65
 
@@ -28943,13 +28939,13 @@ MEM[ADDR].b64 = DATA.b64;
 RETURN_DATA.b64 = tmp
 ```
 
-**FLAT\_ATOMIC\_CMPSWAP\_B64**
+**FLAT_ATOMIC_CMPSWAP_B64**
 
 66
 
 Compare two unsigned 64-bit integer values stored in the data comparison register and a location in the flat aperture. Modify the memory location with a value in the data source register iff the comparison is equal. Store the original value from flat aperture into a vector register iff the GLC bit is set.
 
-NOTE: RETURN\_DATA[2:3] is not modified.
+NOTE: RETURN_DATA[2:3] is not modified.
 
 ```
 tmp = MEM[ADDR].u64;
@@ -28959,7 +28955,7 @@ MEM[ADDR].u64 = tmp == cmp ? src : tmp;
 RETURN_DATA.u64 = tmp
 ```
 
-**FLAT\_ATOMIC\_ADD\_U64**
+**FLAT_ATOMIC_ADD_U64**
 
 67
 
@@ -28971,7 +28967,7 @@ MEM[ADDR].u64 += DATA.u64;
 RETURN_DATA.u64 = tmp
 ```
 
-**FLAT\_ATOMIC\_SUB\_U64**
+**FLAT_ATOMIC_SUB_U64**
 
 68
 
@@ -28983,7 +28979,7 @@ MEM[ADDR].u64 -= DATA.u64;
 RETURN_DATA.u64 = tmp
 ```
 
-**FLAT\_ATOMIC\_MIN\_I64**
+**FLAT_ATOMIC_MIN_I64**
 
 69
 
@@ -28996,7 +28992,7 @@ MEM[ADDR].i64 = src < tmp ? src : tmp;
 RETURN_DATA.i64 = tmp
 ```
 
-**FLAT\_ATOMIC\_MIN\_U64**
+**FLAT_ATOMIC_MIN_U64**
 
 70
 
@@ -29009,7 +29005,7 @@ MEM[ADDR].u64 = src < tmp ? src : tmp;
 RETURN_DATA.u64 = tmp
 ```
 
-**FLAT\_ATOMIC\_MAX\_I64**
+**FLAT_ATOMIC_MAX_I64**
 
 71
 
@@ -29022,7 +29018,7 @@ MEM[ADDR].i64 = src >= tmp ? src : tmp;
 RETURN_DATA.i64 = tmp
 ```
 
-**FLAT\_ATOMIC\_MAX\_U64**
+**FLAT_ATOMIC_MAX_U64**
 
 72
 
@@ -29038,7 +29034,7 @@ MEM[ADDR].u64 = src >= tmp ? src : tmp;
 RETURN_DATA.u64 = tmp
 ```
 
-**FLAT\_ATOMIC\_AND\_B64****73**
+**FLAT_ATOMIC_AND_B64****73**
 
 Calculate bitwise AND given two unsigned 64-bit integer values stored in the data register and a location in the flat aperture. Store the original value from flat aperture into a vector register iff the GLC bit is set.
 
@@ -29048,7 +29044,7 @@ MEM[ADDR].b64 = (tmp & DATA.b64);
 RETURN_DATA.b64 = tmp
 ```
 
-**FLAT\_ATOMIC\_OR\_B64****74**
+**FLAT_ATOMIC_OR_B64****74**
 
 Calculate bitwise OR given two unsigned 64-bit integer values stored in the data register and a location in the flat aperture. Store the original value from flat aperture into a vector register iff the GLC bit is set.
 
@@ -29058,7 +29054,7 @@ MEM[ADDR].b64 = (tmp | DATA.b64);
 RETURN_DATA.b64 = tmp
 ```
 
-**FLAT\_ATOMIC\_XOR\_B64****75**
+**FLAT_ATOMIC_XOR_B64****75**
 
 Calculate bitwise XOR given two unsigned 64-bit integer values stored in the data register and a location in the flat aperture. Store the original value from flat aperture into a vector register iff the GLC bit is set.
 
@@ -29068,7 +29064,7 @@ MEM[ADDR].b64 = (tmp ^ DATA.b64);
 RETURN_DATA.b64 = tmp
 ```
 
-**FLAT\_ATOMIC\_INC\_U64****76**
+**FLAT_ATOMIC_INC_U64****76**
 
 Increment an unsigned 64-bit integer value from a location in the flat aperture with wraparound to 0 if the value exceeds a value in the data register. Store the original value from flat aperture into a vector register iff the GLC bit is set.
 
@@ -29079,7 +29075,7 @@ MEM[ADDR].u64 = tmp >= src ? 0ULL : tmp + 1ULL;
 RETURN_DATA.u64 = tmp
 ```
 
-**FLAT\_ATOMIC\_DEC\_U64**
+**FLAT_ATOMIC_DEC_U64**
 
 77
 
@@ -29092,7 +29088,7 @@ MEM[ADDR].u64 = ((tmp == 0ULL) || (tmp > src)) ? src : tmp - 1ULL;
 RETURN_DATA.u64 = tmp
 ```
 
-**FLAT\_ATOMIC\_CMPSWAP\_F32**
+**FLAT_ATOMIC_CMPSWAP_F32**
 
 80
 
@@ -29110,7 +29106,7 @@ RETURN_DATA.f32 = tmp
 
 Floating-point compare handles NAN/INF/denorm.
 
-**FLAT\_ATOMIC\_MIN\_F32**
+**FLAT_ATOMIC_MIN_F32**
 
 81
 
@@ -29127,7 +29123,7 @@ RETURN_DATA.f32 = tmp
 
 Floating-point compare handles NAN/INF/denorm.
 
-**FLAT\_ATOMIC\_MAX\_F32**
+**FLAT_ATOMIC_MAX_F32**
 
 82
 
@@ -29144,7 +29140,7 @@ RETURN_DATA.f32 = tmp
 
 Floating-point compare handles NAN/INF/denorm.
 
-**FLAT\_ATOMIC\_ADD\_F32**
+**FLAT_ATOMIC_ADD_F32**
 
 86
 
@@ -29164,7 +29160,7 @@ Floating-point addition handles NAN/INF/denorm.
 
 Scratch instructions are like Flat, but assume all work-item addresses fall in scratch (private) space.
 
-**SCRATCH\_LOAD\_U8**
+**SCRATCH_LOAD_U8**
 
 16
 
@@ -29174,7 +29170,7 @@ Load 8 bits of unsigned data from the scratch aperture, zero extend to 32 bits a
 VDATA.u32 = 32'U({ 24'0U, MEM[ADDR].u8 })
 ```
 
-**SCRATCH\_LOAD\_I18****17**
+**SCRATCH_LOAD_I18****17**
 
 Load 8 bits of signed data from the scratch aperture, sign extend to 32 bits and store the result into a vector register.
 
@@ -29182,7 +29178,7 @@ Load 8 bits of signed data from the scratch aperture, sign extend to 32 bits and
 VDATA.i32 = 32'I(signext(MEM[ADDR].i8))
 ```
 
-**SCRATCH\_LOAD\_U16****18**
+**SCRATCH_LOAD_U16****18**
 
 Load 16 bits of unsigned data from the scratch aperture, zero extend to 32 bits and store the result into a vector register.
 
@@ -29190,7 +29186,7 @@ Load 16 bits of unsigned data from the scratch aperture, zero extend to 32 bits 
 VDATA.u32 = 32'U({ 16'0U, MEM[ADDR].u16 })
 ```
 
-**SCRATCH\_LOAD\_I16****19**
+**SCRATCH_LOAD_I16****19**
 
 Load 16 bits of signed data from the scratch aperture, sign extend to 32 bits and store the result into a vector register.
 
@@ -29198,7 +29194,7 @@ Load 16 bits of signed data from the scratch aperture, sign extend to 32 bits an
 VDATA.i32 = 32'I(signext(MEM[ADDR].i16))
 ```
 
-**SCRATCH\_LOAD\_B32****20**
+**SCRATCH_LOAD_B32****20**
 
 Load 32 bits of data from the scratch aperture into a vector register.
 
@@ -29206,7 +29202,7 @@ Load 32 bits of data from the scratch aperture into a vector register.
 VDATA[31 : 0] = MEM[ADDR].b32
 ```
 
-**SCRATCH\_LOAD\_B64****21**
+**SCRATCH_LOAD_B64****21**
 
 Load 64 bits of data from the scratch aperture into a vector register.
 
@@ -29215,7 +29211,7 @@ VDATA[31 : 0] = MEM[ADDR].b32;
 VDATA[63 : 32] = MEM[ADDR + 4U].b32
 ```
 
-**SCRATCH\_LOAD\_B96****22**
+**SCRATCH_LOAD_B96****22**
 
 Load 96 bits of data from the scratch aperture into a vector register.
 
@@ -29227,7 +29223,7 @@ VDATA[95 : 64] = MEM[ADDR + 8U].b32
 
 ---
 
-### SCRATCH\_LOAD\_B128
+### SCRATCH_LOAD_B128
 
 **23**
 
@@ -29242,7 +29238,7 @@ VDATA[127 : 96] = MEM[ADDR + 12U].b32
 
 ---
 
-### SCRATCH\_STORE\_B8
+### SCRATCH_STORE_B8
 
 **24**
 
@@ -29254,7 +29250,7 @@ MEM[ADDR].b8 = VDATA[7 : 0]
 
 ---
 
-### SCRATCH\_STORE\_B16
+### SCRATCH_STORE_B16
 
 **25**
 
@@ -29266,7 +29262,7 @@ MEM[ADDR].b16 = VDATA[15 : 0]
 
 ---
 
-### SCRATCH\_STORE\_B32
+### SCRATCH_STORE_B32
 
 **26**
 
@@ -29278,7 +29274,7 @@ MEM[ADDR].b32 = VDATA[31 : 0]
 
 ---
 
-### SCRATCH\_STORE\_B64
+### SCRATCH_STORE_B64
 
 **27**
 
@@ -29289,7 +29285,7 @@ MEM[ADDR].b32 = VDATA[31 : 0];
 MEM[ADDR + 4U].b32 = VDATA[63 : 32]
 ```
 
-**SCRATCH\_STORE\_B96**
+**SCRATCH_STORE_B96**
 
 28
 
@@ -29301,7 +29297,7 @@ MEM[ADDR + 4U].b32 = VDATA[63 : 32];
 MEM[ADDR + 8U].b32 = VDATA[95 : 64]
 ```
 
-**SCRATCH\_STORE\_B128**
+**SCRATCH_STORE_B128**
 
 29
 
@@ -29314,7 +29310,7 @@ MEM[ADDR + 8U].b32 = VDATA[95 : 64];
 MEM[ADDR + 12U].b32 = VDATA[127 : 96]
 ```
 
-**SCRATCH\_LOAD\_D16\_U8**
+**SCRATCH_LOAD_D16_U8**
 
 30
 
@@ -29325,7 +29321,7 @@ VDATA[15 : 0].u16 = 16'U({ 8'0U, MEM[ADDR].u8 });
 // VDATA[31:16] is preserved.
 ```
 
-**SCRATCH\_LOAD\_D16\_I8**
+**SCRATCH_LOAD_D16_I8**
 
 31
 
@@ -29336,7 +29332,7 @@ VDATA[15 : 0].i16 = 16'I(signext(MEM[ADDR].i8));
 // VDATA[31:16] is preserved.
 ```
 
-**SCRATCH\_LOAD\_D16\_B16****32**
+**SCRATCH_LOAD_D16_B16****32**
 
 Load 16 bits of unsigned data from the scratch aperture and store the result into the low 16 bits of a 32-bit vector register.
 
@@ -29345,7 +29341,7 @@ VDATA[15 : 0].b16 = MEM[ADDR].b16;
 // VDATA[31:16] is preserved.
 ```
 
-**SCRATCH\_LOAD\_D16\_HI\_U8****33**
+**SCRATCH_LOAD_D16_HI_U8****33**
 
 Load 8 bits of unsigned data from the scratch aperture, zero extend to 16 bits and store the result into the high 16 bits of a 32-bit vector register.
 
@@ -29354,7 +29350,7 @@ VDATA[31 : 16].u16 = 16'U({ 8'0U, MEM[ADDR].u8 });
 // VDATA[15:0] is preserved.
 ```
 
-**SCRATCH\_LOAD\_D16\_HI\_I8****34**
+**SCRATCH_LOAD_D16_HI_I8****34**
 
 Load 8 bits of signed data from the scratch aperture, sign extend to 16 bits and store the result into the high 16 bits of a 32-bit vector register.
 
@@ -29363,7 +29359,7 @@ VDATA[31 : 16].i16 = 16'I(signext(MEM[ADDR].i8));
 // VDATA[15:0] is preserved.
 ```
 
-**SCRATCH\_LOAD\_D16\_HI\_B16****35**
+**SCRATCH_LOAD_D16_HI_B16****35**
 
 Load 16 bits of unsigned data from the scratch aperture and store the result into the high 16 bits of a 32-bit vector register.
 
@@ -29372,7 +29368,7 @@ VDATA[31 : 16].b16 = MEM[ADDR].b16;
 // VDATA[15:0] is preserved.
 ```
 
-**SCRATCH\_STORE\_D16\_HI\_B8****36**
+**SCRATCH_STORE_D16_HI_B8****36**
 
 Store 8 bits of data from the high 16 bits of a 32-bit vector register into the scratch aperture.
 
@@ -29380,7 +29376,7 @@ Store 8 bits of data from the high 16 bits of a 32-bit vector register into the 
 MEM[ADDR].b8 = VDATA[23 : 16]
 ```
 
-**SCRATCH\_STORE\_D16\_HI\_B16**
+**SCRATCH_STORE_D16_HI_B16**
 
 37
 
@@ -29394,7 +29390,7 @@ MEM[ADDR].b16 = VDATA[31 : 16]
 
 Global instructions are like Flat, but assume all work-item addresses fall in global memory space.
 
-**GLOBAL\_LOAD\_U8**
+**GLOBAL_LOAD_U8**
 
 16
 
@@ -29404,7 +29400,7 @@ Load 8 bits of unsigned data from the global aperture, zero extend to 32 bits an
 VDATA.u32 = 32'U({ 24'0U, MEM[ADDR].u8 })
 ```
 
-**GLOBAL\_LOAD\_I8**
+**GLOBAL_LOAD_I8**
 
 17
 
@@ -29414,7 +29410,7 @@ Load 8 bits of signed data from the global aperture, sign extend to 32 bits and 
 VDATA.i32 = 32'I(signext(MEM[ADDR].i8))
 ```
 
-**GLOBAL\_LOAD\_U16**
+**GLOBAL_LOAD_U16**
 
 18
 
@@ -29424,7 +29420,7 @@ Load 16 bits of unsigned data from the global aperture, zero extend to 32 bits a
 VDATA.u32 = 32'U({ 16'0U, MEM[ADDR].u16 })
 ```
 
-**GLOBAL\_LOAD\_I16**
+**GLOBAL_LOAD_I16**
 
 19
 
@@ -29434,7 +29430,7 @@ Load 16 bits of signed data from the global aperture, sign extend to 32 bits and
 VDATA.i32 = 32'I(signext(MEM[ADDR].i16))
 ```
 
-**GLOBAL\_LOAD\_B32****20**
+**GLOBAL_LOAD_B32****20**
 
 Load 32 bits of data from the global aperture into a vector register.
 
@@ -29442,7 +29438,7 @@ Load 32 bits of data from the global aperture into a vector register.
 VDATA[31 : 0] = MEM[ADDR].b32
 ```
 
-**GLOBAL\_LOAD\_B64****21**
+**GLOBAL_LOAD_B64****21**
 
 Load 64 bits of data from the global aperture into a vector register.
 
@@ -29451,7 +29447,7 @@ VDATA[31 : 0] = MEM[ADDR].b32;
 VDATA[63 : 32] = MEM[ADDR + 4U].b32
 ```
 
-**GLOBAL\_LOAD\_B96****22**
+**GLOBAL_LOAD_B96****22**
 
 Load 96 bits of data from the global aperture into a vector register.
 
@@ -29461,7 +29457,7 @@ VDATA[63 : 32] = MEM[ADDR + 4U].b32;
 VDATA[95 : 64] = MEM[ADDR + 8U].b32
 ```
 
-**GLOBAL\_LOAD\_B128****23**
+**GLOBAL_LOAD_B128****23**
 
 Load 128 bits of data from the global aperture into a vector register.
 
@@ -29472,7 +29468,7 @@ VDATA[95 : 64] = MEM[ADDR + 8U].b32;
 VDATA[127 : 96] = MEM[ADDR + 12U].b32
 ```
 
-**GLOBAL\_STORE\_B8****24**
+**GLOBAL_STORE_B8****24**
 
 Store 8 bits of data from a vector register into the global aperture.
 
@@ -29480,7 +29476,7 @@ Store 8 bits of data from a vector register into the global aperture.
 MEM[ADDR].b8 = VDATA[7 : 0]
 ```
 
-**GLOBAL\_STORE\_B16****25**
+**GLOBAL_STORE_B16****25**
 
 Store 16 bits of data from a vector register into the global aperture.
 
@@ -29488,7 +29484,7 @@ Store 16 bits of data from a vector register into the global aperture.
 MEM[ADDR].b16 = VDATA[15 : 0]
 ```
 
-**GLOBAL\_STORE\_B32****26**
+**GLOBAL_STORE_B32****26**
 
 Store 32 bits of data from vector input registers into the global aperture.
 
@@ -29496,7 +29492,7 @@ Store 32 bits of data from vector input registers into the global aperture.
 MEM[ADDR].b32 = VDATA[31 : 0]
 ```
 
-**GLOBAL\_STORE\_B64****27**
+**GLOBAL_STORE_B64****27**
 
 Store 64 bits of data from vector input registers into the global aperture.
 
@@ -29505,7 +29501,7 @@ MEM[ADDR].b32 = VDATA[31 : 0];
 MEM[ADDR + 4U].b32 = VDATA[63 : 32]
 ```
 
-**GLOBAL\_STORE\_B96****28**
+**GLOBAL_STORE_B96****28**
 
 Store 96 bits of data from vector input registers into the global aperture.
 
@@ -29515,7 +29511,7 @@ MEM[ADDR + 4U].b32 = VDATA[63 : 32];
 MEM[ADDR + 8U].b32 = VDATA[95 : 64]
 ```
 
-**GLOBAL\_STORE\_B128****29**
+**GLOBAL_STORE_B128****29**
 
 Store 128 bits of data from vector input registers into the global aperture.
 
@@ -29529,7 +29525,7 @@ MEM[ADDR + 8U].b32 = VDATA[95 : 64];
 MEM[ADDR + 12U].b32 = VDATA[127 : 96]
 ```
 
-**GLOBAL\_LOAD\_D16\_U8****30**
+**GLOBAL_LOAD_D16_U8****30**
 
 Load 8 bits of unsigned data from the global aperture, zero extend to 16 bits and store the result into the low 16 bits of a 32-bit vector register.
 
@@ -29538,7 +29534,7 @@ VDATA[15 : 0].u16 = 16'U({ 8'0U, MEM[ADDR].u8 });
 // VDATA[31:16] is preserved.
 ```
 
-**GLOBAL\_LOAD\_D16\_I8****31**
+**GLOBAL_LOAD_D16_I8****31**
 
 Load 8 bits of signed data from the global aperture, sign extend to 16 bits and store the result into the low 16 bits of a 32-bit vector register.
 
@@ -29547,7 +29543,7 @@ VDATA[15 : 0].i16 = 16'I(signext(MEM[ADDR].i8));
 // VDATA[31:16] is preserved.
 ```
 
-**GLOBAL\_LOAD\_D16\_B16****32**
+**GLOBAL_LOAD_D16_B16****32**
 
 Load 16 bits of unsigned data from the global aperture and store the result into the low 16 bits of a 32-bit vector register.
 
@@ -29556,7 +29552,7 @@ VDATA[15 : 0].b16 = MEM[ADDR].b16;
 // VDATA[31:16] is preserved.
 ```
 
-**GLOBAL\_LOAD\_D16\_HI\_U8****33**
+**GLOBAL_LOAD_D16_HI_U8****33**
 
 Load 8 bits of unsigned data from the global aperture, zero extend to 16 bits and store the result into the high 16 bits of a 32-bit vector register.
 
@@ -29565,7 +29561,7 @@ VDATA[31 : 16].u16 = 16'U({ 8'0U, MEM[ADDR].u8 });
 // VDATA[15:0] is preserved.
 ```
 
-**GLOBAL\_LOAD\_D16\_HI\_I8****34**
+**GLOBAL_LOAD_D16_HI_I8****34**
 
 Load 8 bits of signed data from the global aperture, sign extend to 16 bits and store the result into the high 16 bits of a 32-bit vector register.
 
@@ -29574,7 +29570,7 @@ VDATA[31 : 16].i16 = 16'I(signext(MEM[ADDR].i8));
 // VDATA[15:0] is preserved.
 ```
 
-### **GLOBAL\_LOAD\_D16\_HI\_B16**
+### **GLOBAL_LOAD_D16_HI_B16**
 
 35
 
@@ -29585,7 +29581,7 @@ VDATA[31 : 16].b16 = MEM[ADDR].b16;
 // VDATA[15:0] is preserved.
 ```
 
-### **GLOBAL\_STORE\_D16\_HI\_B8**
+### **GLOBAL_STORE_D16_HI_B8**
 
 36
 
@@ -29595,7 +29591,7 @@ Store 8 bits of data from the high 16 bits of a 32-bit vector register into the 
 MEM[ADDR].b8 = VDATA[23 : 16]
 ```
 
-### **GLOBAL\_STORE\_D16\_HI\_B16**
+### **GLOBAL_STORE_D16_HI_B16**
 
 37
 
@@ -29605,7 +29601,7 @@ Store 16 bits of data from the high 16 bits of a 32-bit vector register into the
 MEM[ADDR].b16 = VDATA[31 : 16]
 ```
 
-### **GLOBAL\_LOAD\_ADDTID\_B32**
+### **GLOBAL_LOAD_ADDTID_B32**
 
 40
 
@@ -29615,7 +29611,7 @@ Load 32 bits of data from the global aperture into a vector register. The memory
 RETURN_DATA.u32 = MEM[SGPR_ADDR[63 : 0] + INST_OFFSET[11 : 0].b64 + 64'B(laneID.i32 * 4)].u32
 ```
 
-### **GLOBAL\_STORE\_ADDTID\_B32**
+### **GLOBAL_STORE_ADDTID_B32**
 
 41
 
@@ -29627,7 +29623,7 @@ as an immediate value and the lane ID is used as an offset.
 MEM[SGPR_ADDR[63 : 0] + INST_OFFSET[11 : 0].b64 + 64'B(laneID.i32 * 4)].u32 = DATA.u32
 ```
 
-### GLOBAL\_ATOMIC\_SWAP\_B32
+### GLOBAL_ATOMIC_SWAP_B32
 
 51
 
@@ -29639,7 +29635,7 @@ MEM[ADDR].b32 = DATA.b32;
 RETURN_DATA.b32 = tmp
 ```
 
-### GLOBAL\_ATOMIC\_CMPSWAP\_B32
+### GLOBAL_ATOMIC_CMPSWAP_B32
 
 52
 
@@ -29653,7 +29649,7 @@ MEM[ADDR].u32 = tmp == cmp ? src : tmp;
 RETURN_DATA.u32 = tmp
 ```
 
-### GLOBAL\_ATOMIC\_ADD\_U32
+### GLOBAL_ATOMIC_ADD_U32
 
 53
 
@@ -29665,7 +29661,7 @@ MEM[ADDR].u32 += DATA.u32;
 RETURN_DATA.u32 = tmp
 ```
 
-### GLOBAL\_ATOMIC\_SUB\_U32
+### GLOBAL_ATOMIC_SUB_U32
 
 54
 
@@ -29677,7 +29673,7 @@ MEM[ADDR].u32 -= DATA.u32;
 RETURN_DATA.u32 = tmp
 ```
 
-**GLOBAL\_ATOMIC\_CSUB\_U32**
+**GLOBAL_ATOMIC_CSUB_U32**
 
 55
 
@@ -29695,7 +29691,7 @@ MEM[ADDR].u32 = new_value;
 RETURN_DATA.u32 = old_value
 ```
 
-**GLOBAL\_ATOMIC\_MIN\_I32**
+**GLOBAL_ATOMIC_MIN_I32**
 
 56
 
@@ -29708,7 +29704,7 @@ MEM[ADDR].i32 = src < tmp ? src : tmp;
 RETURN_DATA.i32 = tmp
 ```
 
-**GLOBAL\_ATOMIC\_MIN\_U32**
+**GLOBAL_ATOMIC_MIN_U32**
 
 57
 
@@ -29721,7 +29717,7 @@ MEM[ADDR].u32 = src < tmp ? src : tmp;
 RETURN_DATA.u32 = tmp
 ```
 
-**GLOBAL\_ATOMIC\_MAX\_I32**
+**GLOBAL_ATOMIC_MAX_I32**
 
 58
 
@@ -29734,7 +29730,7 @@ MEM[ADDR].i32 = src >= tmp ? src : tmp;
 RETURN_DATA.i32 = tmp
 ```
 
-**GLOBAL\_ATOMIC\_MAX\_U32**
+**GLOBAL_ATOMIC_MAX_U32**
 
 59
 
@@ -29747,7 +29743,7 @@ MEM[ADDR].u32 = src >= tmp ? src : tmp;
 RETURN_DATA.u32 = tmp
 ```
 
-**GLOBAL\_ATOMIC\_AND\_B32**
+**GLOBAL_ATOMIC_AND_B32**
 
 60
 
@@ -29759,7 +29755,7 @@ MEM[ADDR].b32 = (tmp & DATA.b32);
 RETURN_DATA.b32 = tmp
 ```
 
-**GLOBAL\_ATOMIC\_OR\_B32**
+**GLOBAL_ATOMIC_OR_B32**
 
 61
 
@@ -29771,7 +29767,7 @@ MEM[ADDR].b32 = (tmp | DATA.b32);
 RETURN_DATA.b32 = tmp
 ```
 
-**GLOBAL\_ATOMIC\_XOR\_B32**
+**GLOBAL_ATOMIC_XOR_B32**
 
 62
 
@@ -29783,7 +29779,7 @@ MEM[ADDR].b32 = (tmp ^ DATA.b32);
 RETURN_DATA.b32 = tmp
 ```
 
-**GLOBAL\_ATOMIC\_INC\_U32**
+**GLOBAL_ATOMIC_INC_U32**
 
 63
 
@@ -29796,7 +29792,7 @@ MEM[ADDR].u32 = tmp >= src ? 0U : tmp + 1U;
 RETURN_DATA.u32 = tmp
 ```
 
-**GLOBAL\_ATOMIC\_DEC\_U32**
+**GLOBAL_ATOMIC_DEC_U32**
 
 64
 
@@ -29809,7 +29805,7 @@ MEM[ADDR].u32 = ((tmp == 0U) || (tmp > src)) ? src : tmp - 1U;
 RETURN_DATA.u32 = tmp
 ```
 
-**GLOBAL\_ATOMIC\_SWAP\_B64**
+**GLOBAL_ATOMIC_SWAP_B64**
 
 65
 
@@ -29821,7 +29817,7 @@ MEM[ADDR].b64 = DATA.b64;
 RETURN_DATA.b64 = tmp
 ```
 
-**GLOBAL\_ATOMIC\_CMPSWAP\_B64**
+**GLOBAL_ATOMIC_CMPSWAP_B64**
 
 66
 
@@ -29835,7 +29831,7 @@ MEM[ADDR].u64 = tmp == cmp ? src : tmp;
 RETURN_DATA.u64 = tmp
 ```
 
-**GLOBAL\_ATOMIC\_ADD\_U64**
+**GLOBAL_ATOMIC_ADD_U64**
 
 67
 
@@ -29847,7 +29843,7 @@ MEM[ADDR].u64 += DATA.u64;
 RETURN_DATA.u64 = tmp
 ```
 
-**GLOBAL\_ATOMIC\_SUB\_U64**
+**GLOBAL_ATOMIC_SUB_U64**
 
 68
 
@@ -29859,7 +29855,7 @@ MEM[ADDR].u64 -= DATA.u64;
 RETURN_DATA.u64 = tmp
 ```
 
-**GLOBAL\_ATOMIC\_MIN\_I64**
+**GLOBAL_ATOMIC_MIN_I64**
 
 69
 
@@ -29872,7 +29868,7 @@ MEM[ADDR].i64 = src < tmp ? src : tmp;
 RETURN_DATA.i64 = tmp
 ```
 
-**GLOBAL\_ATOMIC\_MIN\_U64**
+**GLOBAL_ATOMIC_MIN_U64**
 
 70
 
@@ -29885,7 +29881,7 @@ MEM[ADDR].u64 = src < tmp ? src : tmp;
 RETURN_DATA.u64 = tmp
 ```
 
-**GLOBAL\_ATOMIC\_MAX\_I64**
+**GLOBAL_ATOMIC_MAX_I64**
 
 71
 
@@ -29898,7 +29894,7 @@ MEM[ADDR].i64 = src >= tmp ? src : tmp;
 RETURN_DATA.i64 = tmp
 ```
 
-**GLOBAL\_ATOMIC\_MAX\_U64**
+**GLOBAL_ATOMIC_MAX_U64**
 
 72
 
@@ -29911,7 +29907,7 @@ MEM[ADDR].u64 = src >= tmp ? src : tmp;
 RETURN_DATA.u64 = tmp
 ```
 
-**GLOBAL\_ATOMIC\_AND\_B64**
+**GLOBAL_ATOMIC_AND_B64**
 
 73
 
@@ -29923,7 +29919,7 @@ MEM[ADDR].b64 = (tmp & DATA.b64);
 RETURN_DATA.b64 = tmp
 ```
 
-**GLOBAL\_ATOMIC\_OR\_B64**
+**GLOBAL_ATOMIC_OR_B64**
 
 74
 
@@ -29935,7 +29931,7 @@ MEM[ADDR].b64 = (tmp | DATA.b64);
 RETURN_DATA.b64 = tmp
 ```
 
-**GLOBAL\_ATOMIC\_XOR\_B64**
+**GLOBAL_ATOMIC_XOR_B64**
 
 75
 
@@ -29947,7 +29943,7 @@ MEM[ADDR].b64 = (tmp ^ DATA.b64);
 RETURN_DATA.b64 = tmp
 ```
 
-**GLOBAL\_ATOMIC\_INC\_U64**
+**GLOBAL_ATOMIC_INC_U64**
 
 76
 
@@ -29960,7 +29956,7 @@ MEM[ADDR].u64 = tmp >= src ? 0ULL : tmp + 1ULL;
 RETURN_DATA.u64 = tmp
 ```
 
-**GLOBAL\_ATOMIC\_DEC\_U64**
+**GLOBAL_ATOMIC_DEC_U64**
 
 77
 
@@ -29973,7 +29969,7 @@ MEM[ADDR].u64 = ((tmp == 0ULL) || (tmp > src)) ? src : tmp - 1ULL;
 RETURN_DATA.u64 = tmp
 ```
 
-**GLOBAL\_ATOMIC\_CMPSWAP\_F32**
+**GLOBAL_ATOMIC_CMPSWAP_F32**
 
 80
 
@@ -29991,7 +29987,7 @@ RETURN_DATA.f32 = tmp
 
 Floating-point compare handles NAN/INF/denorm.
 
-**GLOBAL\_ATOMIC\_MIN\_F32**
+**GLOBAL_ATOMIC_MIN_F32**
 
 81
 
@@ -30008,7 +30004,7 @@ RETURN_DATA.f32 = tmp
 
 Floating-point compare handles NAN/INF/denorm.
 
-**GLOBAL\_ATOMIC\_MAX\_F32**
+**GLOBAL_ATOMIC_MAX_F32**
 
 82
 
@@ -30025,7 +30021,7 @@ RETURN_DATA.f32 = tmp
 
 Floating-point compare handles NAN/INF/denorm.
 
-**GLOBAL\_ATOMIC\_ADD\_F32****86**
+**GLOBAL_ATOMIC_ADD_F32****86**
 
 Add two single-precision float values stored in the data register and a location in the global aperture. Store the original value from global aperture into a vector register iff the GLC bit is set.
 
