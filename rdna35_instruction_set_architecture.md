@@ -430,7 +430,7 @@ The figure below shows a block diagram of the AMD RDNA3.5 Generation series proc
 
 Figure 1. AMD RDNA3.5 Generation Series Block Diagram
 
-\*Discrete GPU – Physical Device Memory; APU – Region of system for GPU direct access
+\*Discrete GPU - Physical Device Memory; APU - Region of system for GPU direct access
 
 The RDNA3.5 device includes a data-parallel processor array, a command processor, a memory controller, and other logic (not shown). The command processor reads commands that the host has written to memory-mapped registers in the system-memory address space. The command processor sends hardware-generated interrupts to the host when the command is completed. The memory controller has direct access to all device memory and the host-specified areas of system memory. To satisfy read and write requests, the memory controller performs the functions of a direct-memory access (DMA) controller, including computing memory-address offsets based on the format of the requested data in memory.
 
@@ -3008,7 +3008,7 @@ Matrix entry naming: "A2_4" = A-Matrix, Row 2, Column 4
 
 This diagram below shows how the matrices are laid out in VGPRs when  $M = N = K = 16$ . Note that the A matrix is column-major while the others are in row-major order.
 
-**A Matrix: VGPR View for Wave32 – Column Major**
+**A Matrix: VGPR View for Wave32 - Column Major**
 
 |            | Lane 0                                                                                                                    | 1     | 2     | 3     | 4     | 5     | 6     | 7     | 8     | 9     | 10     | 11     | 12     | 13     | 14     | 15     |
 |------------|---------------------------------------------------------------------------------------------------------------------------|-------|-------|-------|-------|-------|-------|-------|-------|-------|--------|--------|--------|--------|--------|--------|
@@ -3019,7 +3019,7 @@ This diagram below shows how the matrices are laid out in VGPRs when  $M = N = K
 | V7 [15:0]  | A0_14                                                                                                                     | A1_14 | A2_14 | A3_14 | A4_14 | A5_14 | A6_14 | A7_14 | A8_14 | A9_14 | A10_14 | A11_14 | A12_14 | A13_14 | A14_14 | A15_14 |
 | V7 [31:16] | A0_15                                                                                                                     | A1_15 | A2_15 | A3_15 | A4_15 | A5_15 | A6_15 | A7_15 | A8_15 | A9_15 | A10_15 | A11_15 | A12_15 | A13_15 | A14_15 | A15_15 |
 
-**B Matrix: VGPR View for Wave32 – Row Major**
+**B Matrix: VGPR View for Wave32 - Row Major**
 
 |            | Lane 0                                                                       | 1     | 2     | 3     | 4     | 5     | 6     | 7     | 8     | 9     | 10     | 11     | 12     | 13     | 14     | 15     |
 |------------|------------------------------------------------------------------------------|-------|-------|-------|-------|-------|-------|-------|-------|-------|--------|--------|--------|--------|--------|--------|
@@ -3030,7 +3030,7 @@ This diagram below shows how the matrices are laid out in VGPRs when  $M = N = K
 | V7 [15:0]  | B14_0                                                                        | B14_1 | B14_2 | B14_3 | B14_4 | B14_5 | B14_6 | B14_7 | B14_8 | B14_9 | B14_10 | B14_11 | B14_12 | B14_13 | B14_14 | B14_15 |
 | V7 [31:16] | B15_0                                                                        | B15_1 | B15_2 | B15_3 | B15_4 | B15_5 | B15_6 | B15_7 | B15_8 | B15_9 | B15_10 | B15_11 | B15_12 | B15_13 | B15_14 | B15_15 |
 
-**C & D Matrix: VGPR View for Wave32 – Row Major**
+**C & D Matrix: VGPR View for Wave32 - Row Major**
 
 |                                                                                                         | Lane 0 | 1     | 2     | 3     | 4     | 5     | 6     | 7     | 8     | 9     | 10     | 11     | 12     | 13     | 14     | 15     | 16    | 17    | ...    | 30     | 31 |
 |---------------------------------------------------------------------------------------------------------|--------|-------|-------|-------|-------|-------|-------|-------|-------|-------|--------|--------|--------|--------|--------|--------|-------|-------|--------|--------|----|
